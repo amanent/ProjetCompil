@@ -1,0 +1,5 @@
+Tokens :
+-	class, extends, is, def, override, static, returns, return, as, var, new, then, if, else
+-	{ } ; := : & = <> < > <= >= + - * / % ( ) , .
+-	Identificateur de classe (commence par une majuscule)
+-	Identificateur (commence par une minuscule)
