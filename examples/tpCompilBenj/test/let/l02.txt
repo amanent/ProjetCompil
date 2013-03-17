@@ -1,0 +1,6 @@
+y := 3;
+z := let y := y * y in y * y;
+begin y * z end
+/*
+result: 243
+*/

@@ -1,0 +1,7 @@
+x := 0;
+y := let x := x + 1 in x;
+z := x;
+begin x + y + z end
+/*
+result: 1
+*/

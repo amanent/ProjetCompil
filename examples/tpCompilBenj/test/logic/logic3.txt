@@ -1,0 +1,10 @@
+x := 0;
+y := 1;
+z := 5;
+t := if z > y  then x + 3 else y + 2;
+t1 := if z < y or get() = 12 then put("OK ", 1) else put("KO ", 0) ;
+t2 := if not y >= z and get() > 4 or get() = 23 then put("OK ", 1) else put("KO ", 0);
+begin if t1 * t2 <> 0 then put("\nTOUT OK !\n", 3) else 0 end
+/*
+result: 3
+*/

@@ -1,0 +1,19 @@
+x := 0;
+/* ceci est un commentaire */
+y := 1;
+/* ceci est un commentaire avec une "chaine" dedans et des * en plus */
+z := -5--5-+x;
+z2 :=(+5+-5)*-y;
+/**/
+/****/
+/***/
+t := put("Une chaine avec un \" et un \\ dedans", 1);
+t1 := put("Une chaine avec un /* commentaire */ dedans", 1);
+t2 := put("Chaine1", 1) * put("chaine2", 1); /* et rien de plus */
+t3 := if t+t1+t2+z+z2<> 3 then
+         put("\tCe message indente ne devrait pas apparaitre", 1)
+      else put ("\tCe message indente doit apparaitre\n\tsur deux lignes", 0);
+begin t3 end
+/*
+result: 0
+*/

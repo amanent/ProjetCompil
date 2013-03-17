@@ -1,0 +1,8 @@
+x := 2;
+y := let x := 2+x in x *
+                       let x := 4 + x /* ce 'x' est celui du premier let */
+                       in x;
+begin y end
+/*
+result: 32
+*/
