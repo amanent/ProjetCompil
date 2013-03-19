@@ -103,7 +103,7 @@ Exp2		:	'(' Exp ')'
 			|	CONST
 			|	STR;
 
-LeftAffect	:	Exp2 '.' Id												{ makeTree( LeaftAffect,
+LeftAffect	:	Exp2 '.' Id												{ makeTree( LeaftAffect, // to modify
 			|	Id;														{ makeLeafStr(ID, $0); }
 			
 Id 			: 	ID;														{ $$ = yyval.S; }			
