@@ -14,4 +14,8 @@ typedef struct _ParamsList{
 	struct _ParamsList* next;
 }ParamsList, *ParamsListP;
 
+ParamsListP prmlst_newElem(string type, string name);
+bool prmlst_sameTypes (ParamsListP, ParamsListP);
+
+
 #endif
