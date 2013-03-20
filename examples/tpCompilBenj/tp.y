@@ -133,4 +133,9 @@ NOM_RELOP : RELOP 					{ $$ = yylval.C; }
 
 NOM_STR : STR						{ $$ = makeLeafStr(STR, yylval.S); }
 ;
-
+/*
+TreeP makeLeafStr(short op, char *str);
+TreeP makeLeafInt(short op, int val);
+TreeP makeTree(short op, int nbChildren, ...);
+TreeP getChild(TreeP tree, int rank);
+*/
