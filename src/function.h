@@ -6,6 +6,8 @@ typedef struct _Function{
 	string ID;
 	ParamsList * paramsList;
 	TreeP code;
+	ClassP returnType;
+	string returnName;
 }Function, *FunctionP;
 
 typedef struct _ParamsList{
@@ -13,9 +15,5 @@ typedef struct _ParamsList{
 	string name;
 	struct _ParamsList* next;
 }ParamsList, *ParamsListP;
-
-ParamsListP prmlst_newElem(string type, string name);
-bool prmlst_sameTypes (ParamsListP, ParamsListP);
-
 
 #endif

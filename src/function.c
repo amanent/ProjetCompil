@@ -12,14 +12,6 @@ ParamsListP prmlst_getLast (ParamsListP elem){
 	return tmp;
 }
 
-ParamsListP prmlst_newElem(string type, string name){
-	ParamsListP newElem = malloc(sizeof(ParamsList));
-	newElem.name = name;
-	newElem.type = type;
-	newElem.next = NULL;
-	return newElem;
-}
-
 bool prmlst_sameTypes (ParamsListP l, ParamsListP ll){
 	if(l == ll)
 		return TRUE;
@@ -34,9 +26,10 @@ bool prmlst_sameTypes (ParamsListP l, ParamsListP ll){
 	return TRUE;
 }
 
-
-
-
-
-
-
+ParamsListP function_makeParam(string name, string type){
+	ParamsListP new = (ParamsListP)malloc(sizeof(ParamsList));
+	new.name = name;
+	new.type = type;
+	new.next = NULL;
+	return new;
+}

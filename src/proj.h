@@ -1,5 +1,5 @@
-#IFNDEF _PROJ_H_
-#DEFINE _PROJ_H_
+#ifndef _PROJ_H_
+#define _PROJ_H_
 
 #include <stdlib.h>
 
@@ -87,4 +87,4 @@ void pprint(TreeP tree);
 void pprintMain(TreeP);
 
 #define YYSTYPE YYSTYPE
-#ENDIF
+#endif

@@ -14,12 +14,12 @@ typedef struct _ClassMethod{
 }ClassMethod, *ClassMethodP;
 
 typedef struct _ClassFieldList{
-  ClassField * current;
+  ClassFieldP current;
   struct _ClassFieldList * next;
 }ClassFieldList, *ClassFieldListP;
 
 typedef struct _ClassMethodList{
-  ClassMethod * current;
+  ClassMethodP current;
   struct _ClassMethodList * next;
 }ClassMethodList, *ClassMethodListP;
 
@@ -31,11 +31,12 @@ typedef struct _Class{
   ClassFieldList cfl;
   ClassMethodList cml;
   struct  _Class * super;
+  string superName;
 }Class, *ClassP;
 
 typedef struct _ClassList{
 	ClassP current;
-	ClassP next;
+	struct _ClassList * next;
 }ClassList, *ClassListP;
 
 #endif
