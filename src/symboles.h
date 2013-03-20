@@ -1,8 +1,8 @@
-#IFNDEF _SYMBOLES_H_
-#DEFINE _SYMBOLES_H_
+#ifndef _SYMBOLES_H_
+#define _SYMBOLES_H_
 
 typedef enum{
-	variable,function,parameter;
+	variable,function,parameter
 }Nature;
 
 typedef struct _Line
@@ -21,4 +21,4 @@ typedef struct _SymbolesTable{
 	LineP next;
 }SymbolesTable, *SymbolesTableP;
 
-#ENDIF
+#endif

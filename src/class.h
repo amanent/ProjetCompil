@@ -1,5 +1,5 @@
-#IFNDEF _CLASS_H_
-#DEFINE _CLASS_H_
+#ifndef _CLASS_H_
+#define _CLASS_H_
 
 #include "proj.h"
 #include "function.h"
@@ -30,4 +30,4 @@ typedef struct _Class{
   struct  _Class * super;
 }Class, *ClassP;
 
-#ENDIF
+#endif
