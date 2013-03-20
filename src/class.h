@@ -25,9 +25,17 @@ typedef struct _ClassMethodList{
 
 typedef struct _Class{
   string IDClass;
+  ClassMethod constructor;
+  ClassFieldList staticCfl;
+  ClassMethodList staticCml;
   ClassFieldList cfl;
   ClassMethodList cml;
   struct  _Class * super;
 }Class, *ClassP;
+
+typedef struct _ClassList{
+	ClassP current;
+	ClassP next;
+}ClassList, *ClassListP;
 
 #endif

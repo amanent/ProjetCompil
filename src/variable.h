@@ -2,8 +2,10 @@
 #define _VARIABLES_H_
 
 typedef struct _Var{
+	string typeName;
 	ClassP type;
 	string ID;	
+	TreeP value;
 }Var, *VarP;
 
 #endif

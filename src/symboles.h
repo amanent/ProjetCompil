@@ -7,18 +7,15 @@ typedef enum{
 
 typedef struct _Line
 {
-	union{
-		ClassP c;
-		VarP v;
-	} id;
+	VarP v;
 	unsigned int depth;
 	Nature n;
 	unsigned int rang;
+	struct _Line * next;
 }Line, *LineP;
 
 typedef struct _SymbolesTable{
 	LineP current;
-	LineP next;
 }SymbolesTable, *SymbolesTableP;
 
 #endif
