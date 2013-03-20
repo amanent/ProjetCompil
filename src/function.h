@@ -1,5 +1,5 @@
-#IFNDEF _FUNCTION_H_
-#DEFINE _FUNCTION_H_
+#ifndef _FUNCTION_H_
+#define _FUNCTION_H_
 
 #include "proj.h"
 typedef struct _Function{
@@ -14,4 +14,8 @@ typedef struct _ParamsList{
 	struct _ParamsList* next;
 }ParamsList, *ParamsListP;
 
-#ENDIF
+ParamsListP prmlst_newElem(string type, string name);
+bool prmlst_sameTypes (ParamsListP, ParamsListP);
+
+
+#endif

@@ -1,9 +1,11 @@
-#IFNDEF _VARIABLES_H_
-#DEFINE _VARIABLES_H_
+#ifndef _VARIABLES_H_
+#define _VARIABLES_H_
 
 typedef struct _Var{
+	string typeName;
 	ClassP type;
 	string ID;	
+	TreeP value;
 }Var, *VarP;
 
-#ENDIF
+#endif

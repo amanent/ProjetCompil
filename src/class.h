@@ -1,5 +1,5 @@
-#IFNDEF _CLASS_H_
-#DEFINE _CLASS_H_
+#ifndef _CLASS_H_
+#define _CLASS_H_
 
 #include "proj.h"
 #include "function.h"
@@ -25,9 +25,17 @@ typedef struct _ClassMethodList{
 
 typedef struct _Class{
   string IDClass;
+  ClassMethod constructor;
+  ClassFieldList staticCfl;
+  ClassMethodList staticCml;
   ClassFieldList cfl;
   ClassMethodList cml;
   struct  _Class * super;
 }Class, *ClassP;
 
-#ENDIF
+typedef struct _ClassList{
+	ClassP current;
+	ClassP next;
+}ClassList, *ClassListP;
+
+#endif

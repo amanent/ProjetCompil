@@ -1,24 +1,21 @@
-#IFNDEF _SYMBOLES_H_
-#DEFINE _SYMBOLES_H_
+#ifndef _SYMBOLES_H_
+#define _SYMBOLES_H_
 
 typedef enum{
-	variable,function,parameter;
+	variable,function,parameter
 }Nature;
 
 typedef struct _Line
 {
-	union{
-		ClassP c;
-		VarP v;
-	} id;
+	VarP v;
 	unsigned int depth;
 	Nature n;
 	unsigned int rang;
+	struct _Line * next;
 }Line, *LineP;
 
 typedef struct _SymbolesTable{
 	LineP current;
-	LineP next;
 }SymbolesTable, *SymbolesTableP;
 
-#ENDIF
+#endif
