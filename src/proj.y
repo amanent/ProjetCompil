@@ -16,49 +16,31 @@
 
 extern int yylex();	/* fournie par Flex */
 extern void yyerror();  /* definie dans tp.c */
-
-Class* current;
+extern classList;
 
 %}
 	
 %% 
 
-Program		:	Bloc
-				|	Class Program
+Program		:	Bloc												{ /*lancer la verif contextuelle */ }
+				|	Class Program									/* Pas de traitement */
 
-Class 		:	CLASS Idcl '(' ListParamO ')' ExtendO BlocO IS '{' ListDeclO '}'; {
-																												current = addClass($1.u.str);
-																											}
+Class 		:	CLASS Idcl '(' ListParamO ')' ExtendO BlocO IS '{' ListDeclO '}'; { classlist_addClass($1); }
 
-ListParamO 	:	/* epsilon */									{ class_setParam(current, NULL); }
-				|	ListParam;
+ListParamO 	:	/* epsilon */									{ class_setParam(classList.current, NULL); }
+				|	ListParam;										{ class_setParam(classList.current, $0); } // pour le constructeur
 
-ListParam	:	Param												
-				| 	Param ',' ListParam;
+ListParam	:	Param												{ $$ = $0; }
+				| 	Param ',' ListParam;							{ ParamListP tmp = $0;
+																		  tmp.next = $2;
+																		  $$=tmp;
+																		}
 			
-Param			:	Id ':' Idcl;									{ addParam($0, $2); }
+Param			:	Id ':' Idcl;									{ $$ = function_makeParam($0, $2); }
 
 ExtendO		:	/* epsilon */									{  }
 				|	EXT Idcl '(' ListArgO ')';
-		
-ListArgO	:	/* epsilon */
-				|	ListArg;
-		
-ListArg		:	Exp
-				|	Exp ',' ListArg;
-		
-BlocO			:	/* epsilon */
-				|	Bloc;
-	
-Bloc			:	'{' ListInstO '}'
-				|	'{' ListDeclV IS ListInst '}';
 
-ListInstO	:	/* epsilon */
-				|	ListInst;
-			
-ListInst		:	Inst
-				|	Inst ListInst;
-			
 ListDeclO	:	/* epsilon */
 				|	Decl ListDeclO;
 			
@@ -84,8 +66,26 @@ OvOrStatO	:	/* epsilon */
 				|	OVR													{ $$ = makeLeafInt(OVR, 0); }
 				|	STAT;													{ $$ = makeLeafInt(STAT, 0); }
 			
-ReturnO		:	/* epsilon */										{ $$ = ?????????????????????? }
-				|	RETS Idcl;											{ $$ = makeLeafStr(RETS, $1); }
+ReturnO		:	/* epsilon */										{ $$ = NULL }
+				|	RETS Idcl;											{ $$ = $1; }
+
+ListArgO	:	/* epsilon */
+				|	ListArg;
+		
+ListArg		:	Exp
+				|	Exp ',' ListArg;
+		
+BlocO			:	/* epsilon */
+				|	Bloc;
+	
+Bloc			:	'{' ListInstO '}'
+				|	'{' ListDeclV IS ListInst '}';
+
+ListInstO	:	/* epsilon */										{ $$ = NULL; }
+				|	ListInst;											{ $$ = $0; }
+			
+ListInst		:	Inst													{ $$ = $0; }
+				|	Inst ListInst;										{ $$ = makeTree(LSTINST, $0, $1); }
 			
 Inst			:	Exp ';'												{ $$ = $0; }
 				|	Bloc													{ $$ = $0; }
@@ -104,8 +104,8 @@ Exp			:	Exp Relop Exp										{ $$ = makeTree($1, 2, $0, $2); }
 				|	Exp2;													{ $$ = $0 }
 				
 Exp2			:	'(' Exp ')'											{ $$ = $1; }
-				|	'(' AS Idcl ':' Exp ')'							{ $$ = makeTree(CAST, 2, $2, $4); }
-				|	NEW Idcl '(' ListArgO ')'						{ $$ = makeTree(INST, 2, $1, $3); }
+				|	'(' AS Idcl ':' Exp ')'							{ $$ = makeTree(CAST, 2, makeLeafStr(IDCL, $2), $4); }
+				|	NEW Idcl '(' ListArgO ')'						{ $$ = makeTree(INST, 2, makeLeafStr(IDCL, $1), $3); }
 				|	Exp2 '.' Id '(' ListArgO ')'					{ $$ = makeTree(MSGSNT, 3, $0, $2, $4); }
 				| 	LeftAffect											{ $$ = $0; }
 				|	CONST													{ $$ = makeLeafInt(CONST, yyval.I); }
@@ -116,7 +116,7 @@ LeftAffect	:	Exp2 '.' Id											{ $$ = makeTree(LAFFECT, 2, $0, $2); }
 			
 Id 			: 	ID;													{ $$ = makeLeafStr(ID, yyval.S); }			
 
-Idcl			:	IDCL;													{ $$ = makeLeafStr(IDCL, yyval.S); }
+Idcl			:	IDCL;													{ $$ = yyval.S }
 
 Relop			:	RELOP;												{ $$ = yyval.I; }
 
