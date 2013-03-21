@@ -57,7 +57,7 @@ void lexError(char c) {
 {Commentary}	{ }
 {DefaultID}		{ return keywordOrId(); }
 {ClassID}		{ yylval.S = strdup(yytext); return(IDCL); }
-{NUMBER}+		{ yylval.I = atoi(yytext,NULL,0); return(CST); }
+{NUMBER}+		{ yylval.I = atoi(yytext); return(CST); }
 {Symbol}		{ return(yytext[0]); }
 {Str}			{ yylval.S = strdup(yytext); return(STR); }
 ":="			{ return(AFF); }

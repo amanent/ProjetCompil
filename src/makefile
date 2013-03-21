@@ -28,8 +28,7 @@ proj_y.h proj_y.c : proj.y proj.h
 # feature interessante : indique que clean et tests ne sont pas des fichiers, mais bien des commander a executer, que les fichiers existent ou non.
 
 clean:
-	rm -f *~ proj*.exe* proj proj_lex *.o proj_l.* proj_y.*
-	rm -f test/*~ test/*.out test/*.res test/*/*~ test/*/*.out test/*/*.res
+	rm -f *~ proj *.o proj_l.* proj_y.*
 
 tests:
 	@make proj

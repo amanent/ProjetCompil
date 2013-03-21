@@ -2,7 +2,7 @@
 %token IF THEN ELSE
 %token AFF
 %token ID IDCL
-%token CONST STR
+%token CST STR
 %token RELOP
 %token ADD SUB MUL DIV CONCAT
 
@@ -121,11 +121,14 @@ Inst		:	Exp ';'										{ $$ = $0; }
 			|	Bloc										{ $$ = $0; }
 			|	RET ';'										{ $$ = makeLeafInt(RET, 0); /* 0 a defaut de savoir quoi mettre*/ }
 			|	LeftAffect AFF Exp ';' /* Affectation */	{ $$ = makeTree(AFF, 2, $0, $2); }
-			|	IF Exp THEN Inst ELSE Inst					{ $$ = makeTree(IF, 3, $1, $3, $5); }
+			|	IF Bexp THEN Inst ELSE Inst					{ $$ = makeTree(IF, 3, $1, $3, $5); }
+			;
+
+Bexp		:	Exp Relop Exp								{ $$ = makeTree($1, 2, $0, $2); }
+			|	Exp											{ $$ = $0; }
 			;
 			
-Exp			:	Exp Relop Exp								{ $$ = makeTree($1, 2, $0, $2); }
-			|	Exp CONCAT Exp								{ $$ = makeTree(CONCAT, 2, $0, $2); }
+Exp			:	Exp CONCAT Exp								{ $$ = makeTree(CONCAT, 2, $0, $2); }
 			|	Exp ADD Exp									{ $$ = makeTree(ADD, 2, $0, $2); }
 			|	Exp SUB Exp									{ $$ = makeTree(SUB, 2, $0, $2); }
 			|	Exp MUL Exp									{ $$ = makeTree(MUL, 2, $0, $2); }
@@ -135,12 +138,12 @@ Exp			:	Exp Relop Exp								{ $$ = makeTree($1, 2, $0, $2); }
 			|	Exp2										{ $$ = $0 }
 			;
 			
-Exp2		:	'(' Exp ')'									{ $$ = $1; }
-			|	'(' AS Idcl ':' Exp ')'						{ $$ = makeTree(CAST, 2, makeLeafStr(IDCL, $2), $4); }
+Exp2		:	'(' Exp ')'									{ $$ = $1; } /* Peut etre un Bexp */
+			|	'(' AS Idcl ':' Exp ')'						{ $$ = makeTree(CAST, 2, makeLeafStr(IDCL, $2), $4); } /* Idem */
 			|	NEW Idcl '(' ListArgO ')'					{ $$ = makeTree(INST, 2, makeLeafStr(IDCL, $1), $3); }
 			|	Exp2 '.' Id '(' ListArgO ')'				{ $$ = makeTree(MSGSNT, 3, $0, makeLeafStr(ID, $2), $4); }
 			| 	LeftAffect									{ $$ = $0; }
-			|	CONST										{ $$ = makeLeafInt(CONST, yyval.I); }
+			|	CST											{ $$ = makeLeafInt(CST, yyval.I); }
 			|	STR											{ $$ = makeLeafStr(STR, yyval.S); }
 			;
 			
