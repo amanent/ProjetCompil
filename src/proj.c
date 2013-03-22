@@ -1,14 +1,12 @@
 #include <unistd.h>
-#include <stdarg.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
-#include "tp.h"
-#include "tp_y.h"
+
+#include "proj.h"
+#include "proj_y.h"
 
 extern int yyparse();
-
-int eval(TreeP tree, VarDeclP decls);
 
 /* Niveau de 'verbosite'.
  * Par defaut, n'imprime que le resultat et les messages d'erreur
@@ -100,119 +98,3 @@ void setError(int code) {
   errorCode = code;
   if (code != NO_ERROR) { noEval = TRUE; }
 }
-
-/* Lecture dynamique d'une valeur, indiquee par get() dans une expression.
- * Exemple: x := 3 + get(); begin x end
- */
-int getValue() {
-  int res;
-  if (fd == NIL(FILE)) {
-    fprintf(stderr, "Error: Missing data file\n");
-    exit(USAGE_ERROR);
-  }
-  if (fscanf(fd, "%d", &res) == 1) {
-    return res;
-  } else {
-    fprintf(stderr, "Error: Missing or wrong data in file\n");
-    exit(USAGE_ERROR);
-  }
-}
-
-
-
-/* implemente la fonction put(str, val) du langage */
-int putValue(char *str, int val) {
-  printf("%s%d\n", str, val);
-  return val;
-}
-
-
-/* Tronc commun pour la construction d'arbre */
-TreeP makeNode(int nbChildren, short op) {
-  TreeP tree = NEW(1, Tree);
-  tree->op = op;
-  tree->nbChildren = nbChildren;
-  tree->u.children = nbChildren > 0 ? NEW(nbChildren, TreeP) : NIL(TreeP);
-  return(tree);
-}
-
-
-/* Construction d'un arbre a nbChildren branches, passees en parametres */
-TreeP makeTree(short op, int nbChildren, ...) {
-  va_list args;
-  int i;
-  TreeP tree = makeNode(nbChildren, op); 
-  va_start(args, nbChildren);
-  for (i = 0; i < nbChildren; i++) { 
-    tree->u.children[i] = va_arg(args, TreeP);
-  }
-  va_end(args);
-  return(tree);
-}
-
-
-/* Retourne le rankieme fils d'un arbre (de 0 a n-1) */
-TreeP getChild(TreeP tree, int rank) {
-  return tree->u.children[rank];
-}
-
-
-/* Constructeur de feuille dont la valeur est une chaine de caracteres
- * (un identificateur de variable ou parametre, la chaine d'un PUT).
- */
-TreeP makeLeafStr(short op, char *str) {
-  TreeP tree = makeNode(0, op);
-  tree->u.str = str;
-  return(tree);
-}
-
-
-/* Constructeur de feuille dont la valeur est un entier */
-TreeP makeLeafInt(short op, int val) {
-  TreeP tree = makeNode(0, op); 
-  tree->u.val = val;
-  return(tree);
-}
-
-
-/* retrouve la valeur d'une variable stockee dans 'tree' si elle apparait bien
- * bien dans la liste des couples (nom, valeur) de 'decls'. Sinon quitte
- * irremediablement le programme car on ne va pas lui donner une valeur
- * arbitraire. 
- */
-int evalVar(TreeP tree, VarDeclP decls) {
-  char *name = tree->u.str;
-  while (decls != NIL(VarDecl)) {
-    if (! strcmp(decls->name, name)) return(decls->val);
-    decls = decls->next;
-  }
-  fprintf(stderr, "Error: Undeclared variable: %s\n", name);
-  exit(UNEXPECTED);
-}
-
-/* Evaluation par parcours recursif de l'arbre representant une expression. 
- * Les valeurs des identificateurs situes aux feuilles de l'arbre sont a
- * rechercher dans la liste 'decls'
- * Attention dans chaque a n'evaluer que ce qui doit l'etre et au bon moment
- * selon la semantique de l'operateur (cas du IF, and, or, etc.)
- */
-int eval(TreeP tree, VarDeclP decls) {
-  switch (tree->op) {
-  case ID:
-    return evalVar(tree, decls);
-  case CST:
-    return(tree->u.val);
-  case EQ:
-  case NE:
-  case GT:
-  case GE:
-  case LT:
-  case LE:
-  case ADD:
-  case SUB:
-  default: 
-    fprintf(stderr, "Error: Eval unexpected operator label: %d\n", tree->op);
-    exit(UNEXPECTED);
-  }
-}
-

@@ -23,10 +23,12 @@
 
 
 %{
+#include <stdio.h>
 #include "proj.h"
 #include "class.h"
 #include "function.h"
 
+extern int yylineno;
 extern ClassListP classList; /* variable globale contenant les classes déclarées */
 
 extern int yylex();	/* fournie par Flex */

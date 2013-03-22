@@ -17,43 +17,42 @@ Commentary ([/]{Star}({NotStar}|{Star}*{NotStarSlash})*{Star}*[*][/])
 
 
 %{
-#include <stdio.h> /* Pour fileno */
-#include <string.h> /* Pour strdup */
+	#include <stdio.h> /* Pour fileno */
+	#include <string.h> /* Pour strdup */
 
-#include "proj.h"
-#include "proj_y.h"
+	#include "proj.h"
+	#include "proj_y.h"
 
-#define YY_NO_INPUT /* pour éviter le warning "input declared but unused" */
+	#define YY_NO_INPUT /* pour éviter le warning "input declared but unused" */
 
-extern char *strdup(const char *s);
-extern int fileno(FILE* f); /* pour éviter le warning "finelo implicitely declared" */
+	extern char *strdup(const char *s);
+	extern int fileno(FILE* f); /* pour éviter le warning "finelo implicitely declared" */
 
-extern YYSTYPE yylval;
-extern bool noEval;
+	extern YYSTYPE yylval;
+	extern bool noEval;
 
-int keywordOrId() {
-	if(!strcmp(yytext,"if")) return(IF);
-	if(!strcmp(yytext,"then")) return(THEN);
-	if(!strcmp(yytext,"else")) return(ELSE);
-	if(!strcmp(yytext,"class")) return(CLASS);
-	if(!strcmp(yytext,"extends")) return(EXT);
-	if(!strcmp(yytext,"is")) return(IS);
-	if(!strcmp(yytext,"def")) return(DEF);
-	if(!strcmp(yytext,"override")) return(OVR);
-	if(!strcmp(yytext,"static")) return(STAT);
-	if(!strcmp(yytext,"return")) return(RET);
-	if(!strcmp(yytext,"returns")) return(RETS);
-	if(!strcmp(yytext,"as")) return(AS);
-	if(!strcmp(yytext,"var")) return(VAR);
-	if(!strcmp(yytext,"new")) return(NEW);
-	yylval.S = strdup(yytext);
-	return(ID);
-}
+	int keywordOrId() {
+		if(!strcmp(yytext,"if")) return(IF);
+		if(!strcmp(yytext,"then")) return(THEN);
+		if(!strcmp(yytext,"else")) return(ELSE);
+		if(!strcmp(yytext,"class")) return(CLASS);
+		if(!strcmp(yytext,"extends")) return(EXT);
+		if(!strcmp(yytext,"is")) return(IS);
+		if(!strcmp(yytext,"def")) return(DEF);
+		if(!strcmp(yytext,"override")) return(OVR);
+		if(!strcmp(yytext,"static")) return(STAT);
+		if(!strcmp(yytext,"return")) return(RET);
+		if(!strcmp(yytext,"returns")) return(RETS);
+		if(!strcmp(yytext,"as")) return(AS);
+		if(!strcmp(yytext,"var")) return(VAR);
+		if(!strcmp(yytext,"new")) return(NEW);
+		yylval.S = strdup(yytext);
+		return(ID);
+	}
 
-
-void lexError(char c) {
-  fprintf(stderr, "Skipping invalid character: '%c' on line %d\n", c, yylineno);
-}
+	void lexError(char c) {
+		fprintf(stderr, "Skipping invalid character: '%c' on line %d\n", c, yylineno);
+	}
 %}
 
 %%

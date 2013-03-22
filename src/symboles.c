@@ -5,9 +5,9 @@ SymbolesTableP symTable_newTable(){
 }
 
 void symTable_addLineFromLine(SymbolesTableP theTable, LineP l){
-	LineP current = theTable.current;
-	theTable.current = l;
-	l.next = current;
+	LineP current = theTable->current;
+	theTable->current = l;
+	l->next = current;
 }
 
 void symTable_addLineFromScratch(){
