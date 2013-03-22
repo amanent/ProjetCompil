@@ -6,7 +6,9 @@
 %token RELOP
 %token ADD SUB MUL DIV CONCAT
 
-
+/* ---- pour l'arbre syntaxique --- */
+%token DECL LSTARG BLCDECL CAST INST MSGSNT LAFFECT LSTINST
+/* --------------------------------- */
 %nonassoc RELOP CONCAT
 %left ADD SUB
 %left MUL DIV
@@ -20,6 +22,8 @@
 
 %{
 #include "proj.h"
+#include "class.h"
+#include "fonction.h"
 
 extern int yylex();	/* fournie par Flex */
 extern void yyerror();  /* definie dans tp.c */
