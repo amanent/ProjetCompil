@@ -10,6 +10,7 @@ typedef struct _ClassField{
 
 typedef struct _ClassMethod{
   int visibility;
+  string type;
   Function function;
 }ClassMethod, *ClassMethodP;
 
@@ -32,6 +33,7 @@ typedef struct _Class{
   ClassMethodList cml;
   struct  _Class * super;
   string superName;
+  TreeP superCallArgs;
 }Class, *ClassP;
 
 typedef struct _ClassList{
