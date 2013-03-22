@@ -12,13 +12,14 @@
 %left MUL DIV
 %left UNARYADD UNARYSUB
 
-/*
-Program Class ListParamO ListParam Param ExtendO ListDeclO Decl ListDeclV DeclV DeclField StaticO AffectO DeclMethod OvOrStatO ReturnO
- ------------------------------------------------------ Fin creation structures, debut creation arbres ---------------------------------------------
-ListArgO ListArg BlocO Bloc ListInstO ListInst Inst Bexp Exp Exp2 LeftAffect Id Idcl Relop
-*/
+%type <T> AffectO ListArgO ListArg BlocO Bloc ListInstO ListInst Inst Bexp Exp Exp2 LeftAffect DeclV ListDeclV
+%type <S> ReturnO Id Idcl 
+%type <I> StaticO OvOrStatO Relop
+%type <S> ListParamO ListParam Param /* En fait ce sera du type ListeParamètre */
+/*No type : Program Class ExtendO ListDeclO Decl DeclField DeclMethod  */
 
 %{
+#include "proj.h"
 
 extern int yylex();	/* fournie par Flex */
 extern void yyerror();  /* definie dans tp.c */
@@ -32,28 +33,28 @@ Program		:	Bloc										{ /*lancer la verif contextuelle */ }
 			;
 
 Class 		:	CLASS Idcl '(' ListParamO ')' ExtendO BlocO IS '{' ListDeclO '}' {
-																classlist_addClass($1);
-																class_setConstructor(classList.current, $3);
+																classlist_addClass($2);
+																class_setConstructor(classList.current, $4);
 															}
 			;
 
 ListParamO 	:	/* epsilon */								{ $$ = NULL; }
-			|	ListParam									{ $$ = $0; }
+			|	ListParam									{ $$ = $1; }
 			;
 
-ListParam	:	Param										{ $$ = $0; }
+ListParam	:	Param										{ $$ = $1; }
 			| 	Param ',' ListParam						{
-																ParamListP tmp = $0;
-																tmp.next = $2;
+																ParamListP tmp = $1;
+																tmp.next = $3;
 																$$=tmp;
 															}
 			;
 
-Param		:	Id ':' Idcl								{ $$ = function_makeParam($0, $2); }
+Param		:	Id ':' Idcl								{ $$ = function_makeParam($1, $3); }
 			;
 
 ExtendO		:	/* epsilon */								/* Pas de traitement */
-			|	EXT Idcl '(' ListArgO ')'					{ class_addParent(classList.current, $1, $3); /* troisiemme paramètres, les paramètres passés par le constructeru au parent */ }
+			|	EXT Idcl '(' ListArgO ')'					{ class_addParent(classList.current, $2, $4); /* troisiemme paramètres, les paramètres passés par le constructeru au parent */ }
 			;
 
 ListDeclO	:	/* epsilon */								/* Pas de traitement */
@@ -64,26 +65,15 @@ Decl		:	DeclField									/* Pas de traitement */
 			|	DeclMethod									/* Pas de traitement */
 			;
 
-ListDeclV	:	DeclV										/* Pas de traitement */
-			|	DeclV ListDeclV								/* Pas de traitement */
-			;
-
-DeclV		:	VAR Id ':' Idcl AffectO						{ $$ = class_addVar($1, $3, $4); /* nom, type, arbre de l'expression de sa valeur si existe, NULL sinon */ }
-			;
-
-DeclField	:	StaticO DeclV								{ function_setStatic($1, $0); }
+DeclField	:	StaticO DeclV								{ class_addVar($2, $1); }
 			;
 
 StaticO		:	/* epsilon */								{ $$ = 0; }
 			|	STAT										{ $$ = 1; }
 			;
 
-AffectO		:	/* epsilon */								{ $$ = NULL; }
-			|	AFF Exp										{ $$ = $1; }
-			;
-
 DeclMethod	:	OvOrStatO	DEF	Id '(' ListParamO ')' ReturnO IS Bloc {
-																class_addMethod($0, $2, $6, $4, $8);
+																class_addMethod($1, $3, $7, $5, $9);
 																/* static/overide/rien, nom, type de retour,liste des paramètres, arbre du corps de la fonction */
 															}
 			;
@@ -94,67 +84,78 @@ OvOrStatO	:	/* epsilon */								{ $$ = 0; }
 			;
 
 ReturnO		:	/* epsilon */								{ $$ = NULL;}
-			|	RETS Idcl									{ $$ = $1;}
+			|	RETS Idcl									{ $$ = $2;}
 			;
 
 /* ------------------------------------------------------ Fin creation structures, debut creation arbres --------------------------------------------- */
 
-ListArgO	:	/* epsilon */								{ $$ = NULL; }
-			|	ListArg										{ $$ = $0; }
+ListDeclV	:	DeclV										{ $$ = $1; }
+			|	DeclV ListDeclV								{ $$ = makeTree(DECL, 2, $1, $2); }
 			;
 
-ListArg		:	Exp											{ $$ = $0; }
-			|	Exp ',' ListArg								{ $$ = makeTree(LSTARG, 2, $0, $2); }
+DeclV		:	VAR Id ':' Idcl AffectO						{ $$ = makeTree(VAR, 3, $2, $4, $5); } /* voir a pas ajouter un autre type "variable" aux feuilles de l'arbre */
+			;
+			
+AffectO		:	/* epsilon */								{ $$ = NULL; }
+			|	AFF Exp										{ $$ = $2; }
+			;
+
+ListArgO	:	/* epsilon */								{ $$ = NULL; }
+			|	ListArg										{ $$ = $1; }
+			;
+
+ListArg		:	Exp											{ $$ = $1; }
+			|	Exp ',' ListArg								{ $$ = makeTree(LSTARG, 2, $1, $3); }
 			;
 
 BlocO		:	/* epsilon */								{ $$ = NULL; } /* voir a peut etre passer par des leafs avec un code particulier pour eviter les segflt */
-			|	Bloc										{ $$ = $0; }
+			|	Bloc										{ $$ = $1; }
 			;
 
-Bloc		:	'{' ListInstO '}'							{ $$ = $1; }
-			|	'{' ListDeclV IS ListInst '}'				{ $$ = makeTree(BLCDECL, 2, $1, $3); }
+Bloc		:	'{' ListInstO '}'							{ $$ = $2; }
+			|	'{' ListDeclV IS ListInst '}'				{ $$ = makeTree(BLCDECL, 2, $2, $4); }
 			;
 
 ListInstO	:	/* epsilon */								{ $$ = NULL; }
-			|	ListInst									{ $$ = $0; }
+			|	ListInst									{ $$ = $1; }
 			;
 
-ListInst	:	Inst										{ $$ = $0; }
-			|	Inst ListInst								{ $$ = makeTree(LSTINST, $0, $1); }
+ListInst	:	Inst										{ $$ = $1; }
+			|	Inst ListInst								{ $$ = makeTree(LSTINST, $1, $2); }
 			;
 
-Inst		:	Exp ';'										{ $$ = $0; }
-			|	Bloc										{ $$ = $0; }
+Inst		:	Exp ';'										{ $$ = $1; }
+			|	Bloc										{ $$ = $1; }
 			|	RET ';'										{ $$ = makeLeafInt(RET, 0); /* 0 a defaut de savoir quoi mettre*/ }
-			|	LeftAffect AFF Exp ';' /* Affectation */	{ $$ = makeTree(AFF, 2, $0, $2); }
-			|	IF Bexp THEN Inst ELSE Inst					{ $$ = makeTree(IF, 3, $1, $3, $5); }
+			|	LeftAffect AFF Exp ';' /* Affectation */	{ $$ = makeTree(AFF, 2, $1, $3); }
+			|	IF Bexp THEN Inst ELSE Inst					{ $$ = makeTree(IF, 3, $2, $4, $6); }
 			;
 
-Bexp		:	Exp Relop Exp								{ $$ = makeTree($1, 2, $0, $2); }
-			|	Exp											{ $$ = $0; }
+Bexp		:	Exp Relop Exp								{ $$ = makeTree($2, 2, $1, $3); }
+			|	Exp											{ $$ = $1; }
 			;
 
-Exp			:	Exp CONCAT Exp								{ $$ = makeTree(CONCAT, 2, $0, $2); }
-			|	Exp ADD Exp									{ $$ = makeTree(ADD, 2, $0, $2); }
-			|	Exp SUB Exp									{ $$ = makeTree(SUB, 2, $0, $2); }
-			|	Exp MUL Exp									{ $$ = makeTree(MUL, 2, $0, $2); }
-			|	Exp DIV Exp									{ $$ = makeTree(DIV, 2, $0, $2); }
-			|	ADD Exp %prec UNARYADD						{ $$ = makeTree(UNARYADD, 1, $1); }
-			|	SUB Exp %prec UNARYSUB						{ $$ = makeTree(UNARYSUB, 1, $1); }
-			|	Exp2										{ $$ = $0 }
+Exp			:	Exp CONCAT Exp								{ $$ = makeTree(CONCAT, 2, $1, $3); }
+			|	Exp ADD Exp									{ $$ = makeTree(ADD, 2, $1, $3); }
+			|	Exp SUB Exp									{ $$ = makeTree(SUB, 2, $1, $3); }
+			|	Exp MUL Exp									{ $$ = makeTree(MUL, 2, $1, $3); }
+			|	Exp DIV Exp									{ $$ = makeTree(DIV, 2, $1, $3); }
+			|	ADD Exp %prec UNARYADD						{ $$ = makeTree(UNARYADD, 1, $2); }
+			|	SUB Exp %prec UNARYSUB						{ $$ = makeTree(UNARYSUB, 1, $2); }
+			|	Exp2										{ $$ = $1 }
 			;
 
-Exp2		:	'(' Exp ')'									{ $$ = $1; } /* Peut etre un Bexp */
-			|	'(' AS Idcl ':' Exp ')'						{ $$ = makeTree(CAST, 2, makeLeafStr(IDCL, $2), $4); } /* Idem */
-			|	NEW Idcl '(' ListArgO ')'					{ $$ = makeTree(INST, 2, makeLeafStr(IDCL, $1), $3); }
-			|	Exp2 '.' Id '(' ListArgO ')'				{ $$ = makeTree(MSGSNT, 3, $0, makeLeafStr(ID, $2), $4); }
-			| 	LeftAffect									{ $$ = $0; }
+Exp2		:	'(' Exp ')'									{ $$ = $2; } /* Peut etre un Bexp */
+			|	'(' AS Idcl ':' Exp ')'						{ $$ = makeTree(CAST, 2, makeLeafStr(IDCL, $3), $5); } /* Idem */
+			|	NEW Idcl '(' ListArgO ')'					{ $$ = makeTree(INST, 2, makeLeafStr(IDCL, $2), $4); }
+			|	Exp2 '.' Id '(' ListArgO ')'				{ $$ = makeTree(MSGSNT, 3, $1, makeLeafStr(ID, $3), $5); }
+			| 	LeftAffect									{ $$ = $1; }
 			|	CST											{ $$ = makeLeafInt(CST, yyval.I); }
 			|	STR											{ $$ = makeLeafStr(STR, yyval.S); }
 			;
 
-LeftAffect	:	Exp2 '.' Id									{ $$ = makeTree(LAFFECT, 2, $0, makeLeafStr(ID, $2); }
-			|	Id											{ $$ = makeLeafStr(ID, $0); }
+LeftAffect	:	Exp2 '.' Id									{ $$ = makeTree(LAFFECT, 2, $1, makeLeafStr(ID, $3); }
+			|	Id											{ $$ = makeLeafStr(ID, $1); }
 			;
 
 Id 			: 	ID											{ $$ = yyval.S }
