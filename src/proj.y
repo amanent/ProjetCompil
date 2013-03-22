@@ -5,10 +5,10 @@
 %token CST STR
 %token RELOP
 %token ADD SUB MUL DIV CONCAT
-
 /* ---- pour l'arbre syntaxique --- */
 %token DECL LSTARG BLCDECL CAST INST MSGSNT LAFFECT LSTINST
 /* --------------------------------- */
+
 %nonassoc RELOP CONCAT
 %left ADD SUB
 %left MUL DIV
@@ -27,10 +27,13 @@
 #include "class.h"
 #include "function.h"
 
-extern ClassListP classList;
+extern ClassListP classList; /* variable globale contenant les classes déclarées */
 
 extern int yylex();	/* fournie par Flex */
-extern void yyerror();  /* definie dans tp.c */
+
+void yyerror(char *ignore) {
+  printf("erreur de syntaxe: Ligne %d\n", yylineno);
+}
 
 %}
 
