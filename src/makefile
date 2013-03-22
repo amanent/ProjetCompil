@@ -17,6 +17,8 @@ proj_l.o: proj_l.c proj_y.h
 proj_y.o : proj_y.c
 	$(CC) $(CFLAGS) -c proj_y.c
 
+proj.c :
+	touch proj.c
 
 proj_l.c : proj.l proj_y.h
 	flex --yylineno -o proj_l.c proj.l

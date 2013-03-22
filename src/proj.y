@@ -12,7 +12,7 @@
 %left MUL DIV
 %left UNARYADD UNARYSUB
 
-%type <T> AffectO ListArgO ListArg BlocO Bloc ListInstO ListInst Inst Bexp Exp Exp2 LeftAffect DeclV ListDeclV
+%type <T> AffectO ListArgO ListArg BlocO Bloc ListInstO ListInst Inst Exp Exp2 LeftAffect DeclV ListDeclV
 %type <S> ReturnO Id Idcl 
 %type <I> StaticO OvOrStatO Relop
 %type <S> ListParamO ListParam Param /* En fait ce sera du type ListeParamètre */
@@ -128,25 +128,22 @@ Inst		:	Exp ';'										{ $$ = $1; }
 			|	Bloc										{ $$ = $1; }
 			|	RET ';'										{ $$ = makeLeafInt(RET, 0); /* 0 a defaut de savoir quoi mettre*/ }
 			|	LeftAffect AFF Exp ';' /* Affectation */	{ $$ = makeTree(AFF, 2, $1, $3); }
-			|	IF Bexp THEN Inst ELSE Inst					{ $$ = makeTree(IF, 3, $2, $4, $6); }
+			|	IF Exp THEN Inst ELSE Inst					{ $$ = makeTree(IF, 3, $2, $4, $6); }
 			;
 
-Bexp		:	Exp Relop Exp								{ $$ = makeTree($2, 2, $1, $3); }
-			|	Exp											{ $$ = $1; }
-			;
-
-Exp			:	Exp CONCAT Exp								{ $$ = makeTree(CONCAT, 2, $1, $3); }
+Exp			:	Exp Relop Exp %prec RELOP 				{ $$ = makeTree($2, 2, $1, $3); }
+			|	Exp CONCAT Exp								{ $$ = makeTree(CONCAT, 2, $1, $3); }
 			|	Exp ADD Exp									{ $$ = makeTree(ADD, 2, $1, $3); }
 			|	Exp SUB Exp									{ $$ = makeTree(SUB, 2, $1, $3); }
 			|	Exp MUL Exp									{ $$ = makeTree(MUL, 2, $1, $3); }
 			|	Exp DIV Exp									{ $$ = makeTree(DIV, 2, $1, $3); }
 			|	ADD Exp %prec UNARYADD						{ $$ = makeTree(UNARYADD, 1, $2); }
 			|	SUB Exp %prec UNARYSUB						{ $$ = makeTree(UNARYSUB, 1, $2); }
-			|	Exp2										{ $$ = $1 }
+			|	Exp2										{ $$ = $1; }
 			;
 
-Exp2		:	'(' Exp ')'									{ $$ = $2; } /* Peut etre un Bexp */
-			|	'(' AS Idcl ':' Exp ')'						{ $$ = makeTree(CAST, 2, makeLeafStr(IDCL, $3), $5); } /* Idem */
+Exp2		:	'(' Exp ')'									{ $$ = $2; } 
+			|	'(' AS Idcl ':' Exp ')'						{ $$ = makeTree(CAST, 2, makeLeafStr(IDCL, $3), $5); }
 			|	NEW Idcl '(' ListArgO ')'					{ $$ = makeTree(INST, 2, makeLeafStr(IDCL, $2), $4); }
 			|	Exp2 '.' Id '(' ListArgO ')'				{ $$ = makeTree(MSGSNT, 3, $1, makeLeafStr(ID, $3), $5); }
 			| 	LeftAffect									{ $$ = $1; }
@@ -158,10 +155,10 @@ LeftAffect	:	Exp2 '.' Id									{ $$ = makeTree(LAFFECT, 2, $1, makeLeafStr(ID,
 			|	Id											{ $$ = makeLeafStr(ID, $1); }
 			;
 
-Id 			: 	ID											{ $$ = yyval.S }
+Id 			: 	ID											{ $$ = yyval.S; }
 			;
 
-Idcl		:	IDCL										{ $$ = yyval.S }
+Idcl		:	IDCL										{ $$ = yyval.S; }
 			;
 
 Relop		:	RELOP										{ $$ = yyval.I; }
