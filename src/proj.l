@@ -17,11 +17,15 @@ Commentary ([/]{Star}({NotStar}|{Star}*{NotStarSlash})*{Star}*[*][/])
 
 
 %{
+#include <stdio.h>
 #include <string.h>
 #include "proj.h"
 #include "proj_y.h"
 
+#define YY_NO_INPUT /* Petit hack pour éviter un warning ennuyeux */
+
 extern char *strdup(const char *s);
+extern int fileno(FILE* f); /* Gros hack pour éviter le warning disant que fileno n'est pas défini */
 
 extern YYSTYPE yylval;
 extern bool noEval;

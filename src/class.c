@@ -11,7 +11,7 @@ void classList_addClass(string name){
 	newTop.next = classList;
 	classList = newTop;
 }
-
+/*
 void class_addField(ClassP c, string type, string name, TreeP var ){
 	ClassFieldP newClassField = (ClassFieldP)malloc(sizeof(ClassField));
 	newClassField.v.typeName = (string)malloc(strlen(type)*sizeof(char) + 1);
@@ -23,6 +23,9 @@ void class_addField(ClassP c, string type, string name, TreeP var ){
 	newCFL.current = newClassField;
 	newCFL.next = c.cfl;
 	c.cfl = newCFL;
+}*/
+void class_addVar(int forme, TreeP decl ) {
+	/* todo to add a variable to the class */
 }
 
 ClassMethodP class_addMethodByClass(ClassP c, string methodName, string type){
@@ -38,7 +41,7 @@ ClassMethodP class_addMethodByClass(ClassP c, string methodName, string type){
 	return newMeth;
 }
 
-ClassMethodP class_addMethod(string type, string c, string methodName, string returnType, ParamsListP paramList, TreeP code){
+/*ClassMethodP class_addMethod(string type, string c, string methodName, string returnType, ParamsListP paramList, TreeP code){
 	ClassListP currentCL = classList;
 	ClassP theClass = classList.current;
 	while(theClass != NULL && strcmp(theClass.IDClass,c)){
@@ -54,6 +57,9 @@ ClassMethodP class_addMethod(string type, string c, string methodName, string re
 		return meth;
 	}
 	return NULL;
+} */
+ClassMethodP class_addMethod(int forme, string methodName, string returnType, ParamsListP paramList, TreeP code) {
+	/* to do to create a right method */
 }
 
 void class_setConstructorParam(ClassMethodP constructor, ParamsListP pl){

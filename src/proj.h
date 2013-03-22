@@ -30,6 +30,7 @@ typedef struct _Tree {
  */
 
 
+
 typedef struct _Decl
 { char *name;
   int val;
@@ -62,11 +63,15 @@ typedef struct _Decl
  * les autres correspondent aux variantes utilisees dans les actions
  * associees aux productions de la grammaire. 
 */
+#include "class.h"
+#include "function.h" /* Déso, je vous aps de moyen plus propre de faire ca */
+
 typedef union
 { char C;
   char *S;   
   int I;    
   VarDeclP D;
+  ParamsList* P;
   TreeP T;
 } YYSTYPE;
 

@@ -17,13 +17,17 @@
 %type <T> AffectO ListArgO ListArg BlocO Bloc ListInstO ListInst Inst Exp Exp2 LeftAffect DeclV ListDeclV
 %type <S> ReturnO Id Idcl 
 %type <I> StaticO OvOrStatO Relop
-%type <S> ListParamO ListParam Param /* En fait ce sera du type ListeParamètre */
+%type <P> ListParamO ListParam Param
 /*No type : Program Class ExtendO ListDeclO Decl DeclField DeclMethod  */
+
+
 
 %{
 #include "proj.h"
 #include "class.h"
-#include "fonction.h"
+#include "function.h"
+
+extern ClassListP classList;
 
 extern int yylex();	/* fournie par Flex */
 extern void yyerror();  /* definie dans tp.c */
@@ -37,8 +41,8 @@ Program		:	Bloc										{ /*lancer la verif contextuelle */ }
 			;
 
 Class 		:	CLASS Idcl '(' ListParamO ')' ExtendO BlocO IS '{' ListDeclO '}' {
-																classlist_addClass($2);
-																class_setConstructor(classList.current, $4);
+																classList_addClass($2);
+																class_setConstructor(classList->current, $4);
 															}
 			;
 
@@ -47,18 +51,18 @@ ListParamO 	:	/* epsilon */								{ $$ = NULL; }
 			;
 
 ListParam	:	Param										{ $$ = $1; }
-			| 	Param ',' ListParam						{
-																ParamListP tmp = $1;
-																tmp.next = $3;
+			| 	Param ',' ListParam							{
+																ParamsListP tmp = $1;
+																tmp->next = $3;
 																$$=tmp;
 															}
 			;
 
-Param		:	Id ':' Idcl								{ $$ = function_makeParam($1, $3); }
+Param		:	Id ':' Idcl									{ $$ = function_makeParam($1, $3); }
 			;
 
 ExtendO		:	/* epsilon */								/* Pas de traitement */
-			|	EXT Idcl '(' ListArgO ')'					{ class_addParent(classList.current, $2, $4); /* troisiemme paramètres, les paramètres passés par le constructeru au parent */ }
+			|	EXT Idcl '(' ListArgO ')'					{ class_addParent(classList->current, $2, $4); /* troisiemme paramètres, les paramètres passés par le constructeru au parent */ }
 			;
 
 ListDeclO	:	/* epsilon */								/* Pas de traitement */
@@ -69,7 +73,7 @@ Decl		:	DeclField									/* Pas de traitement */
 			|	DeclMethod									/* Pas de traitement */
 			;
 
-DeclField	:	StaticO DeclV								{ class_addVar($2, $1); }
+DeclField	:	StaticO DeclV								{ class_addVar($1, $2); }
 			;
 
 StaticO		:	/* epsilon */								{ $$ = 0; }
@@ -125,7 +129,7 @@ ListInstO	:	/* epsilon */								{ $$ = NULL; }
 			;
 
 ListInst	:	Inst										{ $$ = $1; }
-			|	Inst ListInst								{ $$ = makeTree(LSTINST, $1, $2); }
+			|	Inst ListInst								{ $$ = makeTree(LSTINST, 2,  $1, $2); }
 			;
 
 Inst		:	Exp ';'										{ $$ = $1; }
@@ -135,7 +139,7 @@ Inst		:	Exp ';'										{ $$ = $1; }
 			|	IF Exp THEN Inst ELSE Inst					{ $$ = makeTree(IF, 3, $2, $4, $6); }
 			;
 
-Exp			:	Exp Relop Exp %prec RELOP 				{ $$ = makeTree($2, 2, $1, $3); }
+Exp			:	Exp Relop Exp %prec RELOP 					{ $$ = makeTree($2, 2, $1, $3); }
 			|	Exp CONCAT Exp								{ $$ = makeTree(CONCAT, 2, $1, $3); }
 			|	Exp ADD Exp									{ $$ = makeTree(ADD, 2, $1, $3); }
 			|	Exp SUB Exp									{ $$ = makeTree(SUB, 2, $1, $3); }
@@ -155,7 +159,7 @@ Exp2		:	'(' Exp ')'									{ $$ = $2; }
 			|	STR											{ $$ = makeLeafStr(STR, yyval.S); }
 			;
 
-LeftAffect	:	Exp2 '.' Id									{ $$ = makeTree(LAFFECT, 2, $1, makeLeafStr(ID, $3); }
+LeftAffect	:	Exp2 '.' Id									{ $$ = makeTree(LAFFECT, 2, $1, makeLeafStr(ID, $3)); }
 			|	Id											{ $$ = makeLeafStr(ID, $1); }
 			;
 

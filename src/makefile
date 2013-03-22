@@ -21,7 +21,7 @@ proj.c :
 	touch proj.c
 
 proj_l.c : proj.l proj_y.h
-	flex --yylineno -o proj_l.c proj.l
+	flex --yylineno --nounput -o proj_l.c proj.l
 
 proj_y.h proj_y.c : proj.y proj.h
 	bison -v -b proj_y -o proj_y.c -d proj.y
