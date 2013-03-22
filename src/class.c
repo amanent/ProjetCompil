@@ -25,7 +25,7 @@ void class_addField(ClassP c, string type, string name, TreeP var ){
 	c.cfl = newCFL;
 }
 
-ClassMethodP class_addMethod(ClassP c, string methodName, string type){
+ClassMethodP class_addMethodByClass(ClassP c, string methodName, string type){
 	ClassMethodP newMeth = (ClassMethodP)malloc(sizeof(ClassMethod));
 	newMeth.function.ID = (string)malloc(strlen(methodName)*sizeof(char));
 	newMeth.function.returnName = (string)malloc(strlen(type)*sizeof(char));
@@ -38,14 +38,57 @@ ClassMethodP class_addMethod(ClassP c, string methodName, string type){
 	return newMeth;
 }
 
+ClassMethodP class_addMethod(string type, string c, string methodName, string returnType, ParamsListP paramList, TreeP code){
+	ClassListP currentCL = classList;
+	ClassP theClass = classList.current;
+	while(theClass != NULL && strcmp(theClass.IDClass,c)){
+		currentCL = currentCL.next;
+		theClass = currentCL.current;
+	}
+
+	if(theClass != NULL){
+		ClassMethodP meth = class_addMethodByClass(theClass, methodName, returnType);
+		meth.function.code = code;
+		meth.function.paramsList = paramList;
+		meth.type = type;
+		return meth;
+	}
+	return NULL;
+}
+
 void class_setConstructorParam(ClassMethodP constructor, ParamsListP pl){
 	constructor.function.paramsList = pl;
 }
 
-void class_setSuper(ClassP c, string super){
+void class_setConstructor(ClassP c, ParamsListP pl){
+	class_setConstructorParam(c.constructor, pl);
+}
+
+bool class_setSuperClass(ClassP c, string super){
+	ClassListP currentCL = classList;
+	ClassP theSuper = classList.current;
+	while(theSuper != NULL && strcmp(theSuper.IDClass,super) != 0){
+		currentCL = currentCL.next;
+		theSuper = currentCL.current;
+	}
+
+	if(theSuper != NULL){
+		c.super = theSuper;
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void class_setSuperName(ClassP c, string super){
 	c.superName = (string)malloc(strlen(super)*sizeof(char));
 }
 
 void class_setParam(ClassMethodP meth, ParamsListP pl){
 	meth.function.paramsList = pl;
+}
+
+void class_addParent(ClassP c, string super, TreeP args){
+	if(!class_setSuperClass(c,super))
+		class_setSuperName(c,super);
+	c.superCallArgs = args;
 }
