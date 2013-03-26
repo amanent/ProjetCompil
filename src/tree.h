@@ -18,4 +18,4 @@
 	TreeP makeTree(short op, int nbChildren, ...);
 	TreeP getChild(TreeP tree, int rank);
 
-#endif
+#endif /* _TREE_H_ */

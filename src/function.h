@@ -24,7 +24,6 @@
 	
 	struct _ClassMethod{
 	  int visibility;
-	  string type;
 	  Function function;
 	};
 	
@@ -34,4 +33,5 @@
 	bool prmlst_sameTypes (ParamsListP l, ParamsListP ll);
 	ParamsListP function_makeParam(string name, string type);
 	ParamsListP prmlst_newElem(string type, string name);
+
 #endif

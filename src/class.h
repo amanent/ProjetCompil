@@ -38,12 +38,12 @@
 
 	void classList_addClass(string name);
 	/* void class_addField(ClassP c, string type, string name, TreeP var ); */
-	void class_addVar(int forme, TreeP decl );
+	void class_addField(ClassP c, int static, TreeP decl );
 	ClassMethodP class_addMethodByClass(ClassP c, string methodName, string type);
 	/*ClassMethodP class_addMethod(string type, string c, string methodName, string returnType, ParamsListP paramList, TreeP code); */
-	ClassMethodP class_addMethod(int forme, string methodName, string returnType, ParamsListP paramList, TreeP code); /* L'autre ne me convenait pas */
+	ClassMethodP class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code); /* L'autre ne me convenait pas */
 	void class_setConstructorParam(ClassMethodP constructor, ParamsListP pl);
-	void class_setConstructor(ClassP c, ParamsListP pl);
+	void class_setConstructor(ClassP c, ParamsListP pl, TreeP code);
 	bool class_setSuperClass(ClassP c, string super);
 	void class_setSuperName(ClassP c, string super);
 	void class_setParam(ClassMethodP meth, ParamsListP pl);

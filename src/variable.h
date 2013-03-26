@@ -13,7 +13,7 @@
 	}Var, *VarP;
 	
 	struct _ClassField{
-	  int visibility;
+	  bool isStatic;
 	  Var v;
 	};
 

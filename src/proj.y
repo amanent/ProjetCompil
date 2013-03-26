@@ -35,6 +35,16 @@ extern int yylex();	/* fournie par Flex */
 
 void yyerror(char *ignore) {
   printf("erreur de syntaxe: Ligne %d\n", yylineno);
+
+/* Méthodes utilisées : 
+	classList_addClass($2);  (nom de la classe)
+	class_setConstructor(classList->current, $4, $7);  (classe, paramètres constructeur, code du constructeur)
+	function_makeParam($1, $3); (params: nomParam, typeParam)
+	class_addParent(classList->current, $2, $4); (/*)params: classe, superType, arguments constructeur père)
+	class_addVar(classList->current, $1, $2); (params: classe, isStatic, arbre de decl de la var)
+	class_addMethod($1, $3, $7, $5, $9); (params: visibility, nom, type de retour,liste des paramètres, arbre du corps de la fonction)
+*/
+
 }
 
 %}
@@ -46,8 +56,11 @@ Program		:	Bloc										{ /*lancer la verif contextuelle */ }
 			;
 
 Class 		:	CLASS Idcl '(' ListParamO ')' ExtendO BlocO IS '{' ListDeclO '}' {
-																classList_addClass($2);
-																class_setConstructor(classList->current, $4);
+																classList_addClass($2); /*param: nom de la classe */
+																class_setConstructor(classList->current, $4, $7); 
+																/*params: classe, paramètres constructeur, code du constructeur */
+																/* superclasse gérée dans ExtendO */
+																/* declarations gérées dans ListDeclO */
 															}
 			;
 
@@ -63,11 +76,11 @@ ListParam	:	Param										{ $$ = $1; }
 															}
 			;
 
-Param		:	Id ':' Idcl									{ $$ = function_makeParam($1, $3); }
+Param		:	Id ':' Idcl									{ $$ = function_makeParam($1, $3); /*params: nomParam, typeParam */ }
 			;
 
 ExtendO		:	/* epsilon */								/* Pas de traitement */
-			|	EXT Idcl '(' ListArgO ')'					{ class_addParent(classList->current, $2, $4); /* troisiemme paramètres, les paramètres passés par le constructeru au parent */ }
+			|	EXT Idcl '(' ListArgO ')'					{ class_addParent(classList->current, $2, $4); /*params: classe, superType, arguments constructeur père */ }
 			;
 
 ListDeclO	:	/* epsilon */								/* Pas de traitement */
@@ -78,7 +91,7 @@ Decl		:	DeclField									/* Pas de traitement */
 			|	DeclMethod									/* Pas de traitement */
 			;
 
-DeclField	:	StaticO DeclV								{ class_addVar($1, $2); }
+DeclField	:	StaticO DeclV								{ class_addField(classList->current, $1, $2); /*params: classe, isStatic, arbre de decl de la var */ }
 			;
 
 StaticO		:	/* epsilon */								{ $$ = 0; }
@@ -86,8 +99,8 @@ StaticO		:	/* epsilon */								{ $$ = 0; }
 			;
 
 DeclMethod	:	OvOrStatO	DEF	Id '(' ListParamO ')' ReturnO IS Bloc {
-																class_addMethod($1, $3, $7, $5, $9);
-																/* static/overide/rien, nom, type de retour,liste des paramètres, arbre du corps de la fonction */
+																class_addMethod(classList->current, $1, $3, $7, $5, $9);
+																/*params: classe, visibility, nom, type de retour,liste des paramètres, arbre du corps de la fonction */
 															}
 			;
 

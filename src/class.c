@@ -30,7 +30,7 @@ void class_addField(ClassP c, string type, string name, TreeP var ){
 	newCFL->next = c->cfl;
 	c->cfl = newCFL;
 }*/
-void class_addVar(int forme, TreeP decl ) {
+void class_addField(ClassP c, int static, TreeP decl ) {
 	/* todo to add a variable to the class */
 }
 
@@ -64,7 +64,7 @@ ClassMethodP class_addMethodByClass(ClassP c, string methodName, string type){
 	}
 	return NULL;
 } */
-ClassMethodP class_addMethod(int forme, string methodName, string returnType, ParamsListP paramList, TreeP code) {
+ClassMethodP class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code) {
 	/* to do to create a right method */
 	return NULL;
 }
@@ -73,7 +73,11 @@ void class_setConstructorParam(ClassMethodP constructor, ParamsListP pl){
 	constructor->function.paramsList = pl;
 }
 
-void class_setConstructor(ClassP c, ParamsListP pl){
+void class_setConstructor(ClassP c, ParamsListP pl, TreeP code);
+/*
+	TODO : adapter le code !
+	void class_setConstructor(ClassP c, ParamsListP pl){
+		*/
 	class_setConstructorParam(c->constructor, pl);
 }
 
