@@ -119,7 +119,9 @@ ListDeclV	:	DeclV										{ $$ = $1; }
 			|	DeclV ListDeclV								{ $$ = makeTree(DECL, 2, $1, $2); }
 			;
 
-DeclV		:	VAR Id ':' Idcl AffectO						{ $$ = makeTree(VAR, 3, $2, $4, $5); } /* voir a pas ajouter un autre type "variable" aux feuilles de l'arbre */
+DeclV		:	VAR Id ':' Idcl AffectO						{	$$ = makeTree(VAR, 3, makeLeafStr(ID, $2), makeLeafStr(IDCL, $4), $5);
+																/* voir a pas ajouter un autre type "variable" aux feuilles de l'arbre */
+															} 
 			;
 			
 AffectO		:	/* epsilon */								{ $$ = NULL; }
