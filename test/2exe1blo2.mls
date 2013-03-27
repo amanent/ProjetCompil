@@ -1,0 +1,7 @@
+{
+  var zero : Integer := 0;
+  var x : Integer;
+  is
+  "test start".println();
+  "test stop".println();
+}

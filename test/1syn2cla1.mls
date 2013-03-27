@@ -1,0 +1,77 @@
+class Test1() is {
+}
+class Test2(pa : Integer)
+  {
+    a := pa;
+  }
+is {
+  var a : Integer;
+}
+class Test3(a : Integer, str : String)
+  {
+    this.a := a;
+    this.str := str;
+  }
+is {
+  static var v1 : Integer := 3;
+  static var v2 : Integer := 4;
+  var a : Integer;
+  var str : String;
+}
+class Test4(a0 : Integer, b0 : Integer, str0 : String)
+  {
+    a := a + a0;
+    b := b - b0;
+    str := str0;
+  }
+is {
+  var a : Integer := 0;
+  var b : Integer := 9999;
+  var str : String;
+}
+class Test5() is {
+  def me() returns Integer is {
+    result := 0;
+  }
+}
+class Test6() is {
+  var a : Integer := 0;
+  def me(a : Integer) returns Integer is {
+    a := 5;
+    result := 0 ;
+  }
+}
+class Test7() is {
+  static var singleton : Test7;
+  var a : Integer := 12;
+  var str : String := "yes";
+  static def sm(a : Integer, str : String) is {
+    var x : Integer;
+    is
+    Test7.singleton := singleton;
+    singleton := new Test7();
+    Test7.sm(6, "no");
+    x := singleton.me(7, "");
+    x := singleton.a;
+    x := singleton.singleton.singleton.a;
+    x := singleton.self().a;
+    x := singleton.self().singleton.self().a;
+  }
+  def me(a0 : Integer, str0 : String) returns Integer is {
+    this.a := 5;
+    a := a0;
+    result := a;
+  }
+  def self() returns Test7 is {
+    result := this;
+  }
+}
+{
+  var t4 : Test4 := new Test4(20, 10, "");
+  var t5 : Test5 := new Test5();
+  var t6 : Test6 := new Test6();
+  var x : Integer;
+  is
+  x := t5.me();
+  x := t6.me(8);
+}

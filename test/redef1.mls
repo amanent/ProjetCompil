@@ -1,0 +1,11 @@
+class A() is {
+  def f() returns Integer is { result := 1; }
+  def g() is { "A::g".println(); }
+}
+class A2() extends A() is {
+  override def f() is { "A2::f()".println(); }
+  override def g() returns Integer is { result := 2; }
+}
+{
+}
+

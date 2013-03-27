@@ -1,0 +1,24 @@
+{
+  var zero : Integer := 0;
+  var one : Integer := 1;
+  var ten : Integer := 10;
+  var x : Integer;
+  is
+  zero;
+  x := zero;
+  x + 1;
+  x - 1;
+  x * 1;
+  x / 1;
+  x := -x;
+  x := 2 + 3 * 4 - 5 / 6;
+  if x = zero then x := one; else x := ten;
+  if ((x > ten) * ((x <= 5) * (x >= 0))) then x := ten; else x := one;
+  {}
+  {x := 1;}
+  {
+    var x : Integer;
+    is
+    x := 2;
+  }
+}

@@ -1,0 +1,4 @@
+class Cl() is {}
+{
+  return 3 * 4;
+}

@@ -1,0 +1,184 @@
+/* Tests de l'heritage */
+class Cla1(dx : Integer, dy : Integer) 
+  {
+    x := dx;
+    y := dy;
+  }
+is {
+  static var x0 : Integer := -1;
+  static var y0 : Integer := -2;
+  var x : Integer := 1;
+  var y : Integer := 2;
+  static def s1() returns Integer is {
+    x0 := x0 + 1;
+    result := x0;
+  }
+  static def s2(dy : Integer) returns Integer is {
+    y0 := y0 + dy;
+    result := Cla1.s1();
+  }
+  def addx(dx : Integer) returns Integer is {
+    x := x + dx;
+    result := x;
+  }
+  def muly(dy : Integer) returns Integer is {
+    y := y * dy;
+    result := y;
+  }
+  def over () returns Integer is {
+    result := 1;
+  }
+}
+class Cla2(dx : Integer, dy : Integer, dz : Integer) 
+extends Cla1(dx, dy) 
+  {
+    z := dz;
+  }
+is {
+  static var z0 : Integer := -3;
+  var z : Integer := 3;
+  static def s3(dz : Integer) returns Integer is {
+    z0 := z0 + dz;
+    result := Cla2.s1();
+  }
+  override def muly(dy : Integer) returns Integer is {
+    y := y * dy + 1;
+    result := y;
+  }
+  def divz(dz : Integer) returns Integer is {
+    z := z / dz;
+    result := z;
+  }
+  override def over () returns Integer is {
+    result := 2 + super.over();
+  }
+  /* tests attributs et methodes statiques */
+  static def test0() is {
+    var x : Integer;
+    var y : Integer;
+    var z : Integer;
+    is
+    /* teste l'initialisation des attributs statiques */
+    ("check01:-1:" & x0.toString()).println();
+    ("check02:-2:" & y0.toString()).println();
+    ("check03:-3:" & z0.toString()).println();
+    /* teste l'affectation des attributs statiques */
+    x0 := 5;
+    y0 := x0 + y0 - z0 * 2;
+    z0 := 13 + y0;
+    ("check04:5:" & x0.toString()).println();
+    ("check05:9:" & y0.toString()).println();
+    ("check06:22:" & z0.toString()).println();
+    /* teste des affectations via des methodes statiques */
+    x := Cla2.s1();
+    y := Cla2.s2(x0);
+    z := Cla2.s3(2);
+    ("check07:6,8:" & x.toString() & "," & x0.toString()).println();
+    ("check07:7,15:" & y.toString() & "," & y0.toString()).println();
+    ("check07:8,24:" & z.toString() & "," & z0.toString()).println();
+  }
+  /* tests attributs et methodes non statiques */
+  def test1() is {
+    /* teste les attributs initialises par le constructeur */
+    ("check20:10:" & x.toString()).println();
+    ("check21:20:" & y.toString()).println();
+    ("check22:30:" & z.toString()).println();
+    /* teste des affectations simples */
+    x := 7;
+    y := 3 + x * 2 + y / 3;
+    z := (x * y) / 10 + z;
+    ("check23:7:" & x.toString()).println();
+    ("check24:23:" & y.toString()).println();
+    ("check25:46:" & z.toString()).println();
+    /* teste des affectations via des methodes */
+    x := 2; this.addx(11);
+    ("check26:13:" & x.toString()).println();
+    y := 3; this.muly(2);   /* Cla2.muly() surcharge Cla1.muly() */
+    ("check27:7:" & y.toString()).println();
+    y := 3; super.muly(2);   /* appel de Cla1.muly() */
+    ("check28:6:" & y.toString()).println();
+  }
+}
+class Cla3(dx : Integer, dy : Integer, dz : Integer, dt : Integer) 
+extends Cla2(dx, dy, dz) 
+  {
+    t := dt;
+  }
+is {
+  static var t0 : Integer := -4;
+  var t : Integer := 4;
+  static def s4(dt : Integer) returns Integer is {
+    t0 := t0 + dt;
+    result := Cla2.s1();
+  }
+  override def addx(dx : Integer) returns Integer is {
+    x := x + dx + 1;
+    result := x;
+  }
+  override def over () returns Integer is {
+    result := 4 + super.over();
+  }
+  /* tests attributs et methodes statiques */
+  static def test2() is {
+    var x : Integer;
+    var y : Integer;
+    var z : Integer;
+    var t : Integer;
+    is
+    /* teste l'initialisation des attributs statiques (seul t0 n'a pas deja ete modifie) */
+    ("check30:8:" & x0.toString()).println();
+    ("check31:15:" & y0.toString()).println();
+    ("check32:24:" & z0.toString()).println();
+    ("check33:-4:" & t0.toString()).println();
+    /* teste l'affectation des attributs statiques */
+    x0 := 5;
+    y0 := x0 + y0 - z0 * 2;
+    z0 := 13 + y0;
+    t0 := t0 + y0;
+    ("check34:5:" & x0.toString()).println();
+    ("check35:-28:" & y0.toString()).println();
+    ("check36:-15:" & z0.toString()).println();
+    ("check37:-32:" & t0.toString()).println();
+    /* teste des affectations via des methodes statiques */
+    x0 := 0; x := Cla3.s1();
+    y0 := 0; y := Cla3.s2(1);
+    z0 := 0; z := Cla3.s3(2);
+    t0 := 0; t := Cla3.s4(3);
+    ("check38:1,4:" & x.toString() & "," & x0.toString()).println();
+    ("check39:2,1:" & y.toString() & "," & y0.toString()).println();
+    ("check40:3,2:" & z.toString() & "," & z0.toString()).println();
+    ("check41:4,3:" & t.toString() & "," & t0.toString()).println();
+  }
+  /* tests attributs et methodes non statiques */
+  def test3(c1: Cla1, c2 : Cla2) is {
+    /* teste les attributs initialises par le constructeur */
+    ("check50:5:" & x.toString()).println();
+    ("check51:6:" & y.toString()).println();
+    ("check52:7:" & z.toString()).println();
+    ("check53:8:" & z.toString()).println();
+    /* teste des affectations simples */
+    x := 7;
+    y := 3 + x * 2 + y / 3;
+    z := (x * y) / 10 + z;
+    t := x + y + z + t;
+    ("check54:7:" & x.toString()).println();
+    ("check55:19:" & y.toString()).println();
+    ("check56:20:" & z.toString()).println();
+    ("check57:54:" & t.toString()).println();
+    /* teste la surchage de methode */
+    ("check60:1:" & c1.over().toString()).println();
+    ("check61:3:" & c2.over().toString()).println();
+    ("check62:7:" & this.over().toString()).println();
+  }
+}
+{
+  var c2 : Cla2;
+  var c3 : Cla3;
+  is
+  Cla2.test0();
+  c2 := new Cla2(10, 20, 30);
+  c2.test1();
+  Cla3.test2();
+  c3 := new Cla3(5, 6, 7, 8);
+  c3.test3(new Cla1(1, 2), c2);
+}
