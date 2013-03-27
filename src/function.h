@@ -2,7 +2,7 @@
 #define _FUNCTION_H_
 
 	typedef struct _ParamsList ParamsList, *ParamsListP;
-	typedef struct _ClassMethod ClassMethod, *ClassMethodP;
+	typedef struct _Function Function, *FunctionP;
 
 	#include "tree.h"
 	#include "class.h"
@@ -14,17 +14,12 @@
 		struct _ParamsList* next;
 	};
 
-	typedef struct _Function {
+	struct _Function {
 		string ID;
-		ParamsList * paramsList;
+		ParamsListP paramsList;
 		TreeP code;
 		ClassP returnType;
 		string returnName;
-	}Function, *FunctionP;
-	
-	struct _ClassMethod{
-	  int visibility;
-	  Function function;
 	};
 	
 /*

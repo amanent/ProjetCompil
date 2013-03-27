@@ -1,6 +1,6 @@
 # Makefile pour le projet Compilation
 
-OBJ = proj.o proj_l.o proj_y.o class.o function.o symboles.o tree.o
+OBJ = proj.o proj_l.o proj_y.o class.o function.o tree.o
 CC = gcc
 CFLAGS = -Wall -ansi -I./ -g -std=c99 -Werror
 LDFLAGS = -g -lfl
@@ -37,5 +37,5 @@ mrproper: clean
 	rm -f $(PROG)
 	
 tests:
-	@make proj
-	@./test.sh -r -v -a test
+	@make
+	@./$(PROG) ../test/cast1.mls

@@ -28,15 +28,11 @@ bool prmlst_sameTypes (ParamsListP l, ParamsListP ll){
 }
 
 ParamsListP function_makeParam(string name, string type){
-	ParamsListP new = (ParamsListP)malloc(sizeof(ParamsList));
+	ParamsListP new = NEW(1, ParamsList); //(ParamsListP)malloc(sizeof(ParamsList));
 	new->name = name;
 	new->type = type;
 	new->next = NULL;
 	return new;
-}
-
-ParamsListP prmlst_newElem(string type, string name) {
-	return NULL; /* A remplir */
 }
 
 string function_printFunc(FunctionP func){

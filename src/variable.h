@@ -1,20 +1,15 @@
 #ifndef _VARIABLES_H_
 #define _VARIABLES_H_
 
-	typedef struct _ClassField ClassField, *ClassFieldP;
+	typedef struct _Var Var, *VarP;
 
 	#include "proj.h"
 
-	typedef struct _Var{
+	struct _Var{
 		string typeName;
 		ClassP type;
 		string ID;	
 		TreeP value;
-	}Var, *VarP;
-	
-	struct _ClassField{
-	  bool isStatic;
-	  Var v;
 	};
 
 #endif
