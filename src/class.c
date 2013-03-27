@@ -70,7 +70,7 @@ ClassMethodP class_addMethod(ClassP c, int visi, string methodName, string retur
 	return NULL;
 }
 
-void class_setConstructor(ClassP c, ParamsListP pl, TreeP code);
+void class_setConstructor(ClassP c, ParamsListP pl, TreeP code) {
 	c->constructor = NEW(1, ClassMethod);
 	c->constructor->function.paramsList = pl;
 	c->constructor->function.code = code;
@@ -88,7 +88,7 @@ ClassP class_getClass(string super){
 }
 
 void class_setSuper(ClassP c, string super, TreeP args){ /* Si on trouve la classe, on ajoute directement la référence, sinon on ajoute juste son nom */
-	c->super = class_getClass(c,super);
+	c->super = class_getClass(super);
 	c->superName = NEW(strlen(super), char);
 	c->superCallArgs = args;
 }
