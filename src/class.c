@@ -17,56 +17,37 @@ void classList_addClass(string name){
 	newTop->next = classList;
 	classList = newTop;
 }
-/*
-void class_addField(ClassP c, string type, string name, TreeP var ){
-	ClassFieldP newClassField = (ClassFieldP)malloc(sizeof(ClassField));
-	newClassField->v->typeName = (string)malloc(strlen(type)*sizeof(char) + 1);
-	newClassField->v->ID = (string)malloc(strlen(name)*sizeof(char) + 1);
+
+void class_addField(ClassP c, int isStaticp, TreeP decl ) {
+	string type = decl->u->children[1]->u->str;
+	string name = decl->u->children[0]->u->str;
+	ClassFieldP newClassField = NEW(1, ClassField);
+	newClassField->v->typeName = NEW(strlen(type)+ 1, char);
+	newClassField->v->ID = NEW(strlen(name)+1,char);
 	strcpy(newClassField->v->typeName,type);
 	strcpy(newClassField->v->ID,name);
-	newClassField->v->value = var;
-	ClassFieldListP newCFL = (ClassFieldListP)malloc(sizeof(ClassFieldList));
+	newClassField->v->value = decl->u->children[2];
+	ClassFieldListP newCFL = NEW(1, ClassFieldList);
 	newCFL->current = newClassField;
 	newCFL->next = c->cfl;
 	c->cfl = newCFL;
-}*/
-
-void class_addField(ClassP c, int isStaticp, TreeP decl ) {
-	/* todo to add a variable to the class */
 }
 
-ClassMethodP class_addMethodByClass(ClassP c, string methodName, string type){
+ClassMethodP class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code) {
 	ClassMethodP newMeth = NEW(1, ClassMethod); /*(ClassMethodP)malloc(sizeof(ClassMethod));*/
 	newMeth->function.ID = NEW(strlen(methodName), char); /*(string)malloc(strlen(methodName)*sizeof(char));*/
-	newMeth->function.returnName = NEW(strlen(type), char); /*(string)malloc(strlen(type)*sizeof(char));*/
+	newMeth->function.returnName = NEW(strlen(returnType), char); /*(string)malloc(strlen(type)*sizeof(char));*/
 	strcpy(newMeth->function.ID,methodName);
-	strcpy(newMeth->function.returnName,type);
+	strcpy(newMeth->function.returnName,returnType);
+
+	newMeth->visibility = visi;
+	newMeth->function->paramsList = paramList;
+	newMeth->function->code = code;
+
 	ClassMethodListP newCML = NEW(1, ClassMethodList); /*(ClassMethodListP)malloc(sizeof(ClassMethodList));*/
 	newCML->current = newMeth;
 	newCML->next = c->cml; /* surement un problème a ce niveau la */
 	c->cml = newCML;
-	return newMeth;
-}
-
-/*ClassMethodP class_addMethod(string type, string c, string methodName, string returnType, ParamsListP paramList, TreeP code){
-	ClassListP currentCL = classList;
-	ClassP theClass = classList->current;
-	while(theClass != NULL && strcmp(theClass->IDClass,c)){
-		currentCL = currentCL->next;
-		theClass = currentCL->current;
-	}
-
-	if(theClass != NULL){
-		ClassMethodP meth = class_addMethodByClass(theClass, methodName, returnType);
-		meth->function->code = code;
-		meth->function->paramsList = paramList;
-		meth->type = type;
-		return meth;
-	}
-	return NULL;
-} */
-ClassMethodP class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code) {
-	/* to do to create a right method */
 	return NULL;
 }
 
