@@ -5,14 +5,14 @@
 ClassListP classList = NULL;
 
 void classList_init() {
-	classList = (ClassListP)malloc(sizeof(ClassList));
+	classList = NEW(1, ClassList); /*(ClassListP)malloc(sizeof(ClassList)); */
 }
 
 void classList_addClass(string name){
-	ClassP newClass = (ClassP)malloc(sizeof(Class));
-	newClass->IDClass = (string)malloc(strlen(name)*sizeof(char));
+	ClassP newClass = NEW(1, Class); /*(ClassP)malloc(sizeof(Class)); */
+	newClass->IDClass = NEW(strlen(name), char); /*(string)malloc(strlen(name)*sizeof(char));*/
 	strcpy(newClass->IDClass,name);
-	ClassListP newTop = (ClassListP)malloc(sizeof(ClassList));
+	ClassListP newTop = NEW(1, ClassList); /*(ClassListP)malloc(sizeof(ClassList));*/
 	newTop->current = newClass;
 	newTop->next = classList;
 	classList = newTop;
@@ -30,17 +30,17 @@ void class_addField(ClassP c, string type, string name, TreeP var ){
 	newCFL->next = c->cfl;
 	c->cfl = newCFL;
 }*/
-void class_addField(ClassP c, int static, TreeP decl ) {
+void class_addField(ClassP c, int isStaticp, TreeP decl ) {
 	/* todo to add a variable to the class */
 }
 
 ClassMethodP class_addMethodByClass(ClassP c, string methodName, string type){
-	ClassMethodP newMeth = (ClassMethodP)malloc(sizeof(ClassMethod));
-	newMeth->function.ID = (string)malloc(strlen(methodName)*sizeof(char));
-	newMeth->function.returnName = (string)malloc(strlen(type)*sizeof(char));
+	ClassMethodP newMeth = NEW(1, ClassMethod); /*(ClassMethodP)malloc(sizeof(ClassMethod));*/
+	newMeth->function.ID = NEW(strlen(methodName), char); /*(string)malloc(strlen(methodName)*sizeof(char));*/
+	newMeth->function.returnName = NEW(strlen(type), char); /*(string)malloc(strlen(type)*sizeof(char));*/
 	strcpy(newMeth->function.ID,methodName);
 	strcpy(newMeth->function.returnName,type);
-	ClassMethodListP newCML = (ClassMethodListP)malloc(sizeof(ClassMethodList));
+	ClassMethodListP newCML = NEW(1, ClassMethodList); /*(ClassMethodListP)malloc(sizeof(ClassMethodList));*/
 	newCML->current = newMeth;
 	newCML->next = c->cml; /* surement un problème a ce niveau la */
 	c->cml = newCML;
@@ -69,16 +69,10 @@ ClassMethodP class_addMethod(ClassP c, int visi, string methodName, string retur
 	return NULL;
 }
 
-void class_setConstructorParam(ClassMethodP constructor, ParamsListP pl){
-	constructor->function.paramsList = pl;
-}
-
 void class_setConstructor(ClassP c, ParamsListP pl, TreeP code);
-/*
-	TODO : adapter le code !
-	void class_setConstructor(ClassP c, ParamsListP pl){
-		*/
-	class_setConstructorParam(c->constructor, pl);
+	/* voir si pas besoin de faire une alloc ici */
+	c->constructor->function.paramsList = pl;
+	c->constructor->function.code = code;
 }
 
 bool class_setSuperClass(ClassP c, string super){
