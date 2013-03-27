@@ -9,18 +9,18 @@
 	#include "proj.h"
 
 	typedef struct _ClassFieldList{
-	  ClassFieldP current;
+	  VarP current;
 	  struct _ClassFieldList * next;
 	}ClassFieldList, *ClassFieldListP;
 
 	typedef struct _ClassMethodList{
-	  ClassMethodP current;
+	  FunctionP current;
 	  struct _ClassMethodList * next;
 	}ClassMethodList, *ClassMethodListP;
 
 	struct _Class{
 	  string IDClass;
-	  ClassMethodP constructor;
+	  FunctionP constructor;
 	  ClassFieldListP staticCfl;
 	  ClassMethodListP staticCml;
 	  ClassFieldListP cfl;
@@ -38,7 +38,7 @@
 
 	void classList_addClass(string name);
 	void class_addField(ClassP c, int isStaticp, TreeP decl );
-	ClassMethodP class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code);
+	FunctionP class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code);
 	void class_setConstructor(ClassP c, ParamsListP pl, TreeP code);
 	ClassP class_getClass(string super);
 	void class_setSuper(ClassP c, string super, TreeP args);

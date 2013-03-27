@@ -35,7 +35,7 @@ extern int yylex();	/* fournie par Flex */
 
 void yyerror(char *ignore) {
   printf("erreur de syntaxe: Ligne %d\n", yylineno);
-
+}
 /* Méthodes utilisées : 
 	classList_addClass($2);  (nom de la classe)
 	class_setConstructor(classList->current, $4, $7);  (classe, paramètres constructeur, code du constructeur)
@@ -44,8 +44,6 @@ void yyerror(char *ignore) {
 	class_addVar(classList->current, $1, $2); (params: classe, isStatic, arbre de decl de la var)
 	class_addMethod($1, $3, $7, $5, $9); (params: visibility, nom, type de retour,liste des paramètres, arbre du corps de la fonction)
 */
-
-}
 
 %}
 

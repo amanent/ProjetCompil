@@ -21,28 +21,28 @@ void classList_addClass(string name){
 void class_addField(ClassP c, int isStaticp, TreeP decl ) {
 	string type = decl->u.children[1]->u.str;
 	string name = decl->u.children[0]->u.str;
-	ClassFieldP newClassField = NEW(1, ClassField);
-	newClassField->v.typeName = NEW(strlen(type)+ 1, char);
-	newClassField->v.ID = NEW(strlen(name)+1,char);
-	strcpy(newClassField->v.typeName,type);
-	strcpy(newClassField->v.ID,name);
-	newClassField->v.value = decl->u.children[2];
+	VarP newClassField = NEW(1, Var);
+	newClassField->typeName = NEW(strlen(type)+ 1, char);
+	newClassField->ID = NEW(strlen(name)+1,char);
+	strcpy(newClassField->typeName,type);
+	strcpy(newClassField->ID,name);
+	newClassField->value = decl->u.children[2];
 	ClassFieldListP newCFL = NEW(1, ClassFieldList);
 	newCFL->current = newClassField;
 	newCFL->next = c->cfl;
 	c->cfl = newCFL;
 }
 
-ClassMethodP class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code) {
-	ClassMethodP newMeth = NEW(1, ClassMethod); /*(ClassMethodP)malloc(sizeof(ClassMethod));*/
-	newMeth->function.ID = NEW(strlen(methodName)+1, char); /*(string)malloc(strlen(methodName)*sizeof(char));*/
-	newMeth->function.returnName = NEW(strlen(returnType)+1, char); /*(string)malloc(strlen(type)*sizeof(char));*/
-	strcpy(newMeth->function.ID,methodName);
-	strcpy(newMeth->function.returnName,returnType);
+FunctionP class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code) {
+	FunctionP newMeth = NEW(1, Function); /*(ClassMethodP)malloc(sizeof(ClassMethod));*/
+	newMeth->ID = NEW(strlen(methodName)+1, char); /*(string)malloc(strlen(methodName)*sizeof(char));*/
+	newMeth->returnName = NEW(strlen(returnType)+1, char); /*(string)malloc(strlen(type)*sizeof(char));*/
+	strcpy(newMeth->ID,methodName);
+	strcpy(newMeth->returnName,returnType);
 
-	newMeth->visibility = visi;
-	newMeth->function.paramsList = paramList;
-	newMeth->function.code = code;
+	newMeth->override = visi==1;
+	newMeth->paramsList = paramList;
+	newMeth->code = code;
 
 	ClassMethodListP newCML = NEW(1, ClassMethodList); /*(ClassMethodListP)malloc(sizeof(ClassMethodList));*/
 	newCML->current = newMeth;
@@ -52,9 +52,9 @@ ClassMethodP class_addMethod(ClassP c, int visi, string methodName, string retur
 }
 
 void class_setConstructor(ClassP c, ParamsListP pl, TreeP code) {
-	c->constructor = NEW(1, ClassMethod);
-	c->constructor->function.paramsList = pl;
-	c->constructor->function.code = code;
+	c->constructor = NEW(1, Function);
+	c->constructor->paramsList = pl;
+	c->constructor->code = code;
 }
 
 ClassP class_getClass(string super){
@@ -94,7 +94,7 @@ string class_print(ClassP class){
 	//Constructeur
 	strcat(str, "\n\t");
 	strcat(str, "Constructeur : ");
-	function_printFunc(&(class->constructor->function));
+	function_printFunc(class->constructor);
 
 	//Static Fields
 	strcat(str, "\n\tStatic Fields:");
@@ -102,9 +102,9 @@ string class_print(ClassP class){
 	while(stfl != NULL){
 		strcat(str, "\n\t\t");
 		strcat(str, "static ");
-		strcat(str, stfl->current->v.typeName);
+		strcat(str, stfl->current->typeName);
 		strcat(str, " ");
-		strcat(str, stfl->current->v.ID);
+		strcat(str, stfl->current->ID);
 		stfl = stfl->next;
 	}
 
@@ -114,7 +114,7 @@ string class_print(ClassP class){
 	while(stml != NULL){
 		strcat(str, "\n\t\t");
 		strcat(str, "static ");
-		strcat(str, function_printFunc(&(stml->current->function)));
+		strcat(str, function_printFunc(stml->current));
 		stml = stml->next;
 	}
 
@@ -124,9 +124,9 @@ string class_print(ClassP class){
 	ClassFieldListP fl = class->cfl;
 	while(stfl != NULL){
 		strcat(str, "\n\t\t");
-		strcat(str, fl->current->v.typeName);
+		strcat(str, fl->current->typeName);
 		strcat(str, " ");
-		strcat(str, fl->current->v.ID);
+		strcat(str, fl->current->ID);
 		fl = fl->next;
 	}
 
@@ -135,7 +135,7 @@ string class_print(ClassP class){
 	ClassMethodListP ml = class->cml;
 	while(stml != NULL){
 		strcat(str, "\n\t\t");
-		strcat(str, (char*)function_printFunc(&(ml->current->function)));
+		strcat(str, (char*)function_printFunc(ml->current));
 		ml = ml->next;
 	}
 

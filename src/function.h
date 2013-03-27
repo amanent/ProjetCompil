@@ -15,6 +15,7 @@
 	};
 
 	struct _Function {
+		bool override;
 		string ID;
 		ParamsListP paramsList;
 		TreeP code;
