@@ -30,7 +30,7 @@ void class_addField(ClassP c, string type, string name, TreeP var ){
 	newCFL->next = c->cfl;
 	c->cfl = newCFL;
 }*/
-void class_addField(ClassP c, int static, TreeP decl ) {
+void class_addField(ClassP c, int staticp, TreeP decl ) {
 	/* todo to add a variable to the class */
 }
 
