@@ -42,5 +42,6 @@
 	void class_setConstructor(ClassP c, ParamsListP pl, TreeP code);
 	ClassP class_getClass(string super);
 	void class_setSuper(ClassP c, string super, TreeP args);
+	string class_print(ClassP class);
 
 #endif

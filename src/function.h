@@ -33,5 +33,5 @@
 */
 	bool prmlst_sameTypes (ParamsListP l, ParamsListP ll);
 	ParamsListP function_makeParam(string name, string type);
-
+	string function_printFunc(FunctionP func);
 #endif

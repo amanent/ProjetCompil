@@ -19,14 +19,14 @@ void classList_addClass(string name){
 }
 
 void class_addField(ClassP c, int isStaticp, TreeP decl ) {
-	string type = decl->u->children[1]->u->str;
-	string name = decl->u->children[0]->u->str;
+	string type = decl->u.children[1]->u.str;
+	string name = decl->u.children[0]->u.str;
 	ClassFieldP newClassField = NEW(1, ClassField);
-	newClassField->v->typeName = NEW(strlen(type)+ 1, char);
-	newClassField->v->ID = NEW(strlen(name)+1,char);
-	strcpy(newClassField->v->typeName,type);
-	strcpy(newClassField->v->ID,name);
-	newClassField->v->value = decl->u->children[2];
+	newClassField->v.typeName = NEW(strlen(type)+ 1, char);
+	newClassField->v.ID = NEW(strlen(name)+1,char);
+	strcpy(newClassField->v.typeName,type);
+	strcpy(newClassField->v.ID,name);
+	newClassField->v.value = decl->u.children[2];
 	ClassFieldListP newCFL = NEW(1, ClassFieldList);
 	newCFL->current = newClassField;
 	newCFL->next = c->cfl;
@@ -41,8 +41,8 @@ ClassMethodP class_addMethod(ClassP c, int visi, string methodName, string retur
 	strcpy(newMeth->function.returnName,returnType);
 
 	newMeth->visibility = visi;
-	newMeth->function->paramsList = paramList;
-	newMeth->function->code = code;
+	newMeth->function.paramsList = paramList;
+	newMeth->function.code = code;
 
 	ClassMethodListP newCML = NEW(1, ClassMethodList); /*(ClassMethodListP)malloc(sizeof(ClassMethodList));*/
 	newCML->current = newMeth;
@@ -93,7 +93,7 @@ string class_print(ClassP class){
 	//Constructeur
 	strcat(str, "\n\t");
 	strcat(str, "Constructeur : ");
-	function_printFunc(class->constructor->function);
+	function_printFunc(&(class->constructor->function));
 
 	//Static Fields
 	strcat(str, "\n\tStatic Fields:");
@@ -113,7 +113,7 @@ string class_print(ClassP class){
 	while(stml != NULL){
 		strcat(str, "\n\t\t");
 		strcat(str, "static ");
-		strcat(str, function_printFunc(stml->current->function));
+		strcat(str, function_printFunc(&(stml->current->function)));
 		stml = stml->next;
 	}
 
@@ -134,7 +134,7 @@ string class_print(ClassP class){
 	ClassMethodListP ml = class->cml;
 	while(stml != NULL){
 		strcat(str, "\n\t\t");
-		strcat(str, (char*)function_printFunc(ml->current->function));
+		strcat(str, (char*)function_printFunc(&(ml->current->function)));
 		ml = ml->next;
 	}
 
