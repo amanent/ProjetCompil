@@ -27,11 +27,11 @@
 	  Function function;
 	};
 	
-
+/*
 	void prmlst_addParam(ParamsListP list, string type, string name);
 	ParamsListP prmlst_getLast (ParamsListP elem);
+*/
 	bool prmlst_sameTypes (ParamsListP l, ParamsListP ll);
 	ParamsListP function_makeParam(string name, string type);
-	ParamsListP prmlst_newElem(string type, string name);
 
 #endif

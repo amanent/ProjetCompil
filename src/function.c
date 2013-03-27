@@ -1,6 +1,6 @@
 #include "function.h"
 #include <string.h>
-
+/*
 void prmlst_addParam(ParamsListP list, string type, string name){
 	prmlst_getLast(list->next = prmlst_newElem(type, name));
 }
@@ -11,6 +11,7 @@ ParamsListP prmlst_getLast (ParamsListP elem){
 		tmp = tmp->next;
 	return tmp;
 }
+*/
 
 bool prmlst_sameTypes (ParamsListP l, ParamsListP ll){
 	if(l == ll)

@@ -71,12 +71,12 @@ ClassMethodP class_addMethod(ClassP c, int visi, string methodName, string retur
 }
 
 void class_setConstructor(ClassP c, ParamsListP pl, TreeP code);
-	/* voir si pas besoin de faire une alloc ici */
+	c->constructor = NEW(1, ClassMethod);
 	c->constructor->function.paramsList = pl;
 	c->constructor->function.code = code;
 }
 
-bool class_setSuperClass(ClassP c, string super){
+ClassP class_getClass(string super){
 	ClassListP currentCL = classList;
 	ClassP theSuper = classList->current;
 	while(theSuper != NULL && strcmp(theSuper->IDClass,super) != 0){
@@ -84,23 +84,11 @@ bool class_setSuperClass(ClassP c, string super){
 		theSuper = currentCL->current;
 	}
 
-	if(theSuper != NULL){
-		c->super = theSuper;
-		return TRUE;
-	}
-	return FALSE;
+	return theSuper;
 }
 
-void class_setSuperName(ClassP c, string super){
-	c->superName = (string)malloc(strlen(super)*sizeof(char));
-}
-
-void class_setParam(ClassMethodP meth, ParamsListP pl){
-	meth->function.paramsList = pl;
-}
-
-void class_addParent(ClassP c, string super, TreeP args){
-	if(!class_setSuperClass(c,super))
-		class_setSuperName(c,super);
+void class_setSuper(ClassP c, string super, TreeP args){ /* Si on trouve la classe, on ajoute directement la référence, sinon on ajoute juste son nom */
+	c->super = class_getClass(c,super);
+	c->superName = NEW(strlen(super), char);
 	c->superCallArgs = args;
 }

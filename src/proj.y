@@ -40,7 +40,7 @@ void yyerror(char *ignore) {
 	classList_addClass($2);  (nom de la classe)
 	class_setConstructor(classList->current, $4, $7);  (classe, paramètres constructeur, code du constructeur)
 	function_makeParam($1, $3); (params: nomParam, typeParam)
-	class_addParent(classList->current, $2, $4); (/*)params: classe, superType, arguments constructeur père)
+	class_setSuper(classList->current, $2, $4); (params: classe, superType, arguments constructeur père)
 	class_addVar(classList->current, $1, $2); (params: classe, isStatic, arbre de decl de la var)
 	class_addMethod($1, $3, $7, $5, $9); (params: visibility, nom, type de retour,liste des paramètres, arbre du corps de la fonction)
 */
@@ -80,7 +80,7 @@ Param		:	Id ':' Idcl									{ $$ = function_makeParam($1, $3); /*params: nomPar
 			;
 
 ExtendO		:	/* epsilon */								/* Pas de traitement */
-			|	EXT Idcl '(' ListArgO ')'					{ class_addParent(classList->current, $2, $4); /*params: classe, superType, arguments constructeur père */ }
+			|	EXT Idcl '(' ListArgO ')'					{ class_setSuper(classList->current, $2, $4); /*params: classe, superType, arguments constructeur père */ }
 			;
 
 ListDeclO	:	/* epsilon */								/* Pas de traitement */
