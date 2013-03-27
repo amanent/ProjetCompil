@@ -10,7 +10,7 @@ void classList_init() {
 
 void classList_addClass(string name){
 	ClassP newClass = NEW(1, Class); /*(ClassP)malloc(sizeof(Class)); */
-	newClass->IDClass = NEW(strlen(name), char); /*(string)malloc(strlen(name)*sizeof(char));*/
+	newClass->IDClass = NEW(strlen(name)+1, char); /*(string)malloc(strlen(name)*sizeof(char));*/
 	strcpy(newClass->IDClass,name);
 	ClassListP newTop = NEW(1, ClassList); /*(ClassListP)malloc(sizeof(ClassList));*/
 	newTop->current = newClass;
@@ -35,8 +35,8 @@ void class_addField(ClassP c, int isStaticp, TreeP decl ) {
 
 ClassMethodP class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code) {
 	ClassMethodP newMeth = NEW(1, ClassMethod); /*(ClassMethodP)malloc(sizeof(ClassMethod));*/
-	newMeth->function.ID = NEW(strlen(methodName), char); /*(string)malloc(strlen(methodName)*sizeof(char));*/
-	newMeth->function.returnName = NEW(strlen(returnType), char); /*(string)malloc(strlen(type)*sizeof(char));*/
+	newMeth->function.ID = NEW(strlen(methodName)+1, char); /*(string)malloc(strlen(methodName)*sizeof(char));*/
+	newMeth->function.returnName = NEW(strlen(returnType)+1, char); /*(string)malloc(strlen(type)*sizeof(char));*/
 	strcpy(newMeth->function.ID,methodName);
 	strcpy(newMeth->function.returnName,returnType);
 
@@ -70,7 +70,8 @@ ClassP class_getClass(string super){
 
 void class_setSuper(ClassP c, string super, TreeP args){ /* Si on trouve la classe, on ajoute directement la référence, sinon on ajoute juste son nom */
 	c->super = class_getClass(super);
-	c->superName = NEW(strlen(super), char);
+	c->superName = NEW(strlen(super)+1, char);
+	strcpy(c->superName, super);
 	c->superCallArgs = args;
 }
 

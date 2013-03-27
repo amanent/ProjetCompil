@@ -28,9 +28,12 @@ bool prmlst_sameTypes (ParamsListP l, ParamsListP ll){
 }
 
 ParamsListP function_makeParam(string name, string type){
-	ParamsListP new = NEW(1, ParamsList); //(ParamsListP)malloc(sizeof(ParamsList));
-	new->name = name;
-	new->type = type;
+	ParamsListP new = NEW(1, ParamsList);
+	new->name = NEW(strlen(name)+1, char);
+	new->type = NEW(strlen(type)+1, char);
+	strcpy(new->name, name);
+	strcpy(new->type, type);
+	
 	new->next = NULL;
 	return new;
 }
