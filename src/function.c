@@ -38,3 +38,28 @@ ParamsListP function_makeParam(string name, string type){
 ParamsListP prmlst_newElem(string type, string name) {
 	return NULL; /* A remplir */
 }
+
+string function_printFunc(FunctionP func){
+	string str = NEW(2000, char);
+	strcat(str, func->returnName);
+	strcat(str, "(");
+	if(func->returnType != NULL)
+		strcat(str, func->returnType->IDClass);
+	else
+		strcat(str, "CLASS NOT YET PARSED");
+	strcat(str, ")  ");
+	strcat(str, func->ID);
+	strcat(str, "( ");
+	ParamsListP tmp = func->paramsList;
+	while(tmp != NULL){
+		strcat(str, tmp->type);
+		strcat(str, " ");
+		strcat(str, tmp->name);
+
+		tmp = tmp->next;
+		if(tmp != NULL)
+			strcat(str, ", ");
+	}
+	strcat(str, ")");
+	return str;
+}

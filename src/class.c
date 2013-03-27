@@ -73,3 +73,71 @@ void class_setSuper(ClassP c, string super, TreeP args){ /* Si on trouve la clas
 	c->superName = NEW(strlen(super), char);
 	c->superCallArgs = args;
 }
+
+string class_print(ClassP class){
+	string str = NEW(2000, char);
+	strcat(str, class->IDClass);
+
+	//Heritage ?
+	if(class->superName != NULL){
+		strcat(str, " : ");
+		strcat(str, class->superName);
+		strcat(str, "(");
+		if(class->super != NULL)
+			strcat(str, class->super->IDClass);
+		else
+			strcat(str, "class not yet parsed");
+		strcat(str, ")");
+	}
+
+	//Constructeur
+	strcat(str, "\n\t");
+	strcat(str, "Constructeur : ");
+	function_printFunc(class->constructor->function);
+
+	//Static Fields
+	strcat(str, "\n\tStatic Fields:");
+	ClassFieldListP stfl = class->staticCfl;
+	while(stfl != NULL){
+		strcat(str, "\n\t\t");
+		strcat(str, "static ");
+		strcat(str, stfl->current->v.typeName);
+		strcat(str, " ");
+		strcat(str, stfl->current->v.ID);
+		stfl = stfl->next;
+	}
+
+	//Static Methods
+	strcat(str, "\n\tStatic Methods:");
+	ClassMethodListP stml = class->staticCml;
+	while(stml != NULL){
+		strcat(str, "\n\t\t");
+		strcat(str, "static ");
+		strcat(str, function_printFunc(stml->current->function));
+		stml = stml->next;
+	}
+
+
+	//Instance Fields
+	strcat(str, "\n\tFields:");
+	ClassFieldListP fl = class->cfl;
+	while(stfl != NULL){
+		strcat(str, "\n\t\t");
+		strcat(str, fl->current->v.typeName);
+		strcat(str, " ");
+		strcat(str, fl->current->v.ID);
+		fl = fl->next;
+	}
+
+	//Methods
+	strcat(str, "\n\tMethods:");
+	ClassMethodListP ml = class->cml;
+	while(stml != NULL){
+		strcat(str, "\n\t\t");
+		strcat(str, (char*)function_printFunc(ml->current->function));
+		ml = ml->next;
+	}
+
+
+	return str;
+}
