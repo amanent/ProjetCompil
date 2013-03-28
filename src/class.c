@@ -1,21 +1,21 @@
 #include <string.h>
+#include <stdio.h>
 
 #include "class.h"
 
 ClassListP classList = NULL;
 
-void classList_init() {
-	classList = NEW(1, ClassList); /*(ClassListP)malloc(sizeof(ClassList)); */
-}
 
-void classList_addClass(string name){
-	ClassP newClass = NEW(1, Class); /*(ClassP)malloc(sizeof(Class)); */
-	newClass->IDClass = NEW(strlen(name)+1, char); /*(string)malloc(strlen(name)*sizeof(char));*/
-	strcpy(newClass->IDClass,name);
+void classList_addClass(ClassP c) {
 	ClassListP newTop = NEW(1, ClassList); /*(ClassListP)malloc(sizeof(ClassList));*/
-	newTop->current = newClass;
+	newTop->current = c;
 	newTop->next = classList;
 	classList = newTop;
+}
+
+void class_setName(ClassP c, string name) {
+	c->IDClass = NEW(strlen(name)+1, char); /*(string)malloc(strlen(name)*sizeof(char));*/
+	strcpy(c->IDClass,name);
 }
 
 void class_addField(ClassP c, int isStaticp, TreeP decl ) {
@@ -73,6 +73,17 @@ void class_setSuper(ClassP c, string super, TreeP args){ /* Si on trouve la clas
 	c->superName = NEW(strlen(super)+1, char);
 	strcpy(c->superName, super);
 	c->superCallArgs = args;
+}
+
+string classList_print() {
+	string str = NEW(20000, char);
+	ClassP curr = classList->current;
+	while(curr!=NULL) {
+		printf("%s", class_print(curr));
+		strcat(str, class_print(curr));
+		strcat(str, "\n\n");
+	}
+	return str;
 }
 
 string class_print(ClassP class){

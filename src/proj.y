@@ -18,7 +18,7 @@
 %type <S> ReturnO Id Idcl 
 %type <I> StaticO OvOrStatO Relop
 %type <P> ListParamO ListParam Param
-/*No type : Program Class ExtendO ListDeclO Decl DeclField DeclMethod  */
+/*No type : Program Class ClassAlloc ExtendO ListDeclO Decl DeclField DeclMethod  */
 
 
 
@@ -28,12 +28,13 @@
 #include "class.h"
 #include "function.h"
 
-#define VERBOSE
+#define NOVERBOSE
 
 extern int yylineno;
-extern ClassListP classList; /* variable globale contenant les classes déclarées */
-
 extern int yylex();	/* fournie par Flex */
+
+ClassP current;
+
 
 void yyerror(char *ignore) {
   printf("erreur de syntaxe: Ligne %d\n", yylineno);
@@ -66,20 +67,23 @@ void pprintfi(char* c, int i) {
 %}
 
 %%
-
+/* segfault car pas de class dans la liste (elle est insérée après que l'on ait fait les premiers acces */
 Program		:	Bloc										{ pprintf("prog bloc\n"); /*lancer la verif contextuelle */ }
-			|	Class Program								{ pprintf("prog class\n");} /* Pas de traitement */
+			|	Class Program								{ pprintf("prog class\n"); } /* Pas de traitement */
 			;
 
-Class 		:	CLASS Idcl '(' ListParamO ')' ExtendO BlocO IS '{' ListDeclO '}' {
-																pprintf("class\n"); 
-																classList_addClass($2); /*param: nom de la classe */
-																class_setConstructor(classList->current, $4, $7); 
+Class 		:	ClassAlloc Idcl '(' ListParamO ')' ExtendO BlocO IS '{' ListDeclO '}' {
+																pprintf("class\n");
+																class_setName(current, $2); /*param: nom de la classe */
+																class_setConstructor(current, $4, $7); 
 																/*params: classe, paramètres constructeur, code du constructeur */
 																/* superclasse gérée dans ExtendO */
 																/* declarations gérées dans ListDeclO */
+																classList_addClass(current);
 															}
 			;
+
+ClassAlloc	:	CLASS										{ pprintf("class alloc\n"); current = NEW(1, Class); } /* uniquement pour faire l'allocation */
 
 ListParamO 	:	/* epsilon */								{ pprintf("listparamo null\n"); $$ = NULL; }
 			|	ListParam									{ pprintf("listparamo non null\n"); $$ = $1; }
@@ -98,7 +102,7 @@ Param		:	Id ':' Idcl									{ pprintf("param\n"); $$ = function_makeParam($1, $
 			;
 
 ExtendO		:	/* epsilon */								{ pprintf("extendo null\n");} /* Pas de traitement */
-			|	EXT Idcl '(' ListArgO ')'					{ pprintf("extendo non null\n"); class_setSuper(classList->current, $2, $4); /*params: classe, superType, arguments constructeur père */ }
+			|	EXT Idcl '(' ListArgO ')'					{ pprintf("extendo non null\n"); class_setSuper(current, $2, $4); /*params: classe, superType, arguments constructeur père */ }
 			;
 
 ListDeclO	:	/* epsilon */								{ pprintf("listdeclo null\n");} /* Pas de traitement */
@@ -109,7 +113,7 @@ Decl		:	DeclField									{ pprintf("decl field\n");} /* Pas de traitement */
 			|	DeclMethod									{ pprintf("decl method\n");} /* Pas de traitement */
 			;
 
-DeclField	:	StaticO DeclV								{ pprintf("declField\n"); class_addField(classList->current, $1, $2); /*params: classe, isStatic, arbre de decl de la var */ }
+DeclField	:	StaticO DeclV								{ pprintf("declField\n"); class_addField(current, $1, $2); /*params: classe, isStatic, arbre de decl de la var */ }
 			;
 
 StaticO		:	/* epsilon */								{ pprintf("statico null\n"); $$ = 0; }
@@ -118,7 +122,7 @@ StaticO		:	/* epsilon */								{ pprintf("statico null\n"); $$ = 0; }
 
 DeclMethod	:	OvOrStatO	DEF	Id '(' ListParamO ')' ReturnO IS Bloc {
 																pprintf("declmethod\n"); 
-																class_addMethod(classList->current, $1, $3, $7, $5, $9);
+																class_addMethod(current, $1, $3, $7, $5, $9);
 																/*params: classe, visibility, nom, type de retour,liste des paramètres, arbre du corps de la fonction */
 															}
 			;
@@ -138,14 +142,14 @@ ListDeclV	:	DeclV										{ pprintf("listdeclv final\n"); $$ = $1; }
 			|	DeclV ListDeclV								{ pprintf("listdeclv continue\n"); $$ = makeTree(DECL, 2, $1, $2); }
 			;
 
-DeclV		:	VAR Id ':' Idcl AffectO						{	pprintf("decl var\n");
+DeclV		:	VAR Id ':' Idcl AffectO						{	pprintf("declv\n");
 																$$ = makeTree(VAR, 3, makeLeafStr(ID, $2), makeLeafStr(IDCL, $4), $5);
 																/* voir a pas ajouter un autre type "variable" aux feuilles de l'arbre */
 															} 
 			;
 			
 AffectO		:	/* epsilon */								{ pprintf("affect null\n"); $$ = NULL; }
-			|	AFF Exp										{ pprintf("affect non null\n"); $$ = $2; }
+			|	AFF Exp	';'									{ pprintf("affect non null\n"); $$ = $2; }
 			;
 
 ListArgO	:	/* epsilon */								{ pprintf("listargo null\n"); $$ = NULL; }

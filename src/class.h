@@ -36,12 +36,14 @@
 	}ClassList, *ClassListP;
 
 
-	void classList_addClass(string name);
+	void classList_addClass(ClassP c);
+	void class_setName(ClassP c, string name);
 	void class_addField(ClassP c, int isStaticp, TreeP decl );
 	FunctionP class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code);
 	void class_setConstructor(ClassP c, ParamsListP pl, TreeP code);
 	ClassP class_getClass(string super);
 	void class_setSuper(ClassP c, string super, TreeP args);
+	string classList_print();
 	string class_print(ClassP class);
 
 #endif
