@@ -89,6 +89,8 @@ int main(int argc, char **argv) {
 	* c'est possible.
 	*/
 	res = yyparse();
+	printf("A priori c'est bon :)\n");
+	//printf("resultat:\n%s", classList_print());
 	if (fd != NIL(FILE)) fclose(fd);
 	return res ? SYNTAX_ERROR : errorCode;
 }
