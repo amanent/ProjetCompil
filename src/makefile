@@ -35,7 +35,7 @@ clean:
 
 mrproper: clean
 	rm -f $(PROG)
-	
+
 test:
 	@make
 	@./$(PROG) ../test/cast1.mls
