@@ -2,7 +2,7 @@
 
 OBJ = proj.o proj_l.o proj_y.o class.o function.o tree.o
 CC = gcc
-CFLAGS = -Wall -ansi -I./ -g -std=c99 -Werror
+CFLAGS = -Wall -ansi -I./ -g -std=c99 #-Werror
 LDFLAGS = -g -lfl
 PROG = proj
 
