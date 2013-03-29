@@ -28,11 +28,11 @@
 #include "class.h"
 #include "function.h"
 
-#define VERBOSE
+#define NOVERBOSE
 
 extern int yylineno;
 extern int yylex();	/* fournie par Flex */
-
+extern TreeP mainCode;
 ClassP current;
 
 
@@ -67,8 +67,10 @@ void pprintfi(char* c, int i) {
 %}
 
 %%
-/* segfault car pas de class dans la liste (elle est insérée après que l'on ait fait les premiers acces */
-Program		:	Bloc										{ pprintf("prog bloc\n"); /*lancer la verif contextuelle */ }
+Program		:	Bloc										{	pprintf("prog bloc\n");
+																mainCode = $1;
+																/*lancer la verif contextuelle */ 
+															}
 			|	Class Program								{ pprintf("prog class\n"); } /* Pas de traitement */
 			;
 

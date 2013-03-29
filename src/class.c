@@ -4,39 +4,46 @@
 #include "class.h"
 
 ClassListP classList = NULL;
-
+TreeP mainCode = NULL;
 
 void classList_addClass(ClassP c) {
-	ClassListP newTop = NEW(1, ClassList); /*(ClassListP)malloc(sizeof(ClassList));*/
+	ClassListP newTop = NEW(1, ClassList);
 	newTop->current = c;
 	newTop->next = classList;
 	classList = newTop;
 }
 
 void class_setName(ClassP c, string name) {
-	c->IDClass = NEW(strlen(name)+1, char); /*(string)malloc(strlen(name)*sizeof(char));*/
+	c->IDClass = NEW(strlen(name)+1, char);
 	strcpy(c->IDClass,name);
 }
 
-void class_addField(ClassP c, int isStaticp, TreeP decl ) {
+void class_addField(ClassP c, bool isStatic, TreeP decl ) {
 	string type = decl->u.children[1]->u.str;
 	string name = decl->u.children[0]->u.str;
 	VarP newClassField = NEW(1, Var);
+	
 	newClassField->typeName = NEW(strlen(type)+ 1, char);
 	newClassField->ID = NEW(strlen(name)+1,char);
 	strcpy(newClassField->typeName,type);
 	strcpy(newClassField->ID,name);
+	
 	newClassField->value = decl->u.children[2];
 	ClassFieldListP newCFL = NEW(1, ClassFieldList);
 	newCFL->current = newClassField;
 	newCFL->next = c->cfl;
-	c->cfl = newCFL;
+	
+	if(isStatic)
+		c->staticCfl = newCFL;
+	else
+		c->cfl = newCFL;
 }
 
-FunctionP class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code) {
-	FunctionP newMeth = NEW(1, Function); /*(ClassMethodP)malloc(sizeof(ClassMethod));*/
-	newMeth->ID = NEW(strlen(methodName)+1, char); /*(string)malloc(strlen(methodName)*sizeof(char));*/
-	newMeth->returnName = NEW(strlen(returnType)+1, char); /*(string)malloc(strlen(type)*sizeof(char));*/
+void class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code) {
+	FunctionP newMeth = NEW(1, Function);
+	
+	newMeth->ID = NEW(strlen(methodName)+1, char);
+	newMeth->returnName = NEW(strlen(returnType)+1, char);
 	strcpy(newMeth->ID,methodName);
 	strcpy(newMeth->returnName,returnType);
 
@@ -44,11 +51,13 @@ FunctionP class_addMethod(ClassP c, int visi, string methodName, string returnTy
 	newMeth->paramsList = paramList;
 	newMeth->code = code;
 
-	ClassMethodListP newCML = NEW(1, ClassMethodList); /*(ClassMethodListP)malloc(sizeof(ClassMethodList));*/
+	ClassMethodListP newCML = NEW(1, ClassMethodList);
 	newCML->current = newMeth;
-	newCML->next = c->cml; /* surement un problème a ce niveau la */
-	c->cml = newCML;
-	return NULL;
+	newCML->next = c->cml;
+	if(visi==2)
+		c->staticCml = newCML;
+	else
+		c->cml = newCML;
 }
 
 void class_setConstructor(ClassP c, ParamsListP pl, TreeP code) {
@@ -62,13 +71,14 @@ void class_setConstructor(ClassP c, ParamsListP pl, TreeP code) {
 
 ClassP class_getClass(string super){
 	ClassListP currentCL = classList;
-	ClassP theSuper = classList->current;
-	while(theSuper != NULL && strcmp(theSuper->IDClass,super) != 0){
+	
+	while(currentCL != NULL) {
+		if(strcmp(currentCL->current->IDClass,super))
+			return currentCL->current;
 		currentCL = currentCL->next;
-		theSuper = currentCL->current;
 	}
 
-	return theSuper;
+	return NULL;
 }
 
 void class_setSuper(ClassP c, string super, TreeP args){ /* Si on trouve la classe, on ajoute directement la référence, sinon on ajoute juste son nom */
@@ -82,7 +92,6 @@ string classList_print() {
 	string str = NEW(20000, char);
 	ClassListP curr = classList;
 	while(curr!=NULL) {
-		//printf("%s", class_print(curr->current));
 		strcat(str, class_print(curr->current));
 		strcat(str, "\n\n");
 		curr=curr->next;
@@ -93,10 +102,8 @@ string classList_print() {
 string class_print(ClassP class){
 	string str = NEW(2000, char);
 	
-	//printf("toto %s\n", str);
-	
 	strcat(str, class->IDClass);
-//printf("toto1 %s\n", str);
+
 	//Heritage ?
 	if(class->superName != NULL){
 		strcat(str, " : ");
@@ -108,12 +115,12 @@ string class_print(ClassP class){
 			strcat(str, "class not yet parsed");
 		strcat(str, ")");
 	}
-//printf("toto2 %s\n", str);
+
 	//Constructeur
 	strcat(str, "\n\t");
 	strcat(str, "Constructeur : ");
 	strcat(str, function_printFunc(class->constructor));
-//printf("toto3 %s\n", str);
+	
 	//Static Fields
 	strcat(str, "\n\tStatic Fields:");
 	ClassFieldListP stfl = class->staticCfl;
@@ -125,7 +132,7 @@ string class_print(ClassP class){
 		strcat(str, stfl->current->ID);
 		stfl = stfl->next;
 	}
-//printf("toto4 %s\n", str);
+
 	//Static Methods
 	strcat(str, "\n\tStatic Methods:");
 	ClassMethodListP stml = class->staticCml;
@@ -135,28 +142,26 @@ string class_print(ClassP class){
 		strcat(str, function_printFunc(stml->current));
 		stml = stml->next;
 	}
-//printf("toto5 %s\n", str);
 
 	//Instance Fields
 	strcat(str, "\n\tFields:");
 	ClassFieldListP fl = class->cfl;
-	while(stfl != NULL){
+	while(fl != NULL){
 		strcat(str, "\n\t\t");
 		strcat(str, fl->current->typeName);
 		strcat(str, " ");
 		strcat(str, fl->current->ID);
 		fl = fl->next;
 	}
-//printf("toto6 %s\n", str);
+
 	//Methods
 	strcat(str, "\n\tMethods:");
 	ClassMethodListP ml = class->cml;
-	while(stml != NULL){
+	while(ml != NULL){
 		strcat(str, "\n\t\t");
 		strcat(str, (char*)function_printFunc(ml->current));
 		ml = ml->next;
 	}
-//printf("toto7 %s\n", str);
 
 	return str;
 }

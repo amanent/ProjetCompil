@@ -68,5 +68,8 @@ string function_printFunc(FunctionP func){
 	}
 //printf("toto 44%s\n", str);
 	strcat(str, ")");
+	if(func->override)
+		strcat(str, "[override]");
+		
 	return str;
 }
