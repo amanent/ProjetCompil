@@ -28,9 +28,9 @@
 #include "class.h"
 #include "function.h"
 
-extern int yylineno;
 extern ClassListP classList; /* variable globale contenant les classes déclarées */
 
+extern int yylineno;
 extern int yylex();	/* fournie par Flex */
 
 void yyerror(char *ignore) {
