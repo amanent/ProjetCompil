@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 	*/
 	res = yyparse();
 	printf("A priori c'est bon :)\n");
-	//printf("resultat:\n%s", classList_print());
+	printf("resultat:\n%s", classList_print());
 	if (fd != NIL(FILE)) fclose(fd);
 	return res ? SYNTAX_ERROR : errorCode;
 }

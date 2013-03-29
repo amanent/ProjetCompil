@@ -28,7 +28,7 @@
 #include "class.h"
 #include "function.h"
 
-#define NOVERBOSE
+#define VERBOSE
 
 extern int yylineno;
 extern int yylex();	/* fournie par Flex */

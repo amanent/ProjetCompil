@@ -53,8 +53,11 @@ FunctionP class_addMethod(ClassP c, int visi, string methodName, string returnTy
 
 void class_setConstructor(ClassP c, ParamsListP pl, TreeP code) {
 	c->constructor = NEW(1, Function);
+	c->constructor->ID = "constructor";
 	c->constructor->paramsList = pl;
 	c->constructor->code = code;
+	c->constructor->returnName = c->IDClass;
+	c->constructor->returnType = c;
 }
 
 ClassP class_getClass(string super){
@@ -77,19 +80,23 @@ void class_setSuper(ClassP c, string super, TreeP args){ /* Si on trouve la clas
 
 string classList_print() {
 	string str = NEW(20000, char);
-	ClassP curr = classList->current;
+	ClassListP curr = classList;
 	while(curr!=NULL) {
-		printf("%s", class_print(curr));
-		strcat(str, class_print(curr));
+		//printf("%s", class_print(curr->current));
+		strcat(str, class_print(curr->current));
 		strcat(str, "\n\n");
+		curr=curr->next;
 	}
 	return str;
 }
 
 string class_print(ClassP class){
 	string str = NEW(2000, char);
+	
+	//printf("toto %s\n", str);
+	
 	strcat(str, class->IDClass);
-
+//printf("toto1 %s\n", str);
 	//Heritage ?
 	if(class->superName != NULL){
 		strcat(str, " : ");
@@ -101,12 +108,12 @@ string class_print(ClassP class){
 			strcat(str, "class not yet parsed");
 		strcat(str, ")");
 	}
-
+//printf("toto2 %s\n", str);
 	//Constructeur
 	strcat(str, "\n\t");
 	strcat(str, "Constructeur : ");
-	function_printFunc(class->constructor);
-
+	strcat(str, function_printFunc(class->constructor));
+//printf("toto3 %s\n", str);
 	//Static Fields
 	strcat(str, "\n\tStatic Fields:");
 	ClassFieldListP stfl = class->staticCfl;
@@ -118,7 +125,7 @@ string class_print(ClassP class){
 		strcat(str, stfl->current->ID);
 		stfl = stfl->next;
 	}
-
+//printf("toto4 %s\n", str);
 	//Static Methods
 	strcat(str, "\n\tStatic Methods:");
 	ClassMethodListP stml = class->staticCml;
@@ -128,7 +135,7 @@ string class_print(ClassP class){
 		strcat(str, function_printFunc(stml->current));
 		stml = stml->next;
 	}
-
+//printf("toto5 %s\n", str);
 
 	//Instance Fields
 	strcat(str, "\n\tFields:");
@@ -140,7 +147,7 @@ string class_print(ClassP class){
 		strcat(str, fl->current->ID);
 		fl = fl->next;
 	}
-
+//printf("toto6 %s\n", str);
 	//Methods
 	strcat(str, "\n\tMethods:");
 	ClassMethodListP ml = class->cml;
@@ -149,7 +156,7 @@ string class_print(ClassP class){
 		strcat(str, (char*)function_printFunc(ml->current));
 		ml = ml->next;
 	}
-
+//printf("toto7 %s\n", str);
 
 	return str;
 }

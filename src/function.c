@@ -1,5 +1,6 @@
 #include "function.h"
 #include <string.h>
+#include <stdio.h>
 /*
 void prmlst_addParam(ParamsListP list, string type, string name){
 	prmlst_getLast(list->next = prmlst_newElem(type, name));
@@ -40,8 +41,13 @@ ParamsListP function_makeParam(string name, string type){
 
 string function_printFunc(FunctionP func){
 	string str = NEW(2000, char);
+	//printf("toto %x\n", func);
+	if(func==NULL)
+		return "";
+//printf("toto 11%s\n", str);
 	strcat(str, func->returnName);
 	strcat(str, "(");
+//printf("toto 22 %s\n", str);	
 	if(func->returnType != NULL)
 		strcat(str, func->returnType->IDClass);
 	else
@@ -50,6 +56,7 @@ string function_printFunc(FunctionP func){
 	strcat(str, func->ID);
 	strcat(str, "( ");
 	ParamsListP tmp = func->paramsList;
+//printf("toto 33%s\n", str);
 	while(tmp != NULL){
 		strcat(str, tmp->type);
 		strcat(str, " ");
@@ -59,6 +66,7 @@ string function_printFunc(FunctionP func){
 		if(tmp != NULL)
 			strcat(str, ", ");
 	}
+//printf("toto 44%s\n", str);
 	strcat(str, ")");
 	return str;
 }
