@@ -2,7 +2,7 @@
 #define _FUNCTION_H_
 
 	typedef struct _ParamsList ParamsList, *ParamsListP;
-	typedef struct _ClassMethod ClassMethod, *ClassMethodP;
+	typedef struct _Function Function, *FunctionP;
 
 	#include "tree.h"
 	#include "class.h"
@@ -14,24 +14,20 @@
 		struct _ParamsList* next;
 	};
 
-	typedef struct _Function {
+	struct _Function {
+		bool override;
 		string ID;
-		ParamsList * paramsList;
+		ParamsListP paramsList;
 		TreeP code;
 		ClassP returnType;
 		string returnName;
-	}Function, *FunctionP;
-	
-	struct _ClassMethod{
-	  int visibility;
-	  string type;
-	  Function function;
 	};
 	
-
+/*
 	void prmlst_addParam(ParamsListP list, string type, string name);
 	ParamsListP prmlst_getLast (ParamsListP elem);
+*/
 	bool prmlst_sameTypes (ParamsListP l, ParamsListP ll);
 	ParamsListP function_makeParam(string name, string type);
-	ParamsListP prmlst_newElem(string type, string name);
+	string function_printFunc(FunctionP func);
 #endif

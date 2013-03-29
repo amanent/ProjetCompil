@@ -1,0 +1,19 @@
+{
+  var x : Integer := 1;
+  var y : Integer := "x";
+  var s : String := 1;
+  is
+  x := w;
+  x := s;
+  x := 1 + w;
+  x = 1 + "one";
+  s := 1 & "one";
+  x := 2 - (1 * "one");
+  s := "one" & "two" & "three" & "four" & 5;
+  1.toString(2);
+  1.print();
+  x.toString(2);
+  x.print();
+  x.toString().print(2);
+  if "true" then 1; else 2;
+}

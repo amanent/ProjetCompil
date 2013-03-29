@@ -1,0 +1,5 @@
+class Cl() is {
+  var X : Integer;
+}
+{
+}

@@ -1,0 +1,19 @@
+class A() is {
+  var v: Integer := 1;
+  def f() returns Integer is { result := v; }
+}
+class A2() extends A() is {
+  var v: String := "coucou";
+  def g() returns String is { result := v; }
+}
+class A3() extends A2() is {
+  var v: Integer := 5;
+  def h() returns Integer is { result := v; }
+}
+{
+  var monA3 : A3 := new A3();
+  is
+  monA3.f().toString().println();
+  monA3.g().println();
+  monA3.h().toString().println();
+}

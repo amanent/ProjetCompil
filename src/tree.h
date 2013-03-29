@@ -17,5 +17,8 @@
 	TreeP makeLeafInt(short op, int val);
 	TreeP makeTree(short op, int nbChildren, ...);
 	TreeP getChild(TreeP tree, int rank);
+	/* fonction d'affichage d'un arbre */
+	void pprintMain(TreeP tree);
+	void ppprint(TreeP tree);
 
-#endif
+#endif /* _TREE_H_ */

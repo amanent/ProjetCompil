@@ -1,0 +1,26 @@
+{
+  var x : Integer := 2;
+  var y : Integer := 1;
+  is
+  ("check01:2:" & x.toString()).println();
+  x := 4;
+  ("check02:4:" & x.toString()).println();
+  {
+    var x : Integer := 8;
+    var z : Integer := x + 1;
+    is
+    ("check03:9:" & z.toString()).println();
+    x := 7;
+    ("check04:7:" & x.toString()).println();
+    ("check05:1:" & y.toString()).println();
+    y := 8;
+    ("check06:8:" & y.toString()).println();
+  }
+  ("check07:4:" & x.toString()).println();
+  ("check08:8:" & y.toString()).println();
+  if 1 then {x := 1; y := 2;} else {x := 0; y := 0;}
+  {
+    ("check09:3:" & (x + y).toString()).println();
+  }
+  ("check10:3:" & (x + y).toString()).println();
+}

@@ -10,7 +10,7 @@
 	#define TRUE 1
 	#define FALSE 0 
 
-	typedef int bool;
+	typedef short bool;
 	typedef char* string; /* nécéssaire de les déclarer avant de faire les inclusions */
 
 	#include "tree.h"
@@ -47,7 +47,7 @@
 	{ char C;
 	  char *S;   
 	  int I;    
-	  ParamsList* P;
+	  ParamsListP P;
 	  TreeP T;
 	} YYSTYPE;
 

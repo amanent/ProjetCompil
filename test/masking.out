@@ -1,0 +1,141 @@
+START
+ALLOC 2 	-- TV(A)
+DUPN 1
+PUSHA F0 	-- A
+STORE 0
+DUPN 1
+PUSHA F1 	-- f
+STORE 1
+ALLOC 3 	-- TV(A2)
+DUPN 1
+PUSHA F2 	-- A2
+STORE 0
+DUPN 1
+PUSHA F1 	-- f
+STORE 1
+DUPN 1
+PUSHA F3 	-- g
+STORE 2
+ALLOC 4 	-- TV(A3)
+DUPN 1
+PUSHA F4 	-- A3
+STORE 0
+DUPN 1
+PUSHA F1 	-- f
+STORE 1
+DUPN 1
+PUSHA F3 	-- g
+STORE 2
+DUPN 1
+PUSHA F5 	-- h
+STORE 3
+PUSHN 1 	-- Main.monA3
+Main: NOP
+ALLOC 4
+DUPN 1
+PUSHG 2
+STORE 0
+PUSHN 1 	 -- Place du resultat
+SWAP
+DUPN 1
+LOAD 0
+LOAD 0	-- Appel au constructeur
+CALL
+POPN 1
+STOREG 3 	--monA3
+PUSHN 1 	 -- Place du resultat
+PUSHG 3 	 -- monA3
+DUPN 1
+LOAD 0
+LOAD 1
+CALL
+POPN 1
+STR
+DUPN 1
+WRITES
+PUSHA NL
+CALL
+POPN 1 	-- expr->inst
+PUSHN 1 	 -- Place du resultat
+PUSHG 3 	 -- monA3
+DUPN 1
+LOAD 0
+LOAD 2
+CALL
+POPN 1
+DUPN 1
+WRITES
+PUSHA NL
+CALL
+POPN 1 	-- expr->inst
+PUSHN 1 	 -- Place du resultat
+PUSHG 3 	 -- monA3
+DUPN 1
+LOAD 0
+LOAD 3
+CALL
+POPN 1
+STR
+DUPN 1
+WRITES
+PUSHA NL
+CALL
+POPN 1 	-- expr->inst
+STOP
+ErrDiv: ERR "Division par 0"
+NL: PUSHS "\n"
+WRITES
+RETURN
+F4: NOP 	-- A3::A3
+PUSHL -1 	-- Valeur a retourner
+STOREL -2 	-- stockee...
+PUSHN 1 	 -- Place du resultat
+PUSHL -1 	-- super
+PUSHG 1
+LOAD 0
+CALL
+POPN 1
+POPN 1 	-- expr->inst
+PUSHI 5
+PUSHL -1
+SWAP
+STORE 3 	-- v
+RETURN 		-- A3::A3
+F5: NOP 	-- A3::h
+PUSHL -1
+LOAD 3 	-- v
+STOREL -2 	--result
+RETURN 		-- A3::h
+F2: NOP 	-- A2::A2
+PUSHL -1 	-- Valeur a retourner
+STOREL -2 	-- stockee...
+PUSHN 1 	 -- Place du resultat
+PUSHL -1 	-- super
+PUSHG 0
+LOAD 0
+CALL
+POPN 1
+POPN 1 	-- expr->inst
+PUSHS "coucou"
+PUSHL -1
+SWAP
+STORE 2 	-- v
+RETURN 		-- A2::A2
+F3: NOP 	-- A2::g
+PUSHL -1
+LOAD 2 	-- v
+STOREL -2 	--result
+RETURN 		-- A2::g
+F0: NOP 	-- A::A
+PUSHL -1 	-- Valeur a retourner
+STOREL -2 	-- stockee...
+PUSHI 1
+PUSHL -1
+SWAP
+STORE 1 	-- v
+RETURN 		-- A::A
+F1: NOP 	-- A::f
+PUSHL -1
+LOAD 1 	-- v
+STOREL -2 	--result
+RETURN 		-- A::f

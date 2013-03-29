@@ -9,21 +9,21 @@
 	#include "proj.h"
 
 	typedef struct _ClassFieldList{
-	  ClassFieldP current;
+	  VarP current;
 	  struct _ClassFieldList * next;
 	}ClassFieldList, *ClassFieldListP;
 
 	typedef struct _ClassMethodList{
-	  ClassMethodP current;
+	  FunctionP current;
 	  struct _ClassMethodList * next;
 	}ClassMethodList, *ClassMethodListP;
 
 	struct _Class{
 	  string IDClass;
-	  ClassMethodP constructor;
-	  ClassFieldList staticCfl;
-	  ClassMethodList staticCml;
-	  ClassFieldList cfl;
+	  FunctionP constructor;
+	  ClassFieldListP staticCfl;
+	  ClassMethodListP staticCml;
+	  ClassFieldListP cfl;
 	  ClassMethodListP cml;
 	  struct  _Class * super;
 	  string superName;
@@ -36,17 +36,14 @@
 	}ClassList, *ClassListP;
 
 
-	void classList_addClass(string name);
-	/* void class_addField(ClassP c, string type, string name, TreeP var ); */
-	void class_addVar(int forme, TreeP decl );
-	ClassMethodP class_addMethodByClass(ClassP c, string methodName, string type);
-	/*ClassMethodP class_addMethod(string type, string c, string methodName, string returnType, ParamsListP paramList, TreeP code); */
-	ClassMethodP class_addMethod(int forme, string methodName, string returnType, ParamsListP paramList, TreeP code); /* L'autre ne me convenait pas */
-	void class_setConstructorParam(ClassMethodP constructor, ParamsListP pl);
-	void class_setConstructor(ClassP c, ParamsListP pl);
-	bool class_setSuperClass(ClassP c, string super);
-	void class_setSuperName(ClassP c, string super);
-	void class_setParam(ClassMethodP meth, ParamsListP pl);
-	void class_addParent(ClassP c, string super, TreeP args);
+	void classList_addClass(ClassP c);
+	void class_setName(ClassP c, string name);
+	void class_addField(ClassP c, bool isStatic, TreeP decl );
+	void class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code);
+	void class_setConstructor(ClassP c, ParamsListP pl, TreeP code);
+	ClassP class_getClass(string super);
+	void class_setSuper(ClassP c, string super, TreeP args);
+	string classList_print();
+	string class_print(ClassP class);
 
 #endif

@@ -1,0 +1,120 @@
+class Cla1() is {
+}
+class Cla2()
+is {
+  static var x0 : Integer := -1;
+  static var y0 : Integer := -2;
+  static var single : Cla2 := new Cla2();
+  var x : Integer;
+  var y : Integer := 45;
+  static def s1() returns Integer is {
+    x0 := x0 + 1;
+    result := x0;
+  }
+  static def s2(dy : Integer) returns Integer is {
+    y0 := y0 + dy;
+    result := Cla2.s1();
+  }
+  def addx(dx : Integer) returns Integer is {
+    x := x + dx;
+    result := x;
+  }
+  def muly(y : Integer) returns Integer is {
+    this.y := this.y * y;
+     result := this.y;
+  }
+  static def toString0() returns String is {
+     result := ("(" & x0.toString() & "," & y0.toString() & ")");
+  }
+  def toString() returns String is {
+     result := ("(" & x.toString() & "," & y.toString() & ")");
+  }
+  /* tests attributs et methodes statiques */
+  static def test0() is {
+    var x : Integer;
+    var y : Integer;
+    is
+    /* teste les valeurs initiales */
+    ("check00:(-1,-2):" & Cla2.toString0()).println();
+    /* teste des affectations simples */
+    x0 := 7;
+    y0 := 3 + x0 + y0;
+    ("check01:(7,8):" & Cla2.toString0()).println();
+    /* teste des affectations via des methodes statiques */
+    x := Cla2.s1();
+    y := Cla2.s2(x0);
+    ("check02:(9,16):" & Cla2.toString0()).println();
+    ("check03:8:" & x.toString()).println();
+    ("check04:9:" & y.toString()).println();    
+  }
+  def test1(c3 : Cla2) is {
+    /* tests sur l'objet courant */
+    /* teste la valeur initiale pour y, l'affectation pour x */
+    x := 5;
+    ("check10:(5,45):" & this.toString()).println();
+    /* teste des affectations simples */
+    x := 2 + x;
+    y := 3 + x * 2 + y / 3;
+    ("check11:(7,32):" & this.toString()).println();
+    /* teste des affectations via des methodes */
+    this.addx(11);
+    this.muly(2);
+    ("check12:(18,64):" & this.toString()).println();
+    /* reprend les memes tests sur l'objet passe en parametre */
+    /* teste la valeur initiale pour y, l'affectation pour x */
+    c3.x := 6;
+    ("check20:(6,45):" & c3.toString()).println();
+    /* teste des affectations simples */
+    c3.x := 8;
+    c3.y := 4 + c3.x * 2 + c3.y / 3;
+    ("check21:(8,35):" & c3.toString()).println();
+    /* teste des affectations via des methodes */
+    c3.addx(12);
+    c3.muly(3);
+    ("check22:(20,105):" & c3.toString()).println();
+    /* teste l'intance creee a l'initialisation de la classe */
+    ("check23:45:" & single.y.toString()).println();
+  }
+  def test2(y : Integer) is {
+    x := 18;
+    /* teste qu'une variable locale masque un attribut de meme nom */
+    { 
+      var x : Integer := 13;
+      is
+      ("check30:13:" & x.toString()).println();
+    }
+    ("check31:18:" & x.toString()).println();
+    /* teste qu'un parametre masque un attribut de meme nom */
+    ("check32:15:" & y.toString()).println();
+    ("check33:45:" & this.y.toString()).println();
+  }
+}
+class Cla3(x0 : Integer, y : Integer)
+  {
+    x := x0;
+    /* le 'y' en question est le parametre du constructeur, pas l'attribut */
+    this.y := y;
+  }
+is {
+  var x : Integer;
+  var y : Integer := 45;
+  def test3(x0 : Integer, y0 : Integer) is {
+    /* teste que le constructeur a bien initialise les attributs */
+    ("check40:" & x0.toString() & ":" & x.toString()).println();
+    ("check41:" & y0.toString() & ":" & y.toString()).println();
+  }
+}
+{
+  var c1 : Cla1;
+  var c2 : Cla2;
+  var c3 : Cla3;
+  var x : Integer;
+  is
+  c1 := new Cla1();
+  Cla2.test0();
+  c2 := new Cla2();
+  c2.test1(new Cla2());
+  (new Cla2()).test2(15);
+  c3 := new Cla3(17, 19);
+  c3.test3(17, 19);
+}

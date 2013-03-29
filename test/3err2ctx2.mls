@@ -1,0 +1,112 @@
+class C1(x : Integer) is {
+  var x : Integer;
+  static def m() returns Integer is {
+    result := 0;
+  }
+  def m1(x : Integer) returns Integer is {
+    result := 0;
+  }
+  def m2(x : Integer) returns Integer is {
+    result := 0;
+  }
+  def m3(x : Integer) returns Integer is {
+    result := 0;
+  }
+  def m4(x : Integer) returns Integer is {
+    result := 0;
+  }
+}
+class C20() is {
+}
+class C20() is {
+}
+class C21() extends Bad() is {
+}
+class C22() extends C1() is {
+}
+class C23() extends C1("Bad") is {
+}
+class C3() extends C1(0) is {
+  var v : Bad;
+  var x : Integer;
+  var y : Integer;
+  var y : Integer;
+  var z : Integer := "0";
+  static def sm() is {
+    this.m1();
+  }
+  def m1(x : Integer) returns Integer is {
+    result := 0;
+  }
+  override def m2(x : Integer) returns String is {
+    result := "";
+  }
+  override def m3() returns Integer is {
+    result := "";
+  }
+  override def m4(x : String) returns Integer is {
+    result := "";
+  }
+  override def m10() returns C3 is {
+  }
+  def m11() returns C3 is {
+  }
+  def m11() returns C3 is {
+  }
+  def m12() returns Bad is {
+  }
+  def m13(x : Bad) returns Integer is {
+    result := 0;
+  }
+  def m14(x : Integer) returns Integer is {
+  }
+  def m15(x : Integer) returns Integer is {
+    x := 1;
+  }
+  def m16(x : Integer) returns Integer is {
+    var x : Bad;
+    var y : Integer;
+    var y : Integer;
+    var z : Integer := "0";
+    is
+    result := "0";
+  }
+}
+class C4() extends C1(0) is {
+  override def m1(x : Integer) returns Integer is {
+    result := 1;
+  }
+  def m10(s : String) returns String is {
+    result := "1";
+  }
+  def m11(s : String) is {
+    this.m1();
+    this.m1("");
+    super.m1();
+    super.m1("");
+    this.m2();
+    this.m2("");
+    this.m10("", "");
+    this.m10(0);
+  }
+}
+{
+  var x : Integer := 1;
+  var y : Integer := "x";
+  var s : String := 1;
+  var z : Integer := "0";
+  var c1 : C1;
+  var c3 : C3;
+  is
+  x := w;
+  c3 := c1;
+  c1 := new C1();
+  c1 := new C1("");
+  x := 1 + w;
+  x := 2 - (1 * "one");
+  s := "one" & "two" & "three" & "four" & 5;
+  c1.m1(0, 0);
+  c1.m1("");
+  this.print();
+  super.m1();
+}

@@ -7,6 +7,7 @@
 #include "proj_y.h"
 
 extern int yyparse();
+extern TreeP mainCode;
 
 /* Niveau de 'verbosite'.
  * Par defaut, n'imprime que le resultat et les messages d'erreur
@@ -34,63 +35,66 @@ FILE *fd = NIL(FILE);
  * Options: -[eE] -[vV] -[hH?]
  */
 int main(int argc, char **argv) {
-  int fi;
-  int i, res;
+	int fi;
+	int i, res;
 
-  for(i = 1; i < argc; i++) {
-    if (argv[i][0] == '-') {
-      switch (argv[i][1]) {
-      case 'v': case 'V':
+	for(i = 1; i < argc; i++) {
+	if (argv[i][0] == '-') {
+	  switch (argv[i][1]) {
+	  case 'v': case 'V':
 	verbose = TRUE; continue;
-      case 'e': case 'E':
+	  case 'e': case 'E':
 	noEval = TRUE; continue;
-      case '?': case 'h': case 'H':
+	  case '?': case 'h': case 'H':
 	fprintf(stderr, "Command: tp -e -v program.txt data.dat\n");
 	exit(USAGE_ERROR);
-      default:
+	  default:
 	fprintf(stderr, "Error: Unknown option: %c\n", argv[i][1]);
 	exit(USAGE_ERROR);
-      }
-    } else break;
-  }
+	  }
+	} else break;
+	}
 
-  if (i == argc) {
-    fprintf(stderr, "Error: Missing program file\n");
-    exit(USAGE_ERROR);
-  }
+	if (i == argc) {
+	fprintf(stderr, "Error: Missing program file\n");
+	exit(USAGE_ERROR);
+	}
 
-  if ((fi = open(argv[i++], O_RDONLY)) == -1) {
-    fprintf(stderr, "Error: Cannot open %s\n", argv[i-1]);
-    exit(USAGE_ERROR);
-  }
+	if ((fi = open(argv[i++], O_RDONLY)) == -1) {
+	fprintf(stderr, "Error: Cannot open %s\n", argv[i-1]);
+	exit(USAGE_ERROR);
+	}
 
-  /* redirige l'entree standard sur le fichier... */
-  close(0); dup(fi); close(fi);
+	/* redirige l'entree standard sur le fichier... */
+	close(0); dup(fi); close(fi);
 
-  if (i < argc) { /* fichier dans lequel lire les valeurs pour get() */
-    if ((fd = fopen(argv[i], "r")) == NULL) {
-      fprintf(stderr, "Error: Cannot open %s\n", argv[i]);
-      exit(USAGE_ERROR);
-    }
-  }
+	if (i < argc) { /* fichier dans lequel lire les valeurs pour get() */
+	if ((fd = fopen(argv[i], "r")) == NULL) {
+	  fprintf(stderr, "Error: Cannot open %s\n", argv[i]);
+	  exit(USAGE_ERROR);
+	}
+	}
 
-  /* Lance l'analyse syntaxique de tout le source, en appelant yylex au fur
-   * et a mesure. Execute les actions semantiques en parallele avec les
-   * reductions.
-   * yyparse renvoie 0 si le source est syntaxiquement correct, une valeur
-   * differente de 0 en cas d'erreur syntaxique (eventuellement causee par des
-   * erreurs lexicales).
-   * Comme l'interpretation globale est automatiquement lancee par les actions
-   * associees aux reductions, une fois que yyparse a termine il n'y
-   * a plus rien a faire (sauf fermer les fichiers)
-   * Si le code du programme contient une erreur, on bloque l'evaluation.
-   * S'il n y a que des erreurs contextuelles on essaye de ne pas s'arreter
-   * a la premiere mais de continuer l'analyse pour en trouver d'autres, quand
-   * c'est possible.
-   */
-  res = yyparse();
-  if (fd != NIL(FILE)) fclose(fd);
-  return res ? SYNTAX_ERROR : errorCode;
+	/* Lance l'analyse syntaxique de tout le source, en appelant yylex au fur
+	* et a mesure. Execute les actions semantiques en parallele avec les
+	* reductions.
+	* yyparse renvoie 0 si le source est syntaxiquement correct, une valeur
+	* differente de 0 en cas d'erreur syntaxique (eventuellement causee par des
+	* erreurs lexicales).
+	* Comme l'interpretation globale est automatiquement lancee par les actions
+	* associees aux reductions, une fois que yyparse a termine il n'y
+	* a plus rien a faire (sauf fermer les fichiers)
+	* Si le code du programme contient une erreur, on bloque l'evaluation.
+	* S'il n y a que des erreurs contextuelles on essaye de ne pas s'arreter
+	* a la premiere mais de continuer l'analyse pour en trouver d'autres, quand
+	* c'est possible.
+	*/
+	res = yyparse();
+	printf("A priori c'est bon :)\n");
+	printf("resultat:\n%s", classList_print());
+	pprintMain(mainCode);
+	if (fd != NIL(FILE)) fclose(fd);
+	return res ? SYNTAX_ERROR : errorCode;
 }
 
 
