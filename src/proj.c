@@ -7,6 +7,7 @@
 #include "proj_y.h"
 
 extern int yyparse();
+extern TreeP mainCode;
 
 /* Niveau de 'verbosite'.
  * Par defaut, n'imprime que le resultat et les messages d'erreur
@@ -91,6 +92,7 @@ int main(int argc, char **argv) {
 	res = yyparse();
 	printf("A priori c'est bon :)\n");
 	printf("resultat:\n%s", classList_print());
+	pprintMain(mainCode);
 	if (fd != NIL(FILE)) fclose(fd);
 	return res ? SYNTAX_ERROR : errorCode;
 }

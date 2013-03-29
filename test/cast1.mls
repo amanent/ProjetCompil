@@ -6,13 +6,13 @@ class A2() extends A() is {
   var v: String := "coucou";
   def g() returns String is { result := v; }
 }
+class A4() extends A3() is {
+  def z() returns Integer is { result := v; }
+}
 class A3() extends A2() is {
   var v: Integer := 5;
   override def f() returns Integer is { result := v; }
   def h() returns Integer is { result := (as A: this).v; }
-}
-class A4() extends A3() is {
-  def z() returns Integer is { result := v; }
 }
 {
   var monA3 : A3 := new A3();
