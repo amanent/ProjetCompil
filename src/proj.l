@@ -21,7 +21,7 @@ Commentary ([/]{Star}({NotStar}|{Star}*{NotStarSlash})*{Star}*[*][/])
 	#include <string.h> /* Pour strdup */
 
 	#include "proj.h"
-	#include "proj_y.h"
+	#include "proj_y.hpp"
 
 	#define YY_NO_INPUT /* pour éviter le warning "input declared but unused" */
 

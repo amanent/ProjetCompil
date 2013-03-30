@@ -85,7 +85,7 @@ Class 		:	ClassAlloc Idcl '(' ListParamO ')' ExtendO BlocO IS '{' ListDeclO '}' 
 															}
 			;
 
-ClassAlloc	:	CLASS										{ pprintf("class alloc\n"); current = NEW(1, Class); } /* uniquement pour faire l'allocation */
+ClassAlloc	:	CLASS										{ pprintf("class alloc\n"); current = NEW(1, Classs); } /* uniquement pour faire l'allocation */
 
 ListParamO 	:	/* epsilon */								{ pprintf("listparamo null\n"); $$ = NULL; }
 			|	ListParam									{ pprintf("listparamo non null\n"); $$ = $1; }

@@ -1,7 +1,7 @@
 #ifndef _CLASS_H_
 #define _CLASS_H_
 
-	typedef struct _Class Class, *ClassP; /* pré déclaration afin d'éviter des problèmes d'inclusions croisées */
+	typedef struct _Class Classs, *ClassP; /* pré déclaration afin d'éviter des problèmes d'inclusions croisées */
 
 	#include "tree.h"
 	#include "function.h"
@@ -38,12 +38,12 @@
 
 	void classList_addClass(ClassP c);
 	void class_setName(ClassP c, string name);
-	void class_addField(ClassP c, bool isStatic, TreeP decl );
+	void class_addField(ClassP c, boolean isStatic, TreeP decl );
 	void class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code);
 	void class_setConstructor(ClassP c, ParamsListP pl, TreeP code);
 	ClassP class_getClass(string super);
 	void class_setSuper(ClassP c, string super, TreeP args);
 	string classList_print();
-	string class_print(ClassP class);
+//	string class_print(ClassP class);
 
 #endif

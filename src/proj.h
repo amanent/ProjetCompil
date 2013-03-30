@@ -10,7 +10,7 @@
 	#define TRUE 1
 	#define FALSE 0 
 
-	typedef short bool;
+	typedef short boolean;
 	typedef char* string; /* nécéssaire de les déclarer avant de faire les inclusions */
 
 	#include "tree.h"

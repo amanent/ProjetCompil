@@ -2,7 +2,7 @@
 #define _FUNCTION_H_
 
 	typedef struct _ParamsList ParamsList, *ParamsListP;
-	typedef struct _Function Function, *FunctionP;
+	typedef struct _Function Functionn, *FunctionP;
 
 	#include "tree.h"
 	#include "class.h"
@@ -15,7 +15,7 @@
 	};
 
 	struct _Function {
-		bool override;
+		boolean override;
 		string ID;
 		ParamsListP paramsList;
 		TreeP code;
@@ -27,7 +27,7 @@
 	void prmlst_addParam(ParamsListP list, string type, string name);
 	ParamsListP prmlst_getLast (ParamsListP elem);
 */
-	bool prmlst_sameTypes (ParamsListP l, ParamsListP ll);
+	boolean prmlst_sameTypes (ParamsListP l, ParamsListP ll);
 	ParamsListP function_makeParam(string name, string type);
 	string function_printFunc(FunctionP func);
 #endif
