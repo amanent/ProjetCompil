@@ -84,7 +84,7 @@ void ppprint(TreeP tree) {
 	case UNARYSUB: 	printf("-"); ppprint(getChild(tree, 0)); break;
 	case UNARYADD: 	printf("+"); ppprint(getChild(tree, 0)); break;
 	case IF: 		pprintTree3(tree, "if ", " then ", " else ", ""); break;
-	case AFF: 		pprintTree2full(tree, "", " := ", ";"); break;
+	case AFF: 		pprintTree2full(tree, "", " := ", ";"); break; 
 	case RET: 		ppprint(getChild(tree, 0)); printf(";"); break;
 	case LSTARG: 	pprintTree2(tree, ", "); break;
   default:
