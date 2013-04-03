@@ -10,6 +10,7 @@
 		int val;        /* valeur de la feuille si op = CST */
 		struct _Tree **children; /* tableau des sous-arbres */
 	  } u;
+	  char* code;
 	} Tree, *TreeP;
 
 	/* construction et accesseur pour les arbres */

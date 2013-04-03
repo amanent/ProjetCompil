@@ -5,6 +5,7 @@
 
 #include "proj.h"
 #include "proj_y.h"
+#include "gencode.h"
 
 extern int yyparse();
 extern TreeP mainCode;
@@ -37,7 +38,7 @@ FILE *fd = NIL(FILE);
 int main(int argc, char **argv) {
 	int fi;
 	int i, res;
-
+	/*
 	for(i = 1; i < argc; i++) {
 	if (argv[i][0] == '-') {
 	  switch (argv[i][1]) {
@@ -65,15 +66,16 @@ int main(int argc, char **argv) {
 	exit(USAGE_ERROR);
 	}
 
-	/* redirige l'entree standard sur le fichier... */
+	//* redirige l'entree standard sur le fichier... *
 	close(0); dup(fi); close(fi);
 
-	if (i < argc) { /* fichier dans lequel lire les valeurs pour get() */
+	if (i < argc) { // fichier dans lequel lire les valeurs pour get() *
 	if ((fd = fopen(argv[i], "r")) == NULL) {
 	  fprintf(stderr, "Error: Cannot open %s\n", argv[i]);
 	  exit(USAGE_ERROR);
 	}
 	}
+	*/
 
 	/* Lance l'analyse syntaxique de tout le source, en appelant yylex au fur
 	* et a mesure. Execute les actions semantiques en parallele avec les
@@ -89,10 +91,22 @@ int main(int argc, char **argv) {
 	* a la premiere mais de continuer l'analyse pour en trouver d'autres, quand
 	* c'est possible.
 	*/
+	/*
 	res = yyparse();
 	printf("A priori c'est bon :)\n");
 	printf("resultat:\n%s", classList_print());
 	pprintMain(mainCode);
+	*/
+	string toto = NULL;
+	//(string prevCode, bool breakPoint, string label, string code, string arg, string comm)
+	toto = writeCode(toto, 1, NULL, "PUSHS", NULL, NULL);
+	for(i=0;i<400;i++)
+	{
+		toto = writeCode(toto, 1, "toto", "PUSHI", "15", "test");
+	}
+
+	printf("code : \n%s\n", toto);
+
 	if (fd != NIL(FILE)) fclose(fd);
 	return res ? SYNTAX_ERROR : errorCode;
 }

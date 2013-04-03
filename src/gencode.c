@@ -1,36 +1,74 @@
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-  switch (tree->op) {
-	case ID: break;
-	case IDCL: break; 
-	case STR: break;
-	case CST: break;		
-	case EQ: break;	
-	case NE: break;	
-	case GT: break;	
-	case GE: break;	
-	case LT: break;	
-	case LE: break;	
-	case ADD: break;		
-	case SUB: break;		
-	case MUL: break;		
-	case DIV: break;		
-	case CONCAT: break;
-	case BLCDECL: break; 	
-	case DECL: break;		
-	case LSTINST: break; 	
-	case VAR: break; 		
-	case MSGSNT: break; 	
-	case CAST: break; 		
-	case INST: break; 		
-	case LAFFECT: break;
-	case UNARYSUB: break;
-	case UNARYADD: break;
-	case IF: break;
-	case AFF: break;
-	case RET: break;
-	case LSTARG: break;
-  default:
-    fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", tree->op);
+#include "proj.h"
+#include "proj_y.h"
+
+string writeCode(string prevCode, bool breakPoint, string label, string code, string arg, string comm) {
+	string newCode = realloc(prevCode, (prevCode==NULL?0:strlen(prevCode))+
+										(label==NULL?0:strlen(label))+
+										strlen(code)+
+										(comm==NULL?0:strlen(arg)+strlen(comm)+10));
+	// +10 pour gérer les quelques caractères supplémentaires
+	strcat(newCode, "\n");
+	if(breakPoint)
+		strcat(newCode, "* ");
+	if(label!=NULL && strlen(label)>0) {
+		strcat(newCode, label);
+		strcat(newCode, ":");
+	}
+	strcat(newCode, "\t");
+	strcat(newCode, code);
+	strcat(newCode, "\t");
+	if(arg!=NULL && strlen(arg)>0) {
+		strcat(newCode, arg);
+		strcat(newCode, "\t");
+	}
+	if(comm!=NULL && strlen(comm)>0) {
+		strcat(newCode, "--");
+		strcat(newCode, comm);
+	}
+	return newCode;
+}
+
+void gencode(TreeP tree) {
+
+	if (tree == NULL)
+	    return;
+
+	switch (tree->op) {
+		case ID: break;
+		case IDCL: break; 
+		case STR: break;
+		case CST: break;		
+		case EQ: break;	
+		case NE: break;	
+		case GT: break;	
+		case GE: break;	
+		case LT: break;	
+		case LE: break;	
+		case ADD: break;		
+		case SUB: break;		
+		case MUL: break;		
+		case DIV: break;		
+		case CONCAT: break;
+		case BLCDECL: break; 	
+		case DECL: break;		
+		case LSTINST: break; 	
+		case VAR: break; 		
+		case MSGSNT: break; 	
+		case CAST: break; 		
+		case INST: break; 		
+		case LAFFECT: break;
+		case UNARYSUB: break;
+		case UNARYADD: break;
+		case IF: break;
+		case AFF: break;
+		case RET: break;
+		case LSTARG: break;
+		default:
+	    fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", tree->op);
   }
 }
 /*

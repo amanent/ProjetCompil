@@ -1,15 +1,15 @@
 # Makefile pour le projet Compilation
 
-OBJ = proj.o proj_l.o proj_y.o class.o function.o tree.o print.o
+OBJ = proj.o proj_l.o proj_y.o class.o function.o tree.o print.o gencode.o
 CC = gcc
 CFLAGS = -Wall -ansi -I./ -g -std=c99 #-Werror
 LDFLAGS = -g -lfl
 PROG = proj
 
-all : $(OBJ)
+all: $(OBJ)
 	$(CC) -o $(PROG) $(OBJ) $(LDFLAGS)
 
-proj.o : proj.c proj_y.h proj.h
+proj.o: proj.c proj_y.h proj.h
 	$(CC) $(CFLAGS) -c proj.c
 
 proj_l.o: proj_l.c proj_y.h
@@ -18,13 +18,13 @@ proj_l.o: proj_l.c proj_y.h
 proj_y.o : proj_y.c
 	$(CC) $(CFLAGS) -c proj_y.c
 
-proj.c :
+proj.c:
 	touch proj.c
 
-proj_l.c : proj.l proj_y.h
+proj_l.c: proj.l proj_y.h
 	flex --yylineno --nounput -o proj_l.c proj.l
 
-proj_y.h proj_y.c : proj.y proj.h
+proj_y.h proj_y.c: proj.y proj.h
 	bison -v -b proj_y -o proj_y.c -d proj.y
 
 .Phony: clean mrproper tests
