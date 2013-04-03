@@ -4,7 +4,7 @@ OBJ = proj.o proj_l.o proj_y.o class.o function.o tree.o print.o gencode.o
 CC = gcc
 CFLAGS = -Wall -ansi -I./ -g -std=c99 #-Werror
 LDFLAGS = -g -lfl
-PROG = proj
+PROG = proj 
 
 all: $(OBJ)
 	$(CC) -o $(PROG) $(OBJ) $(LDFLAGS)
