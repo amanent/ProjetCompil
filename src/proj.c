@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
 		toto = writeCode(toto, 1, "toto", "PUSHI", "15", "test");
 	}*/
 	writeCode(toto, 0, NULL, "WRITEI", NULL, NULL);
-	writeCode(toto, 0, NULL, "PUSHS", "\"\\n\"", NULL);
+	writeCode(toto, 0, NULL, "PUSHS", "\"\\n\"", NULL); 
 	writeCode(toto, 0, NULL, "WRITES", NULL, NULL);
 	writeCode(toto, 0, NULL, "STOP", NULL, NULL);
 
