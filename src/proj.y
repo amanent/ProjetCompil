@@ -10,7 +10,7 @@
 /* --------------------------------- */
 
 %nonassoc RELOP CONCAT
-%left ADD SUB
+%left ADD SUB 
 %left MUL DIV
 %left UNARYADD UNARYSUB
 
