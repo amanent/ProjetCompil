@@ -6,7 +6,7 @@
 %token RELOP
 %token ADD SUB MUL DIV CONCAT
 /* ---- pour l'arbre syntaxique --- */
-%token DECL LSTARG BLCDECL CAST INST MSGSNT LAFFECT LSTINST
+%token DECL LSTARG BLCDECL CAST INST MSGSNT SELECT LSTINST
 /* --------------------------------- */
 
 %nonassoc RELOP CONCAT
@@ -205,7 +205,7 @@ Exp2		:	'(' Exp ')'									{ pprintf("exp21\n"); $$ = $2; }
 			|	STR											{ pprintf("exp27\n"); $$ = makeLeafStr(STR, yyval.S); }
 			;
 
-LeftAffect	:	Exp2 '.' Id									{ pprintf("left affect\n"); $$ = makeTree(LAFFECT, 2, $1, makeLeafStr(ID, $3)); }
+LeftAffect	:	Exp2 '.' Id									{ pprintf("left affect\n"); $$ = makeTree(SELECT, 2, $1, makeLeafStr(ID, $3)); }
 			|	Id											{ pprintf("left affect2\n"); $$ = makeLeafStr(ID, $1); }
 			;
 

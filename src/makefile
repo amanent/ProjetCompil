@@ -15,7 +15,7 @@ proj.o: proj.c proj_y.h proj.h
 proj_l.o: proj_l.c proj_y.h
 	$(CC) $(CFLAGS) -c proj_l.c
 
-proj_y.o : proj_y.c
+proj_y.o: proj_y.c
 	$(CC) $(CFLAGS) -c proj_y.c
 
 proj.c:
@@ -36,6 +36,9 @@ clean:
 mrproper: clean
 	rm -f $(PROG)
 
+redo: mrproper all
+
 test:
 	@make
-	@./$(PROG) ../test/cast1.mls
+	@./$(PROG) test.mls 1> test.simple
+	@../utils/Interprete/interp test.simple

@@ -6,11 +6,13 @@
 #include "proj_y.h"
 
 string writeCode(string prevCode, bool breakPoint, string label, string code, string arg, string comm) {
-	string newCode = realloc(prevCode, (prevCode==NULL?0:strlen(prevCode))+
-										(label==NULL?0:strlen(label))+
-										strlen(code)+
-										(comm==NULL?0:strlen(arg)+strlen(comm)+10));
-	// +10 pour gérer les quelques caractères supplémentaires
+	string newCode = realloc(prevCode, (prevCode==NULL?0:strlen(prevCode))
+										+ (label==NULL?0:strlen(label))
+										+ strlen(code)
+										+ (arg==NULL?0:strlen(arg))
+										+ (comm==NULL?0:strlen(comm))
+										+ 10); // +10 pour gérer les quelques caractères supplémentaires
+	
 	strcat(newCode, "\n");
 	if(breakPoint)
 		strcat(newCode, "* ");
@@ -21,10 +23,10 @@ string writeCode(string prevCode, bool breakPoint, string label, string code, st
 	strcat(newCode, "\t");
 	strcat(newCode, code);
 	strcat(newCode, "\t");
-	if(arg!=NULL && strlen(arg)>0) {
+	if(arg!=NULL && strlen(arg)>0)
 		strcat(newCode, arg);
-		strcat(newCode, "\t");
-	}
+	
+	strcat(newCode, "\t");
 	if(comm!=NULL && strlen(comm)>0) {
 		strcat(newCode, "--");
 		strcat(newCode, comm);
@@ -32,35 +34,72 @@ string writeCode(string prevCode, bool breakPoint, string label, string code, st
 	return newCode;
 }
 
-void gencode(TreeP tree) {
+string strcatwalloc(string s1, string s2) {
+	string res = realloc(s1, (s1==NULL?0:strlen(s1))+(s2==NULL?0:strlen(s2))+1);
+	if(s2!=NULL && strlen(s2)>0)
+		strcat(res, s2);
+	return res;
+}
+
+string gencode(TreeP tree) {
+	char *tmp;
+	char intToStr[20]; /* normalement pas de int de plus de 20 digit gérés par la machine (18 max pour un nombre sur 64 bits, plus le signe plus \0 = 20) */
 
 	if (tree == NULL)
-	    return;
-
+	    return "";
+	//printf("treating : %d\n", tree->op);
 	switch (tree->op) {
 		case ID: break;
 		case IDCL: break; 
-		case STR: break;
-		case CST: break;		
-		case EQ: break;	
-		case NE: break;	
-		case GT: break;	
-		case GE: break;	
-		case LT: break;	
-		case LE: break;	
-		case ADD: break;		
-		case SUB: break;		
-		case MUL: break;		
-		case DIV: break;		
-		case CONCAT: break;
+		case STR: 
+			return writeCode(NULL, TRUE, NULL, "PUSHS", tree->u.str, "chaine de caractere"); 
+		case CST:
+			sprintf(intToStr, "%d", tree->u.val);
+			return writeCode(NULL, FALSE, NULL, "PUSHI", intToStr, "constante entiere"); 		
+		case EQ:
+			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(tmp, TRUE, NULL, "EQUAL", NULL, "relop (egal)");
+		case NE:
+			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			tmp = writeCode(tmp, TRUE, NULL, "EQUAL", NULL, "relop (non egal) ...");
+			return writeCode(tmp, TRUE, NULL, "NOT", NULL, "... fin");
+		case GT:
+			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(tmp, TRUE, NULL, "SUP", NULL, "relop (plus grand)");
+		case GE:
+			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(tmp, TRUE, NULL, "SUPEQ", NULL, "relop (plus grand ou egal)");
+		case LT:
+			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(tmp, TRUE, NULL, "INF", NULL, "relop (plus petit)");
+		case LE:
+			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(tmp, TRUE, NULL, "INFEQ", NULL, "relop (plus petit ou egal)");
+		case ADD:
+			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(tmp, FALSE, NULL, "ADD", NULL, "addition");
+		case SUB:
+			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(tmp, TRUE, NULL, "SUB", NULL, "soustraction");
+		case MUL:
+			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(tmp, TRUE, NULL, "MUL", NULL, "multiplication");
+		case DIV:
+			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(tmp, TRUE, NULL, "DIV", NULL, "division");
+		case CONCAT:
+			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(tmp, TRUE, NULL, "CONCAT", NULL, "concatenation");
 		case BLCDECL: break; 	
 		case DECL: break;		
-		case LSTINST: break; 	
+		case LSTINST: 
+			return strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
 		case VAR: break; 		
 		case MSGSNT: break; 	
 		case CAST: break; 		
-		case INST: break; 		
-		case LAFFECT: break;
+		case INST: 
+			return strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));	
+		case SELECT: break;
 		case UNARYSUB: break;
 		case UNARYADD: break;
 		case IF: break;
@@ -68,8 +107,10 @@ void gencode(TreeP tree) {
 		case RET: break;
 		case LSTARG: break;
 		default:
-	    fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", tree->op);
-  }
+		fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", tree->op);
+		break;
+	}
+	return"";
 }
 /*
 
@@ -77,29 +118,7 @@ ID
 	PUSH? addrIdent
 IDCL
 	//rien normalement
-STR
-	PUSHS str
-CST
-	PUSHI cst	
-EQ
-	//empiler les deux paramètres
-	EQUAL
-NE 
-	//empiler les deux paramètres
-	EQUAL
-	NOT
-GT 
-	//empiler les deux paramètres
-	SUP
-GE 
-	//empiler les deux paramètres
-	SUPEQ
-LT 
-	//empiler les deux paramètres
-	INF
-LE 
-	//empiler les deux paramètres
-	INFEQ
+
 ADD 
 	//empiler les deux valeurs
 	ADD

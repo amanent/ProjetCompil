@@ -1,0 +1,11 @@
+--A priori c'est bon :)
+--code :
+
+	START		
+	PUSHI	4	--constante entiere
+	PUSHI	5	--constante entiere
+	ADD		--addition
+	WRITEI		
+	PUSHS	"\n"	
+	WRITES		
+	STOP		

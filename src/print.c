@@ -80,7 +80,7 @@ void ppprint(TreeP tree) {
 	case MSGSNT: 	pprintTree3(tree, "", ".", "(", ")"); break;
 	case CAST: 		pprintTree2full(tree, "(as ", ": ", ")"); break;
 	case INST: 		pprintTree2full(tree, "new ", "(", ")"); break;
-	case LAFFECT: 	pprintTree2(tree, "."); break;
+	case SELECT: 	pprintTree2(tree, "."); break;
 	case UNARYSUB: 	printf("-"); ppprint(getChild(tree, 0)); break;
 	case UNARYADD: 	printf("+"); ppprint(getChild(tree, 0)); break;
 	case IF: 		pprintTree3(tree, "if ", " then ", " else ", ""); break;
