@@ -108,7 +108,7 @@ string gencode(TreeP tree) {
 		case LSTARG: break;
 		default:
 		fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", tree->op);
-		break;
+		break; 
 	}
 	return"";
 }
