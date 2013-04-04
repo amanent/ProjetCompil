@@ -105,10 +105,10 @@ string gencode(TreeP tree) {
 			sprintf(intToStr, "else_%d", nbIf);
 			tmp = writeCode(gencode(getChild(tree, 0)), TRUE, NULL, "JZ", intToStr, "premiere passe if");
 			tmp = strcatwalloc(tmp, gencode(getChild(tree, 1)));
-			sprintf(intToStr2, "suite_%d", nbIf);
+			sprintf(intToStr2, "suite_%d", nbIf++);
 			tmp = writeCode(tmp, TRUE, NULL, "JUMP", intToStr2, "deuxieme passe if (fin du then)");
 			tmp = writeCode(tmp, TRUE, intToStr, "NOP", NULL , "troisième passe du if (else)");
-			tmp = strcatwalloc(tmp, gencode(getChild(tree, 1)));
+			tmp = strcatwalloc(tmp, gencode(getChild(tree, 2)));
 			return writeCode(tmp, TRUE, intToStr2, "NOP", NULL , "quatrième passe du if (fin du else)");
 		case AFF: break;
 		case RET: break;

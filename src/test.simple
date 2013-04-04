@@ -2,13 +2,21 @@
 --code :
 
 	START		
+	PUSHI	10	--constante entiere
+	PUSHI	5	--constante entiere
+* 	INFEQ		--relop (plus petit ou egal)
+* 	JZ	else_0	--premiere passe if
 	PUSHI	4	--constante entiere
-* 	PUSHI	0	--moins unaire...
 * 	PUSHI	0	--moins unaire...
 	PUSHI	5	--constante entiere
 * 	SUB		--... fin moins unaire
-* 	SUB		--... fin moins unaire
 * 	MUL		--multiplication
+* 	JUMP	suite_0	--deuxieme passe if (fin du then)
+* else_0:	NOP		--troisième passe du if (else)
+	PUSHI	4	--constante entiere
+	PUSHI	5	--constante entiere
+* 	MUL		--multiplication
+* suite_0:	NOP		--quatrième passe du if (fin du else)
 	WRITEI		
 	PUSHS	"\n"	
 	WRITES		
