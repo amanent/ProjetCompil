@@ -3,8 +3,12 @@
 
 	START		
 	PUSHI	4	--constante entiere
+* 	PUSHI	0	--moins unaire...
+* 	PUSHI	0	--moins unaire...
 	PUSHI	5	--constante entiere
-	ADD		--addition
+* 	SUB		--... fin moins unaire
+* 	SUB		--... fin moins unaire
+* 	MUL		--multiplication
 	WRITEI		
 	PUSHS	"\n"	
 	WRITES		
