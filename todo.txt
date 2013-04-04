@@ -10,7 +10,7 @@ Verif contextuelle : (a peu près par ordre de priorité)
 	
 Génération de code
 	- pour chaque opération, réfléchir au code a générer
-	- générer du code de manière atomique
+	v générer du code de manière atomique
 	- générer code de base (au debut du prog) + code de base des classes
 		Dérooulement prog : 
 		exec des inits des champs statiques des classes dans l'ordre de declaration
