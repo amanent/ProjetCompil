@@ -136,27 +136,19 @@ IDCL
 MSGSNT
 	PUSHN 1 // pour la valeur de retour 
 	//push des n arguments 
-	
+	PUSHA //nom fonction
+	CALL
+	POP // nbParams 
 CAST
 	// je vois pas trop, peut etre en empilant une copie de l'objet et changer sa table d'appels
 INST
 	ALLOC //taille de lobjet
 	//initialisations
 	//constructeur
-	PUSHA //nom fonction
-	CALL
-	POP // nbParams 
+	
 SELECT
 	PUSH //addr objet 
-	// ???  
-IF
-	// Push prim expression 
-	JZ else_...
-	// code fils 1 
-	JUMP suite_...
-	else_...: // code fils 2 
-	suite: NOP
-	
+	// ??? 
 AFF
 	//adresse de la partie gauche deja pushée 
 	PUSH // valeur 
