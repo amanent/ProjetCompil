@@ -5,13 +5,16 @@
 #include "proj.h"
 #include "proj_y.h"
 
-string writeCode(string prevCode, bool breakPoint, string label, string code, string arg, string comm) {
+string writeCode(string prevCode, bool breakPoint, string label, string code, string arg, string comm) { // ne marche pas avec une chaine constante en premier paramètre.
 	string newCode = realloc(prevCode, (prevCode==NULL?0:strlen(prevCode))
 										+ (label==NULL?0:strlen(label))
 										+ strlen(code)
 										+ (arg==NULL?0:strlen(arg))
 										+ (comm==NULL?0:strlen(comm))
 										+ 10); // +10 pour gérer les quelques caractères supplémentaires
+	
+	if(prevCode==NULL)
+		newCode[0]='\0'; // au cas ou l'initialisation soit a NULL, équivalent a Malloc, il faut donc initialiser la chaine.
 	
 	strcat(newCode, "\n");
 	if(breakPoint)
@@ -35,15 +38,15 @@ string writeCode(string prevCode, bool breakPoint, string label, string code, st
 }
 
 string strcatwalloc(string s1, string s2) {
-	string res = realloc(s1, (s1==NULL?0:strlen(s1))+(s2==NULL?0:strlen(s2))+1);
+	string res = realloc(s1, (s1==NULL?0:strlen(s1)) + (s2==NULL?0:strlen(s2))+1);
 	if(s2!=NULL && strlen(s2)>0)
 		strcat(res, s2);
 	return res;
 }
 
 string gencode(TreeP tree) {
-	char *tmp;
-	char intToStr[20]; /* normalement pas de int de plus de 20 digit gérés par la machine (18 max pour un nombre sur 64 bits, plus le signe plus \0 = 20) */
+	char *tmp=NULL;
+	char intToStr[20] = ""; /* normalement pas de int de plus de 20 digit gérés par la machine (18 max pour un nombre sur 64 bits, plus le signe plus \0 = 20) */
 
 	if (tree == NULL)
 	    return "";
@@ -97,11 +100,15 @@ string gencode(TreeP tree) {
 		case VAR: break; 		
 		case MSGSNT: break; 	
 		case CAST: break; 		
-		case INST: 
+		case INST:
 			return strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));	
 		case SELECT: break;
-		case UNARYSUB: break;
-		case UNARYADD: break;
+		case UNARYSUB:
+			tmp = writeCode(NULL, TRUE, NULL, "PUSHI", "0", "moins unaire...");
+			tmp = strcatwalloc(tmp, gencode(getChild(tree, 0)));
+			return writeCode(tmp, TRUE, NULL, "SUB", NULL, "... fin moins unaire");
+		case UNARYADD: 
+			return gencode(getChild(tree, 0));
 		case IF: break;
 		case AFF: break;
 		case RET: break;
@@ -119,21 +126,6 @@ ID
 IDCL
 	//rien normalement
 
-ADD 
-	//empiler les deux valeurs
-	ADD
-SUB 
-	//empiler les deux valeurs
-	SUB
-MUL 
-	//empiler les deux valeurs
-	MUL
-DIV 
-	//empiler les deux valeurs
-	DIV
-CONCAT
-	//empiler les deux valeurs
-	CONCAT
 MSGSNT
 	PUSHN 1 // pour la valeur de retour 
 	//push des n arguments 
@@ -149,13 +141,7 @@ INST
 	POP // nbParams 
 SELECT
 	PUSH //addr objet 
-	// ??? 
-UNARYSUB
-	PUSHI 0
-	PUSH //valeur du fils
-	SUB
-UNARYADD
-	// nothing to do 
+	// ???  
 IF
 	// Push prim expression 
 	JZ else_...
