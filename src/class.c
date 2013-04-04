@@ -165,3 +165,12 @@ string class_print(ClassP class){
 
 	return str;
 }
+
+bool class_isinheritedFrom(ClassP c, ClassP cc){
+	if(c->super == NULL)
+		return FALSE;
+	if(c->super == cc || class_isinheritedFrom(c->super, cc))
+		return TRUE;
+	return FALSE;
+}
+
