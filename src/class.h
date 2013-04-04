@@ -45,5 +45,6 @@
 	void class_setSuper(ClassP c, string super, TreeP args);
 	string classList_print();
 	string class_print(ClassP class);
+	bool class_isinheritedFrom(ClassP c, ClassP cc);
 
 #endif
