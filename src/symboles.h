@@ -34,4 +34,8 @@
 	void symTable_eraseSection(SymbolesTableP t, int sect);
 	LineP symbLine_newLine(VarP var, Nature n);
 
+	SymbolesTableP symTable_duplicate(SymbolesTableP t, unsigned int depth);
+	LineP symTable_dupLine(LineP origin,SymbolesTableP receiver);
+	LineP symLine_dupLine(LineP origin);
+
 #endif

@@ -69,11 +69,11 @@ void class_setConstructor(ClassP c, ParamsListP pl, TreeP code) {
 	c->constructor->returnType = c;
 }
 
-ClassP class_getClass(string super){
+ClassP class_getClass(string className){
 	ClassListP currentCL = classList;
 	
 	while(currentCL != NULL) {
-		if(strcmp(currentCL->current->IDClass,super))
+		if(strcmp(currentCL->current->IDClass,className))
 			return currentCL->current;
 		currentCL = currentCL->next;
 	}

@@ -36,6 +36,28 @@ void symTable_enterNewScope(SymbolesTableP table){
 
 }
 
+SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func){
+	SymbolesTableP nt = symTable_duplicate(t, 0);
+	//Section 0 = Global
+
+	//Section 1 = Params
+	symTable_enterNewScope(nt);
+	ParamsListP prm = func->paramsList;
+	while(prm != NULL){
+		VarP v = NEW(1, Var);
+		v->ID = prm->name;
+		v->typeName = prm->type;
+		v->type = class_getClass(v->typeName);
+		symTable_addLine(nt, v, parameter);
+	}
+
+	//Section 2 = Entering function code
+	symTable_enterNewScope(nt);
+
+	return nt;
+}
+
+
 void symTable_exitScope(SymbolesTableP table){
 	table->nbVarAtRank[table->max_rank] = 0;
 	--table->max_rank;
@@ -64,3 +86,36 @@ bool symTable_isVarDefined(SymbolesTableP t, string varName, string className){
 	return FALSE;
 }
 
+SymbolesTableP symTable_duplicate(SymbolesTableP t, unsigned int depth) {
+	SymbolesTableP nt = symTable_newTable();
+	symTable_dupLine(t->sections[depth], nt);
+
+	nt->max_rank = depth;
+	int i, j; LineP cur = nt->current;
+	for(i = 0; i <= depth; ++i){
+		nt->nbVarAtRank[i] = t->nbVarAtRank[i];
+		for(j = 0; j < nt->nbVarAtRank[i]; ++j){
+			cur = cur->next;
+		}
+		nt->sections[i] = cur;
+	}
+	return nt;
+}
+
+LineP symTable_dupLine(LineP origin,SymbolesTableP receiver){
+	LineP next = NULL;
+	if(origin->next != NULL)
+		next = symTable_dupLine(origin->next, receiver);
+	LineP cur = symLine_dupLine(origin);
+	cur->next = next;
+	symTable_addLineFromLine(receiver, cur);
+	return cur;
+}
+
+LineP symLine_dupLine(LineP origin) {
+	LineP ll = symbLine_newLine(origin->v, origin->n);
+	ll->depth = origin->depth;
+	ll->rang = origin->rang;
+	ll->next = NULL;
+	return ll;
+}
