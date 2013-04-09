@@ -1,7 +1,7 @@
 #include "symboles.h"
 
 SymbolesTableP symTable_newTable(){
-	SymbolesTableP table = (SymbolesTableP)malloc(sizeof(SymbolesTable));
+	SymbolesTableP table = NEW(1, SymbolesTable);
 	table->nbVarAtRank = NEW(20, int);
 	table->sections = NEW(20, LineP);
 	table->max_rank = 0;
