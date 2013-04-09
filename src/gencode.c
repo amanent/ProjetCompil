@@ -57,48 +57,48 @@ string gencode(TreeP tree) {
 	//printf("treating : %d\n", tree->op);
 	switch (tree->op) {
 		case STR: 
-			return writeCode(NULL, TRUE, NULL, "PUSHS", tree->u.str, "chaine de caractere"); 
+			return writeCode(NULL, FALSE, NULL, "PUSHS", tree->u.str, "chaine de caractere"); 
 		case CST:
 			sprintf(intToStr, "%d", tree->u.val);
 			return writeCode(NULL, FALSE, NULL, "PUSHI", intToStr, "constante entiere"); 		
 		case EQ:
 			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, TRUE, NULL, "EQUAL", NULL, "relop (egal)");
+			return writeCode(tmp, FALSE, NULL, "EQUAL", NULL, NULL);
 		case NE:
 			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			tmp = writeCode(tmp, TRUE, NULL, "EQUAL", NULL, "relop (non egal) ...");
-			return writeCode(tmp, TRUE, NULL, "NOT", NULL, "... fin");
+			tmp = writeCode(tmp, FALSE, NULL, "EQUAL", NULL, NULL);
+			return writeCode(tmp, FALSE, NULL, "NOT", NULL, NULL);
 		case GT:
 			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, TRUE, NULL, "SUP", NULL, "relop (plus grand)");
+			return writeCode(tmp, FALSE, NULL, "SUP", NULL, NULL);
 		case GE:
 			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, TRUE, NULL, "SUPEQ", NULL, "relop (plus grand ou egal)");
+			return writeCode(tmp, FALSE, NULL, "SUPEQ", NULL, NULL);
 		case LT:
 			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, TRUE, NULL, "INF", NULL, "relop (plus petit)");
+			return writeCode(tmp, FALSE, NULL, "INF", NULL, NULL);
 		case LE:
 			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, TRUE, NULL, "INFEQ", NULL, "relop (plus petit ou egal)");
+			return writeCode(tmp, FALSE, NULL, "INFEQ", NULL, NULL);
 		case ADD:
 			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, FALSE, NULL, "ADD", NULL, "addition");
+			return writeCode(tmp, FALSE, NULL, "ADD", NULL, NULL);
 		case SUB:
 			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, TRUE, NULL, "SUB", NULL, "soustraction");
+			return writeCode(tmp, FALSE, NULL, "SUB", NULL, NULL);
 		case MUL:
 			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, TRUE, NULL, "MUL", NULL, "multiplication");
+			return writeCode(tmp, FALSE, NULL, "MUL", NULL, NULL);
 		case DIV:
 			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, TRUE, NULL, "DIV", NULL, "division");
+			return writeCode(tmp, FALSE, NULL, "DIV", NULL, NULL);
 		case CONCAT:
 			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, TRUE, NULL, "CONCAT", NULL, "concatenation");
+			return writeCode(tmp, FALSE, NULL, "CONCAT", NULL, NULL);
 		case UNARYSUB:
-			tmp = writeCode(NULL, TRUE, NULL, "PUSHI", "0", "moins unaire...");
+			tmp = writeCode(NULL, FALSE, NULL, "PUSHI", "0", NULL);
 			tmp = strcatwalloc(tmp, gencode(getChild(tree, 0)));
-			return writeCode(tmp, TRUE, NULL, "SUB", NULL, "... fin moins unaire");
+			return writeCode(tmp, FALSE, NULL, "SUB", NULL, NULL);
 		case UNARYADD: 
 			return gencode(getChild(tree, 0));
 		case IF: 
@@ -118,7 +118,7 @@ string gencode(TreeP tree) {
 		case SELECT: break;
 		case ID: break;
 		case IDCL: break;
-		case INSTR: break;
+		case INSTR: return writeCode(NULL, FALSE, NULL, "POPN", "1", NULL); break;
 		case LSTARG: case BLCDECL: case DECL: case LSTINST: case INSTA: 
 			return strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
 		default:
