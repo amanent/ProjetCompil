@@ -117,8 +117,9 @@ string gencode(TreeP tree) {
 		case CAST: break; 		
 		case SELECT: break;
 		case ID: break;
-		case IDCL: break; 
-		case LSTARG: case BLCDECL: case DECL: case LSTINST: case INST: 
+		case IDCL: break;
+		case INSTR: break;
+		case LSTARG: case BLCDECL: case DECL: case LSTINST: case INSTA: 
 			return strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
 		default:
 		fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", tree->op);

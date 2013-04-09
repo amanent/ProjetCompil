@@ -79,13 +79,14 @@ void ppprint(TreeP tree) {
 	case VAR: 		pprintTree3(tree, "var ", " : ", " := ", ""); break;
 	case MSGSNT: 	pprintTree3(tree, "", ".", "(", ")"); break;
 	case CAST: 		pprintTree2full(tree, "(as ", ": ", ")"); break;
-	case INST: 		pprintTree2full(tree, "new ", "(", ")"); break;
+	case INSTA: 		pprintTree2full(tree, "new ", "(", ")"); break;
+  case INSTR:   ppprint(getChild(tree, 0)); printf(";"); break;
 	case SELECT: 	pprintTree2(tree, "."); break;
 	case UNARYSUB: 	printf("-"); ppprint(getChild(tree, 0)); break;
 	case UNARYADD: 	printf("+"); ppprint(getChild(tree, 0)); break;
 	case IF: 		pprintTree3(tree, "if ", " then ", " else ", ""); break;
 	case AFF: 		pprintTree2full(tree, "", " := ", ";"); break; 
-	case RET: 		ppprint(getChild(tree, 0)); printf(";"); break;
+	case RET: 		printf("return;"); break;
 	case LSTARG: 	pprintTree2(tree, ", "); break;
   default:
     /* On signale le probleme mais on ne quitte pas le programme pour autant
