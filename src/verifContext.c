@@ -5,22 +5,14 @@
  *      Author: Matthieu
  */
 #include "proj.h"
+ #include "class.h"
 #include <string.h>
 
-ClassP getClass(string name){
-	ClassListP currentCL = classList;
-	ClassP result = NULL;
-	while(currentCL != NULL){
-		if(strcmp(currentCL->current->IDClass, name) == 0){
-			result = currentCL->current;
-			break;
-		}
-		currentCL = currentCL->next;
-	}
-	return result;
-}
+extern ClassListP classList;
+//extern TreeP mainCode;
 
-bool verif_contextuelle(){
+bool verif_contextuelle(){ // need verif arg.
+
 	/*foreach(class dans classlist){
 		foreach(var in static var && pas static var){
 			check type (if type = null && typeName == une des class de la class list alors maj pointeur vers cette classe);
@@ -37,7 +29,9 @@ bool verif_contextuelle(){
 		while(currentCFL != NULL){
 			VarP currentVar = currentCFL->current;
 			if(currentVar->type == NULL){
-				currentVar->type = getClass(currentVar->typeName);
+				currentVar->type = class_getClass(currentVar->typeName);
+				if(currentVar->type == NULL) // si on a pas trouvé la classe.
+					return FALSE;
 			}
 			currentCFL = currentCFL->next;
 		}
@@ -47,7 +41,9 @@ bool verif_contextuelle(){
 		while(currentSCFL != NULL){
 			VarP currentVar = currentSCFL->current;
 			if(currentVar->type == NULL){
-				currentVar->type = getClass(currentVar->typeName);
+				currentVar->type = class_getClass(currentVar->typeName);
+				if(currentVar->type == NULL) // si on a pas trouvé la classe.
+					return FALSE;
 			}
 			currentSCFL = currentSCFL->next;
 		}
@@ -57,8 +53,11 @@ bool verif_contextuelle(){
 		ClassMethodListP currentCML = currentCL->current->cml;
 		while(currentCML != NULL){
 			FunctionP currentFunc = currentCML->current;
-			if(currentFunc->returnType == NULL && strcmp(currentFunc->returnName,"VOID") != 0)
-				currentFunc->returnType = getClass(currentFunc->returnName);
+			if(currentFunc->returnType == NULL && currentSFunc->returnName != NULL) {
+				currentFunc->returnType = class_getClass(currentFunc->returnName);
+				if(currentFunc->returnType == NULL) // si on a pas trouvé la classe.
+					return FALSE;
+			}
 			currentCML = currentCML->next;
 		}
 
@@ -67,15 +66,21 @@ bool verif_contextuelle(){
 		ClassMethodListP currentSCML = currentCL->current->cml;
 		while(currentSCML != NULL){
 			FunctionP currentSFunc = currentCML->current;
-			if(currentSFunc->returnType == NULL && strcmp(currentSFunc->returnName,"VOID") != 0)
-				currentSFunc->returnType = getClass(currentSFunc->returnName);
+			if(currentSFunc->returnType == NULL && currentSFunc->returnName != NULL) {
+				currentSFunc->returnType = class_getClass(currentSFunc->returnName);
+				if(currentSFunc->returnType == NULL) // si on a pas trouvé la classe.
+					return FALSE;
+			}
 			currentCML = currentCML->next;
 		}
 
 		/* CHECK CURRENT CLASS SUPER */
 
-		if(currentCL->current->super == NULL && currentCL->current->superName != NULL)
-			currentCL->current->super = getClass(currentCL->current->superName);
+		if(currentCL->current->super == NULL && currentCL->current->superName != NULL) {
+			currentCL->current->super = class_getClass(currentCL->current->superName);
+			if(currentCL->current->super == NULL) // si on a pas trouvé la classe.
+				return FALSE;
+		}
 
 		currentCL = currentCL->next;
 	}
