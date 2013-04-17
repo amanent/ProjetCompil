@@ -28,10 +28,12 @@
 	void symTable_addLine(SymbolesTableP theTable, VarP var, Nature n);
 	void symTable_addLineFromScratch();
 
+	bool symTable_isVarDefined(SymbolesTableP t, string varName, string className);
 
 	void symTable_enterNewScope(SymbolesTableP table);
 	void symTable_exitScope(SymbolesTableP table);
 	void symTable_eraseSection(SymbolesTableP t, int sect);
+	SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func);
 	LineP symbLine_newLine(VarP var, Nature n);
 
 	SymbolesTableP symTable_duplicate(SymbolesTableP t, unsigned int depth);
