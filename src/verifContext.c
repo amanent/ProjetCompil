@@ -4,9 +4,7 @@
  *  Created on: Apr 5, 2013
  *      Author: Matthieu
  */
-#include "proj.h"
- #include "class.h"
-#include <string.h>
+#include "verifContext.h"
 
 extern ClassListP classList;
 //extern TreeP mainCode;
@@ -53,9 +51,9 @@ bool verif_contextuelle(){ // need verif arg.
 		ClassMethodListP currentCML = currentCL->current->cml;
 		while(currentCML != NULL){
 			FunctionP currentFunc = currentCML->current;
-			if(currentFunc->returnType == NULL && currentSFunc->returnName != NULL) {
+			if(currentFunc->returnType == NULL && currentFunc->returnName != NULL) {
 				currentFunc->returnType = class_getClass(currentFunc->returnName);
-				if(currentFunc->returnType == NULL) // si on a pas trouvé la classe.
+				if(currentFunc->returnType == NULL || verif_paramList(currentFunc) == FALSE) // si on a pas trouvé la classe.
 					return FALSE;
 			}
 			currentCML = currentCML->next;
@@ -68,7 +66,7 @@ bool verif_contextuelle(){ // need verif arg.
 			FunctionP currentSFunc = currentCML->current;
 			if(currentSFunc->returnType == NULL && currentSFunc->returnName != NULL) {
 				currentSFunc->returnType = class_getClass(currentSFunc->returnName);
-				if(currentSFunc->returnType == NULL) // si on a pas trouvé la classe.
+				if(currentSFunc->returnType == NULL || verif_paramList(currentSFunc) == FALSE) // si on a pas trouvé la classe.
 					return FALSE;
 			}
 			currentCML = currentCML->next;
@@ -87,3 +85,17 @@ bool verif_contextuelle(){ // need verif arg.
 
 	return FALSE;
 }
+
+
+bool verif_paramList(FunctionP func){
+	if(func == NULL)
+		return FALSE;
+	ParamsListP param = func->paramsList;
+	while(param){
+		if(!class_getClass(param->type))
+			return FALSE;
+		param = param->next;
+	}
+	return TRUE;
+}
+
