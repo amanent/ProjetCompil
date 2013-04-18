@@ -6,7 +6,7 @@
 %token RELOP
 %token ADD SUB MUL DIV CONCAT
 /* ---- pour l'arbre syntaxique --- */
-%token DECL LSTARG BLCDECL CAST INSTA INSTR MSGSNT SELECT LSTINST
+%token DECL LSTARG BLCDECL CAST INSTA INSTR MSGSNT SELECT LSTINST CMPAFF DIRAFF
 /* --------------------------------- */
 
 %nonassoc RELOP CONCAT
@@ -14,7 +14,7 @@
 %left MUL DIV
 %left UNARYADD UNARYSUB
 
-%type <T> AffectO ListArgO ListArg BlocO Bloc ListInstO ListInst Inst Exp Exp2 LeftAffect DeclV ListDeclV
+%type <T> AffectO ListArgO ListArg BlocO Bloc ListInstO ListInst Inst Exp Exp2 Select DeclV ListDeclV Affect
 %type <S> ReturnO Id Idcl 
 %type <I> StaticO OvOrStatO Relop
 %type <P> ListParamO ListParam Param
@@ -154,6 +154,9 @@ AffectO		:	/* epsilon */								{ pprintf("affect null\n"); $$ = NULL; }
 			|	AFF Exp	';'									{ pprintf("affect non null\n"); $$ = $2; }
 			;
 
+Affect 		:	Exp2 '.' Id AFF Exp ';' 					{ pprintf("affect1\n"); $$ = makeTree(CMPAFF, 3, $1, makeLeafStr(ID, $3), $5); }
+			|	Id AFF Exp ';'								{ pprintf("affect2\n"); $$ = makeTree(DIRAFF, 2, makeLeafStr(ID, $1), $3); }
+
 ListArgO	:	/* epsilon */								{ pprintf("listargo null\n"); $$ = NULL; }
 			|	ListArg										{ pprintf("listargo non null\n"); $$ = $1; }
 			;
@@ -181,7 +184,7 @@ ListInst	:	Inst										{ pprintf("listinst final\n"); $$ = $1; }
 Inst		:	Exp ';'										{ pprintf("inst1\n"); $$ = makeTree(INSTR, 1, $1); }
 			|	Bloc										{ pprintf("inst2\n"); $$ = $1; }
 			|	RET ';'										{ pprintf("inst3\n"); $$ = makeLeafInt(RET, 0); /* 0 a defaut de savoir quoi mettre*/ }
-			|	LeftAffect AFF Exp ';' /* Affectation */	{ pprintf("inst4\n"); $$ = makeTree(AFF, 2, $1, $3); }
+			|	Affect 										{ pprintf("inst4\n"); $$ = $1; }
 			|	IF Exp THEN Inst ELSE Inst					{ pprintf("inst5\n"); $$ = makeTree(IF, 3, $2, $4, $6); }
 			;
 
@@ -200,13 +203,10 @@ Exp2		:	'(' Exp ')'									{ pprintf("exp21\n"); $$ = $2; }
 			|	'(' AS Idcl ':' Exp ')'						{ pprintf("exp22\n"); $$ = makeTree(CAST, 2, makeLeafStr(IDCL, $3), $5); }
 			|	NEW Idcl '(' ListArgO ')'					{ pprintf("exp23\n"); $$ = makeTree(INSTA, 2, makeLeafStr(IDCL, $2), $4); }
 			|	Exp2 '.' Id '(' ListArgO ')'				{ pprintf("exp24\n"); $$ = makeTree(MSGSNT, 3, $1, makeLeafStr(ID, $3), $5); }
-			| 	LeftAffect									{ pprintf("exp25\n"); $$ = $1; }
+			| 	Exp2 '.' Id									{ pprintf("exp25\n"); $$ = makeTree(SELECT, 2, $1, makeLeafStr(ID, $3));}
 			|	CST											{ pprintf("exp26\n"); $$ = makeLeafInt(CST, yyval.I); }
 			|	STR											{ pprintf("exp27\n"); $$ = makeLeafStr(STR, yyval.S); }
-			;
-
-LeftAffect	:	Exp2 '.' Id									{ pprintf("left affect\n"); $$ = makeTree(SELECT, 2, $1, makeLeafStr(ID, $3)); }
-			|	Id											{ pprintf("left affect2\n"); $$ = makeLeafStr(ID, $1); }
+			|	Id 											{ pprintf("exp28\n"); $$ = makeLeafStr(ID, yyval.S); }
 			;
 
 Id 			: 	ID											{ pprintfs("id", yyval.S); $$ = yyval.S; }
