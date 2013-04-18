@@ -10,6 +10,7 @@
 		ClassP type;
 		string ID;	
 		TreeP value;
+		int local_offset, isLocal;
 	};
 
 	bool var_areEquals(VarP v, string varName, string varClass);

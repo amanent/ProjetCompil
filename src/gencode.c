@@ -48,6 +48,8 @@ string strcatwalloc(string s1, string s2) {
 int nbIf=0;
 /*-----------------------------------------------*/
 
+
+// Voir a différencier selection et affectation 
 string gencode(TreeP tree) {
 	char *tmp=NULL;
 	char intToStr[20] = "", intToStr2[20] = ""; /* normalement pas de int de plus de 20 digit gérés par la machine (18 max pour un nombre sur 64 bits, plus le signe plus \0 = 20) */
@@ -103,31 +105,54 @@ string gencode(TreeP tree) {
 			return gencode(getChild(tree, 0));
 		case IF: 
 			sprintf(intToStr, "else_%d", nbIf);
-			tmp = writeCode(gencode(getChild(tree, 0)), TRUE, NULL, "JZ", intToStr, "premiere passe if");
+			tmp = writeCode(gencode(getChild(tree, 0)), FALSE, NULL, "JZ", intToStr, "premiere passe if");
 			tmp = strcatwalloc(tmp, gencode(getChild(tree, 1)));
 			sprintf(intToStr2, "suite_%d", nbIf++);
-			tmp = writeCode(tmp, TRUE, NULL, "JUMP", intToStr2, "deuxieme passe if (fin du then)");
-			tmp = writeCode(tmp, TRUE, intToStr, "NOP", NULL , "troisième passe du if (else)");
+			tmp = writeCode(tmp, FALSE, NULL, "JUMP", intToStr2, "deuxieme passe if (fin du then)");
+			tmp = writeCode(tmp, FALSE, intToStr, "NOP", NULL , "troisième passe du if (else)");
 			tmp = strcatwalloc(tmp, gencode(getChild(tree, 2)));
-			return writeCode(tmp, TRUE, intToStr2, "NOP", NULL , "quatrième passe du if (fin du else)");
-		case AFF: break;
-		case RET: break;
+			return writeCode(tmp, FALSE, intToStr2, "NOP", NULL , "quatrième passe du if (fin du else)");
+/**/	case CMPAFF: // Exp2 '.' Id AFF Exp ';'
+			sprintf(intToStr, "%d", getChild(tree, 1)->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
+			
+			tmp = gencode(getChild(tree, 0);
+			tmp = strcatWalloc(tmp, gencode(getChild(tree, 2));
+
+			return writeCode(NULL, FALSE, NULL, "STORE", intToStr , NULL);
+/**/	case DIRAFF: // Id AFF Exp ';'
+			tmp = gencode(getChild(tree, 1);
+
+			sprintf(intToStr, "%d", getChild(tree, 1)->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
+			if(getChild(tree, 1)->u.var->isLocal)
+				tmp = writeCode(NULL, FALSE, NULL, "STOREG", intToStr , NULL);
+			else
+				tmp = writeCode(NULL, FALSE, NULL, "STOREL", intToStr , NULL);
+			return tmp;	
+/**/	case SELECT: // Exp2 '.' Id
+			sprintf(intToStr, "%d", getChild(tree, 1)->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
+			tmp = gencode(getChild(tree, 0));
+			return writeCode(tmp, FALSE, NULL, "LOAD", intToStr , NULL);
+		case RET: 
+			sprintf(intToStr, "%d", 10 /* indexofResult */); // champ rempli a la verif du type de retour de l'exp2.
+			tmp = writeCode(NULL, FALSE, NULL, "PUSH", intToStr , NULL); // valeur de result
+			return writeCode(tmp, FALSE, NULL, "STOREL", "" , NULL); // l'adresse de la valeur de retour
 		case VAR: break; 		
 		case MSGSNT: break; 	
-		case CAST: break; 		
-		case SELECT: break;
-		case ID: break;
-		case IDCL: break;
-		case INSTR: return writeCode(NULL, FALSE, NULL, "POPN", "1", NULL); break;
+		case CAST: break;
+		case ID: break; 	
+		case INSTR: 
+			return strcatwalloc(gencode(getChild(tree, 0)), writeCode(NULL, FALSE, "--", "POPN", "1", NULL)); // TWEEEEEEEEAK
 		case LSTARG: case BLCDECL: case DECL: case LSTINST: case INSTA: 
 			return strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-		default:
+		default: // case IDCL: 
 		fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", tree->op);
 		break; 
 	}
 	return"";
 }
 /*
+Integer a;
+Integer i := a+4; 
 
 ID
 	PUSH? addrIdent
@@ -151,8 +176,8 @@ SELECT
 	PUSH //addr objet 
 	// ??? 
 AFF
-	//adresse de la partie gauche deja pushée 
-	PUSH // valeur 
+	// fils gauche : push addresse
+	// fils droit : push la valeur
 	STORE // decalage du champ par rapport a la classe... comment est ce que je le retrouve moi ?) 
 RET
 VAR
