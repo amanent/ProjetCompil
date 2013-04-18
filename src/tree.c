@@ -47,3 +47,9 @@ TreeP makeLeafInt(short op, int val) {
   tree->u.val = val;
   return(tree);
 }
+
+TreeP makeLeafVar(short op, char *str) {
+  TreeP tree = makeNode(0, op); 
+  tree->u.var = val;
+  return(tree);
+}
