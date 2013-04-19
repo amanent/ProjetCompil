@@ -135,13 +135,28 @@ string gencode(TreeP tree) {
 			sprintf(intToStr, "%d", getChild(tree, 1)->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
 			tmp = gencode(getChild(tree, 0));
 			return writeCode(tmp, FALSE, NULL, "LOAD", intToStr , NULL);
-/**/	case RET: 
+/**/	case RET:
+			/* pas sur que y'ait besoin de faire ca */ 
 			sprintf(intToStr, "%d", 10 /* indexofResult */); // champ rempli a la verif du type de retour de l'exp2.
 			tmp = writeCode(NULL, FALSE, NULL, "PUSH", intToStr , NULL); // valeur de result
 			return writeCode(tmp, FALSE, NULL, "STOREL", "" , NULL); // l'adresse de la valeur de retour
-		case VAR: break;//return gencode(getChild(tree, 0));; 		
-		case MSGSNT: break; 	
-		case CAST: break;
+		case VAR: //VAR Id ':' Idcl AffectO	';'
+			tmp = writeCode(NULL, FALSE, NULL, "PUSHN", "1" , getChild(tree, 0)->u.str); // valeur de result
+			if(getChild(tree, 2)!= NULL)
+			{
+				/* faire l'affectation */
+			}
+		break;//return gencode(getChild(tree, 0));; 		
+		case MSGSNT:
+			/* MSGSNT
+			PUSHN 1 // pour la valeur de retour 
+			//push des n arguments 
+			PUSHA //nom fonction
+			CALL
+			POP // nbParams 
+			*/
+			break; 	
+		case CAST: break; /* ----------------------------------------------------------------------------------------------WHAT MUST I DO ? */
 /**/	case ID: 
 			sprintf(intToStr, "%d", 0);//tree->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
 			//switch(tree->u.var->nature)
@@ -150,9 +165,16 @@ string gencode(TreeP tree) {
 					return writeCode(tmp, FALSE, NULL, "PUSHL", intToStr , NULL);
 			}
 			break; 	
+		case INSTA:
+			/*INST
+				ALLOC //taille de lobjet
+				//initialisations
+				//constructeur
+			*/
+			break;
 		case INSTR: 
 			return strcatwalloc(gencode(getChild(tree, 0)), writeCode(NULL, FALSE, "--", "POPN", "1", NULL)); // TWEEEEEEEEAK
-		case LSTARG: case BLCDECL: case DECL: case LSTINST: case INSTA: 
+		case LSTARG: case BLCDECL: case DECL: case LSTINST:  
 			return strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
 		default: // case IDCL: 
 		fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", tree->op);
@@ -167,36 +189,4 @@ string gencode(TreeP tree) {
 	- paramètre
 	- var locale a un bloc
 	- var globale
-
-a : Integer;
-a := 3;
-
-ID
-	PUSH? addrIdent
-IDCL
-	//rien normalement
-
-MSGSNT
-	PUSHN 1 // pour la valeur de retour 
-	//push des n arguments 
-	PUSHA //nom fonction
-	CALL
-	POP // nbParams 
-CAST
-	// je vois pas trop, peut etre en empilant une copie de l'objet et changer sa table d'appels
-INST
-	ALLOC //taille de lobjet
-	//initialisations
-	//constructeur
-	
-SELECT
-	PUSH //addr objet 
-	// ??? 
-AFF
-	// fils gauche : push addresse
-	// fils droit : push la valeur
-	STORE // decalage du champ par rapport a la classe... comment est ce que je le retrouve moi ?) 
-RET
-VAR
-
 */
