@@ -66,4 +66,15 @@
 
 	int class_getNbFields(ClassP c);
 
+	int jtable_getOffsetStatic(ClassP c, string argName);
+	int jtable_getOffsetInst(ClassP c, string argName);
+	JumpTableP jtable_duplicate(JumpTableP j);
+	ClassFieldListP fl_getLast(ClassFieldListP fl);
+	ClassMethodListP ml_getLast(ClassMethodListP ml);
+	ClassMethodListP override(ClassMethodListP orig, FunctionP func);
+	void class_generateJumpTable(ClassP c);
+
+
+
+
 #endif
