@@ -144,14 +144,14 @@ ListDeclV	:	DeclV										{ pprintf("listdeclv final\n"); $$ = $1; }
 			|	DeclV ListDeclV								{ pprintf("listdeclv continue\n"); $$ = makeTree(DECL, 2, $1, $2); }
 			;
 
-DeclV		:	VAR Id ':' Idcl AffectO						{	pprintf("declv\n");
+DeclV		:	VAR Id ':' Idcl AffectO	';'					{	pprintf("declv\n");
 																$$ = makeTree(VAR, 3, makeLeafStr(ID, $2), makeLeafStr(IDCL, $4), $5);
 																/* voir a pas ajouter un autre type "variable" aux feuilles de l'arbre */
 															} 
 			;
 			
 AffectO		:	/* epsilon */								{ pprintf("affect null\n"); $$ = NULL; }
-			|	AFF Exp	';'									{ pprintf("affect non null\n"); $$ = $2; }
+			|	AFF Exp2									{ pprintf("affect non null\n"); $$ = $2; }
 			;
 
 Affect 		:	Exp2 '.' Id AFF Exp ';' 					{ pprintf("affect1\n"); $$ = makeTree(CMPAFF, 3, $1, makeLeafStr(ID, $3), $5); }
