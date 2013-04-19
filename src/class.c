@@ -297,3 +297,45 @@ JumpTableP jtable_duplicate(JumpTableP j){
 
 	return jump;
 }
+
+int jtable_getOffsetInst(ClassP c, string argName){
+	int off = 1;
+	ClassFieldListP cfltmp = c->instance->fields;
+	while(cfltmp){
+		if(!strcmp(cfltmp->current->name, argName))
+			return off;
+		++off;
+		cfltmp = cfltmp->next;
+	}
+
+	off = 0;
+	ClassMethodListP cmltmp = c->instance->methods;
+	while(cmltmp){
+		if(!strcmp(cmltmp->current->ID, argName))
+			return off;
+		++off;
+		cmltmp = cmltmp->next;
+	}
+	return -1;
+}
+
+int jtable_getOffsetStatic(ClassP c, string argName){
+	int off = 1;
+	ClassFieldListP cfltmp = c->statics->fields;
+	while(cfltmp){
+		if(!strcmp(cfltmp->current->name, argName))
+			return off;
+		++off;
+		cfltmp = cfltmp->next;
+	}
+
+	off = 0;
+	ClassMethodListP cmltmp = c->statics->methods;
+	while(cmltmp){
+		if(!strcmp(cmltmp->current->ID, argName))
+			return off;
+		++off;
+		cmltmp = cmltmp->next;
+	}
+	return -1;
+}
