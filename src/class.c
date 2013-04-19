@@ -217,21 +217,32 @@ void class_generateJumpTable(ClassP c){
 		c->statics = NEW(1, JumpTable);
 	}
 
-	ClassMethodListP clmtmp = c->cml;
-	while(clmtmp){
-		ClassMethodListP over = override(c->instance->methods, clmtmp->current);
+	ClassMethodListP cmltmp = c->cml;
+	while(cmltmp){
+		ClassMethodListP over = override(c->instance->methods, cmltmp->current);
 		if(over){
-			over->current = clmtmp->current;
+			over->current = cmltmp->current;
 		}
 		else{
 			ClassMethodListP newMethod = NEW(1, ClassMethodList);
 			newMethod->next = NULL;
-			newMethod->current  = clmtmp->current;
+			newMethod->current  = cmltmp->current;
 			if(c->instance->methods)
 				ml_getLast(c->instance->methods)->next = newMethod;
 			else
 				c->instance->methods = newMethod;
 		}
+	}
+
+	cmltmp c->staticCml
+	while(cmltmp){
+		ClassMethodListP newMethod = NEW(1, ClassMethodList);
+		newMethod->next = NULL;
+		newMethod->current  = cmltmp->current;
+		if(c->instance->methods)
+			ml_getLast(c->instance->methods)->next = newMethod;
+		else
+			c->instance->methods = newMethod;
 	}
 
 	ClassFieldListP clftmp = c->cfl;
@@ -244,6 +255,18 @@ void class_generateJumpTable(ClassP c){
 		else
 			c->instance->fields = newField;
 	}
+
+	clftmp = c->staticCfl;
+	while(clftmp){
+		ClassFieldListP newField = NEW(1, ClassFieldList);
+		newField->next = NULL;
+		newField->current = clftmp->current;
+		if(c->instance->fields)
+			fl_getLast(c->instance->fields)->next = newField;
+		else
+			c->instance->fields = newField;
+	}
+
 }
 
 ClassMethodListP override(ClassMethodListP orig, FunctionP func){
