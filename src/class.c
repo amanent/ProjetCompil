@@ -10,12 +10,36 @@ void classList_addClass(ClassP c) {
 	ClassListP newTop = NEW(1, ClassList);
 	newTop->current = c;
 	newTop->next = classList;
-	classList = newTop;
+	if(classList == NULL)
+		newTop->n = 0;
+	else
+		newTop->n = classlist->n+1;
+	classlist = newTop;
 }
 
 void class_setName(ClassP c, string name) {
 	c->IDClass = NEW(strlen(name)+1, char);
 	strcpy(c->IDClass,name);
+}
+
+int class_getNb(ClassP c){
+	ClassListP tmp = classlist;
+	while(tmp){
+		if(tmp->current == c)
+			return tmp->n;
+		tmp = tmp->next;
+	}
+	return -1;
+}
+
+int class_getNbFromName(string className){
+	ClassListP tmp = classlist;
+	while(tmp){
+		if(tmp->current->IDClass == className);
+			return tmp->n;
+		tmp = tmp->next;
+	}
+	return -1;
 }
 
 void class_addField(ClassP c, bool isStatic, TreeP decl ) {
@@ -174,3 +198,144 @@ bool class_isinheritedFrom(ClassP c, ClassP cc){
 	return FALSE;
 }
 
+int class_getNbFields(ClassP c){
+	int sum = 0;
+	ClassFieldListP tmp = c->cfl;
+	while(tmp){
+		sum++;
+		tmp = tmp->next;
+	}
+	return sum;
+}
+
+void class_generateJumpTable(ClassP c){
+	if(c->super != NULL){
+		if(c->super->instance == NULL){
+			class_generateJumpTable(c->super);
+		}
+		c->instance = jtable_duplicate(c->super->instance);
+		c->statics = NEW(1, JumpTable);
+	}
+
+	ClassMethodListP clmtmp = c->clm;
+	while(clmtmp){
+		ClassMethodListP over = override(c->instance->methods, clmtmp->current);
+		if(over){
+			over->current = clmtmp->current;
+		}
+		else{
+			ClassMethodListP newMethod = NEW(1, ClassMethodList);
+			newMethod->next = NULL;
+			newMethod->current  = clmtmp->current;
+			if(c->instance->methods)
+				ml_getLast(c->instance->methods)->next = newMethod;
+			else
+				c->instance->methods = newMethod;
+		}
+	}
+
+	ClassFieldListP clftmp = c->clf;
+	while(clft){
+		ClassFieldListP newField = NEW(1, ClassFieldListP);
+		newField->next = null;
+		newField->current = clftmp->current;
+		if(c->instance->fields)
+			fl_getLast(c->instance->fields)->next = newField;
+		else
+			c->instance->fields = newField;
+	}
+}
+
+ClassMethodListP override(ClassMethodListP orig, FunctionP func){
+	ClassMethodListP tmp = orig;
+	while(tmp){
+		if(!strcmp(func->name, tmp->current->name))
+			return tmp;
+		tmp = tmp->next;
+	}
+	return NULL;
+}
+
+ClassMethodListP ml_getLast(ClassMethodListP ml){
+	ClassMethodListP tmp = ml;
+	while(tmp->next != NULL)
+		tmp = tmp->next;
+	return tmp;
+}
+
+ClassFieldListP fl_getLast(ClassFieldListP fl){
+	ClassFieldListP tmp = fl;
+	while(tmp->next != NULL)
+		tmp = tmp->next;
+	return tmp;
+}
+
+JumpTableP jtable_duplicate(JumpTableP j){
+	JumpTableP jump = NEW(1, JumpTable);
+	
+	ClassFieldListP  jcfl = j->fields;
+	ClassMethodListP jcml = j->methods;
+
+	ClassFieldListP  ff;
+	ClassMethodListP mm;
+
+	while(jcfl){
+		ClassFieldListP  fff = NEW(1, ClassFieldListP);
+		fff->current = jcfl->current;
+		ff->next = fff;
+		ff = fff;
+		jcfl = jcfl->next;
+	}
+
+	while(jcml){
+		ClassMethodListP mmm = NEW(1, ClassMethodListP);
+		mmm->current = jcml->current;
+		mm->next = mmm;
+		ff = mmm;
+		jcml = jcml->next;
+	}
+
+	return jump;
+}
+
+int jtable_getOffsetInst(ClassP c, string argName){
+	int off = 1;
+	ClassFieldListP cfltmp = c->instance->fields;
+	while(cfltmp){
+		if(!strcmp(cfltmp->current->name, argName))
+			return off;
+		++off;
+		cfltmp = cfltmp->next;
+	}
+
+	off = 0;
+	ClassMethodListP cmltmp = c->instance->methods;
+	while(cmltmp){
+		if(!strcmp(cmltmp->current->ID, argName))
+			return off;
+		++off;
+		cmltmp = cmltmp->next;
+	}
+	return -1;
+}
+
+int jtable_getOffsetStatic(ClassP c, string argName){
+	int off = 1;
+	ClassFieldListP cfltmp = c->statics->fields;
+	while(cfltmp){
+		if(!strcmp(cfltmp->current->name, argName))
+			return off;
+		++off;
+		cfltmp = cfltmp->next;
+	}
+
+	off = 0;
+	ClassMethodListP cmltmp = c->statics->methods;
+	while(cmltmp){
+		if(!strcmp(cmltmp->current->ID, argName))
+			return off;
+		++off;
+		cmltmp = cmltmp->next;
+	}
+	return -1;
+}
