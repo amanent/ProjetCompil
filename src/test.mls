@@ -1,7 +1,7 @@
 /*test.mls*/
 {
-	a : Integer;
+	var a : Integer;
+	is
 	a := 10;
-
 	if a <= 5 then 4 * -5; else 4 * 5;
 }
