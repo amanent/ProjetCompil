@@ -4,13 +4,14 @@
 	typedef struct _Var Var, *VarP;
 
 	#include "proj.h"
+	#include "class.h"
 
 	struct _Var{
 		string typeName;
 		ClassP type;
 		string ID;	
 		TreeP value;
-		int local_offset, isLocal;
+		int local_offset, nature;
 	};
 
 	bool var_areEquals(VarP v, string varName, string varClass);

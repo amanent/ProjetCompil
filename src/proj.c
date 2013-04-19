@@ -101,6 +101,7 @@ int main(int argc, char **argv) {
 
 	string toto = NULL;
 	//(string prevCode, bool breakPoint, string label, string code, string arg, string comm)
+	toto = writeCode(toto, 0, NULL, "PUSHI", "3", NULL);
 	toto = writeCode(toto, 0, NULL, "START", NULL, NULL);
 
 	toto = strcatwalloc(toto, gencode(mainCode));

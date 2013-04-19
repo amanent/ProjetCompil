@@ -44,10 +44,10 @@ string strcatwalloc(string s1, string s2) {
 	return res;
 }
 
+
 /* variables annexes nécéssaires, je vais les replacer plus loin */
 int nbIf=0;
 /*-----------------------------------------------*/
-
 
 // Voir a différencier selection et affectation 
 string gencode(TreeP tree) {
@@ -115,31 +115,41 @@ string gencode(TreeP tree) {
 /**/	case CMPAFF: // Exp2 '.' Id AFF Exp ';'
 			sprintf(intToStr, "%d", getChild(tree, 1)->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
 			
-			tmp = gencode(getChild(tree, 0);
-			tmp = strcatWalloc(tmp, gencode(getChild(tree, 2));
+			tmp = gencode(getChild(tree, 0));
+			tmp = strcatwalloc(tmp, gencode(getChild(tree, 2)));
 
 			return writeCode(NULL, FALSE, NULL, "STORE", intToStr , NULL);
 /**/	case DIRAFF: // Id AFF Exp ';'
-			tmp = gencode(getChild(tree, 1);
+			sprintf(intToStr, "%d", 0);//getChild(tree, 0)->u.var->local_offset);
 
-			sprintf(intToStr, "%d", getChild(tree, 1)->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
-			if(getChild(tree, 1)->u.var->isLocal)
-				tmp = writeCode(NULL, FALSE, NULL, "STOREG", intToStr , NULL);
-			else
-				tmp = writeCode(NULL, FALSE, NULL, "STOREL", intToStr , NULL);
+			tmp = gencode(getChild(tree, 1)); /* le code de l'expression */
+
+			//switch(getChild(tree, 0)->u.var->nature)
+			{
+				//case 1:
+					return writeCode(tmp, FALSE, NULL, "STOREL", intToStr , NULL);
+				//tmp = writeCode(NULL, FALSE, NULL, "STOREL", intToStr , NULL);
+			}
 			return tmp;	
 /**/	case SELECT: // Exp2 '.' Id
 			sprintf(intToStr, "%d", getChild(tree, 1)->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
 			tmp = gencode(getChild(tree, 0));
 			return writeCode(tmp, FALSE, NULL, "LOAD", intToStr , NULL);
-		case RET: 
+/**/	case RET: 
 			sprintf(intToStr, "%d", 10 /* indexofResult */); // champ rempli a la verif du type de retour de l'exp2.
 			tmp = writeCode(NULL, FALSE, NULL, "PUSH", intToStr , NULL); // valeur de result
 			return writeCode(tmp, FALSE, NULL, "STOREL", "" , NULL); // l'adresse de la valeur de retour
 		case VAR: break; 		
 		case MSGSNT: break; 	
 		case CAST: break;
-		case ID: break; 	
+/**/	case ID: 
+			sprintf(intToStr, "%d", 0);//tree->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
+			//switch(tree->u.var->nature)
+			{
+				//case 1: /* variable locale a un bloc => decalage par rapport au FP*/
+					return writeCode(tmp, FALSE, NULL, "PUSHL", intToStr , NULL);
+			}
+			break; 	
 		case INSTR: 
 			return strcatwalloc(gencode(getChild(tree, 0)), writeCode(NULL, FALSE, "--", "POPN", "1", NULL)); // TWEEEEEEEEAK
 		case LSTARG: case BLCDECL: case DECL: case LSTINST: case INSTA: 
@@ -151,8 +161,15 @@ string gencode(TreeP tree) {
 	return"";
 }
 /*
-Integer a;
-Integer i := a+4; 
+!= types de variables :
+	- attribut statique
+	- attribut non statique
+	- paramètre
+	- var locale a un bloc
+	- var globale
+
+a : Integer;
+a := 3;
 
 ID
 	PUSH? addrIdent

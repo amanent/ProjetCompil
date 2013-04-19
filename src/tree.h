@@ -1,9 +1,11 @@
 #ifndef _TREE_H_
 #define _TREE_H_
 	
+	typedef struct _Tree Tree, *TreeP;
+
 	#include "variable.h"
 	/* la structure d'un arbre (noeud ou feuille) */
-	typedef struct _Tree {
+	struct _Tree {
 	  short op;         /* etiquette de l'operateur courant */
 	  short nbChildren; /* nombre de sous-arbres */
 	  union {
@@ -13,7 +15,7 @@
 		struct _Tree **children; /* tableau des sous-arbres */
 	  } u;
 	  char* code;
-	} Tree, *TreeP;
+	};
 
 	/* construction et accesseur pour les arbres */
 	TreeP makeLeafStr(short op, char *str);

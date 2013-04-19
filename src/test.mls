@@ -1,4 +1,7 @@
 /*test.mls*/
 {
-	if 10 <= 5 then 4 * -5; else 4 * 5;
+	a : Integer;
+	a := 10;
+
+	if a <= 5 then 4 * -5; else 4 * 5;
 }

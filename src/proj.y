@@ -14,7 +14,7 @@
 %left MUL DIV
 %left UNARYADD UNARYSUB
 
-%type <T> AffectO ListArgO ListArg BlocO Bloc ListInstO ListInst Inst Exp Exp2 Select DeclV ListDeclV Affect
+%type <T> AffectO ListArgO ListArg BlocO Bloc ListInstO ListInst Inst DeclV ListDeclV Affect Exp Exp2
 %type <S> ReturnO Id Idcl 
 %type <I> StaticO OvOrStatO Relop
 %type <P> ListParamO ListParam Param
