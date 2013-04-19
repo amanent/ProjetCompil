@@ -139,7 +139,7 @@ string gencode(TreeP tree) {
 			sprintf(intToStr, "%d", 10 /* indexofResult */); // champ rempli a la verif du type de retour de l'exp2.
 			tmp = writeCode(NULL, FALSE, NULL, "PUSH", intToStr , NULL); // valeur de result
 			return writeCode(tmp, FALSE, NULL, "STOREL", "" , NULL); // l'adresse de la valeur de retour
-		case VAR: break; 		
+		case VAR: break;//return gencode(getChild(tree, 0));; 		
 		case MSGSNT: break; 	
 		case CAST: break;
 /**/	case ID: 
@@ -158,7 +158,7 @@ string gencode(TreeP tree) {
 		fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", tree->op);
 		break; 
 	}
-	return"";
+	return NULL;
 }
 /*
 != types de variables :
