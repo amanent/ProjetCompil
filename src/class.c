@@ -234,7 +234,7 @@ void class_generateJumpTable(ClassP c){
 		}
 	}
 
-	cmltmp c->staticCml
+	cmltmp = c->staticCml;
 	while(cmltmp){
 		ClassMethodListP newMethod = NEW(1, ClassMethodList);
 		newMethod->next = NULL;
