@@ -101,19 +101,15 @@ int main(int argc, char **argv) {
 
 	string toto = NULL;
 	//(string prevCode, bool breakPoint, string label, string code, string arg, string comm)
-	toto = writeCode(toto, 0, NULL, "PUSHI", "3", NULL);
+	//toto = writeCode(toto, FALSE, NULL, "PUSHI", "3", NULL);
 	toto = writeCode(toto, 0, NULL, "START", NULL, NULL);
 
 	toto = strcatwalloc(toto, gencode(mainCode));
-	//printf("%s\n", gencode(mainCode));
-	/*for(i=0;i<400;i++)
-	{
-		toto = writeCode(toto, 1, "toto", "PUSHI", "15", "test");
-	}*/
-	writeCode(toto, 0, NULL, "WRITEI", NULL, NULL);
-	writeCode(toto, 0, NULL, "PUSHS", "\"\\n\"", NULL); 
-	writeCode(toto, 0, NULL, "WRITES", NULL, NULL);
-	writeCode(toto, 0, NULL, "STOP", NULL, NULL);
+
+	writeCode(toto, FALSE, NULL, "WRITEI", NULL, NULL);
+	writeCode(toto, FALSE, NULL, "PUSHS", "\"\\n\"", NULL); 
+	writeCode(toto, FALSE, NULL, "WRITES", NULL, NULL);
+	writeCode(toto, FALSE, NULL, "STOP", NULL, NULL);
 
 	printf("--code :\n%s\n", toto);
 

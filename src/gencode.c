@@ -59,10 +59,10 @@ string gencode(TreeP tree) {
 	//printf("treating : %d\n", tree->op);
 	switch (tree->op) {
 		case STR: 
-			return writeCode(NULL, FALSE, NULL, "PUSHS", tree->u.str, "chaine de caractere"); 
+			return writeCode(NULL, FALSE, NULL, "PUSHS", tree->u.str, "str cst"); 
 		case CST:
 			sprintf(intToStr, "%d", tree->u.val);
-			return writeCode(NULL, FALSE, NULL, "PUSHI", intToStr, "constante entiere"); 		
+			return writeCode(NULL, FALSE, NULL, "PUSHI", intToStr, "int cst"); 		
 		case EQ:
 			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
 			return writeCode(tmp, FALSE, NULL, "EQUAL", NULL, NULL);
@@ -105,13 +105,14 @@ string gencode(TreeP tree) {
 			return gencode(getChild(tree, 0));
 		case IF: 
 			sprintf(intToStr, "else_%d", nbIf);
-			tmp = writeCode(gencode(getChild(tree, 0)), FALSE, NULL, "JZ", intToStr, "premiere passe if");
-			tmp = strcatwalloc(tmp, gencode(getChild(tree, 1)));
 			sprintf(intToStr2, "suite_%d", nbIf++);
-			tmp = writeCode(tmp, FALSE, NULL, "JUMP", intToStr2, "deuxieme passe if (fin du then)");
-			tmp = writeCode(tmp, FALSE, intToStr, "NOP", NULL , "troisième passe du if (else)");
+
+			tmp = writeCode(gencode(getChild(tree, 0)), FALSE, NULL, "JZ", intToStr, "if");
+			tmp = strcatwalloc(tmp, gencode(getChild(tree, 1)));
+			tmp = writeCode(tmp, FALSE, NULL, "JUMP", intToStr2, NULL);
+			tmp = writeCode(tmp, FALSE, intToStr, "NOP", NULL , NULL);
 			tmp = strcatwalloc(tmp, gencode(getChild(tree, 2)));
-			return writeCode(tmp, FALSE, intToStr2, "NOP", NULL , "quatrième passe du if (fin du else)");
+			return writeCode(tmp, FALSE, intToStr2, "NOP", NULL , "fin if");
 /**/	case CMPAFF: // Exp2 '.' Id AFF Exp ';'
 			sprintf(intToStr, "%d", getChild(tree, 1)->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
 			
@@ -146,17 +147,18 @@ string gencode(TreeP tree) {
 			{
 				/* faire l'affectation */
 			}
-		break;//return gencode(getChild(tree, 0));; 		
-		case MSGSNT:
-			/* MSGSNT
-			PUSHN 1 // pour la valeur de retour 
-			//push des n arguments 
-			PUSHA //nom fonction
-			CALL
-			POP // nbParams 
-			*/
-			break; 	
-		case CAST: break; /* ----------------------------------------------------------------------------------------------WHAT MUST I DO ? */
+			return tmp; //gencode(getChild(tree, 0));; 		
+		case MSGSNT: // Exp2 '.' Id '(' ListArgO ')'
+			sprintf(intToStr, "%d", 1 /* nbParams +1 */);
+			/* La valeur/adresse de Exp2 est deja sur la pile */
+			tmp = gencode(getChild(tree, 2)); //push des n arguments
+			if(1/*si valeur de retour*/)
+				tmp = writeCode(tmp, FALSE, NULL, "PUSHN", "1" , NULL); // pour la valeur de retour 
+			tmp = writeCode(tmp, FALSE, NULL, "PUSHA", getChild(tree, 1)->u.str , NULL);
+			tmp = writeCode(tmp, FALSE, NULL, "CALL", NULL , NULL);
+			return writeCode(tmp, FALSE, NULL, "POPN", intToStr , NULL);
+		case CAST: 
+			return NULL; /* ----------------------------------------------------------------------------------------------WHAT MUST I DO ? */
 /**/	case ID: 
 			sprintf(intToStr, "%d", 0);//tree->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
 			//switch(tree->u.var->nature)
@@ -164,14 +166,14 @@ string gencode(TreeP tree) {
 				//case 1: /* variable locale a un bloc => decalage par rapport au FP*/
 					return writeCode(tmp, FALSE, NULL, "PUSHL", intToStr , NULL);
 			}
-			break; 	
+			return NULL;	
 		case INSTA:
 			/*INST
 				ALLOC //taille de lobjet
 				//initialisations
 				//constructeur
 			*/
-			break;
+			return NULL;
 		case INSTR: 
 			return strcatwalloc(gencode(getChild(tree, 0)), writeCode(NULL, FALSE, "--", "POPN", "1", NULL)); // TWEEEEEEEEAK
 		case LSTARG: case BLCDECL: case DECL: case LSTINST:  
