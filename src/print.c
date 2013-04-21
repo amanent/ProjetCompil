@@ -77,7 +77,8 @@ void ppprint(TreeP tree) {
 	case DECL: 		pprintTree2(tree, "\n"); break;
 	case LSTINST: 	pprintTree2(tree, "\n"); break;
 	case VAR: 		pprintTree3(tree, "var ", " : ", " := ", ""); break;
-	case MSGSNT: 	pprintTree3(tree, "", ".", "(", ")"); break;
+	case MSGSNT: 
+  case MSGSNTS:	pprintTree3(tree, "", ".", "(", ")"); break;
 	case CAST: 		pprintTree2full(tree, "(as ", ": ", ")"); break;
 	case INSTA: 		pprintTree2full(tree, "new ", "(", ")"); break;
   case INSTR:   ppprint(getChild(tree, 0)); printf(";"); break;
