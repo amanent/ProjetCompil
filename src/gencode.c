@@ -114,7 +114,7 @@ string gencode(TreeP tree) {
 			tmp = strcatwalloc(tmp, gencode(getChild(tree, 2)));
 			return writeCode(tmp, FALSE, intToStr2, "NOP", NULL , "fin if");
 /**/	case CMPAFF: // Exp2 '.' Id AFF Exp ';'
-			sprintf(intToStr, "%d", getChild(tree, 1)->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
+			sprintf(intToStr, "%d", getChild(tree, 1)->var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
 			
 			tmp = gencode(getChild(tree, 0));
 			tmp = strcatwalloc(tmp, gencode(getChild(tree, 2)));
@@ -133,7 +133,7 @@ string gencode(TreeP tree) {
 			}
 			return tmp;	
 /**/	case SELECT: // Exp2 '.' Id
-			sprintf(intToStr, "%d", getChild(tree, 1)->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
+			sprintf(intToStr, "%d", getChild(tree, 1)->var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
 			tmp = gencode(getChild(tree, 0));
 			return writeCode(tmp, FALSE, NULL, "LOAD", intToStr , NULL);
 /**/	case RET:
@@ -159,6 +159,8 @@ string gencode(TreeP tree) {
 			tmp = writeCode(tmp, FALSE, NULL, "PUSHA", getChild(tree, 1)->u.str , NULL);
 			tmp = writeCode(tmp, FALSE, NULL, "CALL", NULL , NULL);
 			return writeCode(tmp, FALSE, NULL, "POPN", intToStr , NULL);
+		case MSGSNTS:
+			return NULL;
 /**/	case ID: 
 			sprintf(intToStr, "%d", 0);//tree->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
 			//switch(tree->u.var->nature)
