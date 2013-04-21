@@ -9,6 +9,7 @@
 
 extern int yyparse();
 extern TreeP mainCode;
+extern ClassListP classList;
 
 /* Niveau de 'verbosite'.
  * Par defaut, n'imprime que le resultat et les messages d'erreur
@@ -99,7 +100,7 @@ int main(int argc, char **argv) {
 	//pprintMain(mainCode);
 	
 
-	string toto = NULL;
+	string toto = genBaseCode(classList);
 	//(string prevCode, bool breakPoint, string label, string code, string arg, string comm)
 	//toto = writeCode(toto, FALSE, NULL, "PUSHI", "3", NULL);
 	toto = writeCode(toto, 0, NULL, "START", NULL, NULL);

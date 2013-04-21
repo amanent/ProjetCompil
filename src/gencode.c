@@ -226,6 +226,51 @@ string genCodeConst(ClassP c) {
 	return writeCode(code, FALSE, NULL, "POPN", intToStr, NULL); // a priori on peut le faire ici sans problème et ca simplifie le traitement
 }
 
+string genBaseCode(ClassListP cl_par)
+{
+	string code = NULL;
+	char intToStr[30] = "";
+	ClassListP cl;
+
+	code = strcatwalloc(code, "--champs statiques :\n");
+	cl = cl_par;
+	while(cl!=NULL)
+	{
+		while(cl->current->staticCfl!=NULL) // réservation d'un espace pour chaque champ statique
+		{
+			sprintf(intToStr, "%s_%s", cl->current->IDClass, cl->current->staticCfl->current->ID);
+			code = writeCode(code, FALSE, NULL, "PUSHN", "1" , intToStr);
+		}
+	}
+
+	code = strcatwalloc(code, "--methodes statiques :\n");
+	cl = cl_par;
+	while(cl!=NULL)
+	{
+		sprintf(intToStr, "\t--classe %s\n", cl->current->IDClass);
+		code = strcatwalloc(code, intToStr);
+		while(cl->current->staticCml!=NULL) // réservation d'un espace pour chaque champ statique
+		{
+			code = genCodeFunc(cl->current->staticCml->current);
+		}
+	}
+
+	code = strcatwalloc(code, "--methodes non statiques :\n");
+	cl = cl_par;
+	while(cl!=NULL)
+	{
+		sprintf(intToStr, "\t--classe %s\n", cl->current->IDClass);
+		code = strcatwalloc(code, genCodeFunc(cl->current->constructor));
+
+		code = strcatwalloc(code, intToStr);
+		while(cl->current->cml!=NULL) // réservation d'un espace pour chaque champ statique
+		{
+			code = strcatwalloc(code, genCodeFunc(cl->current->cml->current));
+		}
+	}
+	return code;
+}
+
 /*
 struct _Class{
 	  string IDClass;
