@@ -12,7 +12,7 @@ Verif contextuelle :
 Génération de code :
 	✔  pour chaque opération, réfléchir au code a générer
 	✔ générer du code de manière atomique @done (13-04-17 14:04)
-	☐  générer code de base (au debut du prog) + code de base des classes
+	✔  générer code de base (au debut du prog) + code de base des classes
 		Déroulement prog : 
 		☐ exec des inits des champs statiques des classes dans l'ordre de declaration
 		☐ declaration des champs
