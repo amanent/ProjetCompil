@@ -34,6 +34,7 @@
 	  struct  _Class * super;
 	  string superName;
 	  TreeP superCallArgs;
+	  int size;
 
 	  JumpTableP instance;
 	  JumpTableP statics;
