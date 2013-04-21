@@ -194,7 +194,7 @@ Exp			:	Exp Relop Exp %prec RELOP 					{ pprintf("exp1\n"); $$ = makeTree($2, 2,
 			|	Exp SUB Exp									{ pprintf("exp4\n"); $$ = makeTree(SUB, 2, $1, $3); }
 			|	Exp MUL Exp									{ pprintf("exp5\n"); $$ = makeTree(MUL, 2, $1, $3); }
 			|	Exp DIV Exp									{ pprintf("exp6\n"); $$ = makeTree(DIV, 2, $1, $3); }
-			|	ADD Exp %prec UNARYADD						{ pprintf("exp7\n"); $$ = makeTree(UNARYADD, 1, $2); }
+			|	ADD Exp %prec UNARYADD						{ pprintf("exp7\n"); $$ = makeTree(UNARYADD, 1, $2); } /* vraiment nécéssaire ? */
 			|	SUB Exp %prec UNARYSUB						{ pprintf("exp8\n"); $$ = makeTree(UNARYSUB, 1, $2); }
 			|	Exp2										{ pprintf("exp9\n"); $$ = $1; }
 			;
