@@ -221,9 +221,9 @@ string genCodeConst(ClassP c) {
 	code = strcatwalloc(code, gencode(c->constructor->code));
 
 	sprintf(intToStr, "%d", -1 - c->constructor->nbParam);
-
 	code = writeCode(code, FALSE, NULL, "STOREL", intToStr, NULL);
-	return writeCode(code, FALSE, NULL, "POPN", c->constructor->nbParam, NULL); // a priori on peut le faire ici sans problème et ca simplifie le traitement
+	sprintf(intToStr, "%d", c->constructor->nbParam);
+	return writeCode(code, FALSE, NULL, "POPN", intToStr, NULL); // a priori on peut le faire ici sans problème et ca simplifie le traitement
 }
 
 /*
