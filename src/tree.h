@@ -11,16 +11,16 @@
 	  union {
 		char *str;      /* valeur de la feuille si op = ID, IDCL ou STR */
 		int val;        /* valeur de la feuille si op = CST */
-		VarP var;
 		struct _Tree **children; /* tableau des sous-arbres */
 	  } u;
 	  char* code;
+	  VarP var;
+	  FunctionP func; // ces deux derniers champs peuvent etre dans une union
 	};
 
 	/* construction et accesseur pour les arbres */
 	TreeP makeLeafStr(short op, char *str);
 	TreeP makeLeafInt(short op, int val);
-	TreeP makeLeafVar(short op, char *str);
 	TreeP makeTree(short op, int nbChildren, ...);
 	TreeP getChild(TreeP tree, int rank);
 	/* fonction d'affichage d'un arbre */
