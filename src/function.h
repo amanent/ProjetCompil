@@ -21,6 +21,7 @@
 		TreeP code;
 		ClassP returnType;
 		string returnName;
+		int nbParam;
 	};
 	
 /*
