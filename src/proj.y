@@ -6,7 +6,7 @@
 %token RELOP
 %token ADD SUB MUL DIV CONCAT
 /* ---- pour l'arbre syntaxique --- */
-%token DECL LSTARG BLCDECL CAST INSTA INSTR MSGSNT SELECT LSTINST CMPAFF DIRAFF
+%token DECL LSTARG BLCDECL CAST INSTA INSTR MSGSNT MSGSNTS SELECT LSTINST CMPAFF DIRAFF 
 /* --------------------------------- */
 
 %nonassoc RELOP CONCAT
@@ -28,31 +28,32 @@
 #include "class.h"
 #include "function.h"
 
-#define NOVERBOSE
+#define VERBOSE
 
 extern int yylineno;
+extern int yychar;
 extern int yylex();	/* fournie par Flex */
 extern TreeP mainCode;
 ClassP current;
 
 
 void yyerror(char *ignore) {
-  printf("erreur de syntaxe: Ligne %d\n", yylineno);
+  printf("erreur de syntaxe: Ligne %d : %d unknown\n", yylineno, yychar);
 }
 
 void pprintf(char *c) {
 #ifdef VERBOSE
-	printf("%s", c);
+	printf("--%s", c);
 #endif
 }
 void pprintfs(char* c, char* c2) {
 #ifdef VERBOSE
-	printf("%s %s\n", c, c2);
+	printf("--%s %s\n", c, c2);
 #endif
 }
 void pprintfi(char* c, int i) {
 #ifdef VERBOSE
-	printf("%s %i\n", c, i);
+	printf("--%s %i\n", c, i);
 #endif
 }
 /* Méthodes utilisées : 
@@ -151,7 +152,7 @@ DeclV		:	VAR Id ':' Idcl AffectO	';'					{	pprintf("declv\n");
 			;
 			
 AffectO		:	/* epsilon */								{ pprintf("affect null\n"); $$ = NULL; }
-			|	AFF Exp2									{ pprintf("affect non null\n"); $$ = $2; }
+			|	AFF Exp									{ pprintf("affect non null\n"); $$ = $2; }
 			;
 
 Affect 		:	Exp2 '.' Id AFF Exp ';' 					{ pprintf("affect1\n"); $$ = makeTree(CMPAFF, 3, $1, makeLeafStr(ID, $3), $5); }
@@ -203,6 +204,7 @@ Exp2		:	'(' Exp ')'									{ pprintf("exp21\n"); $$ = $2; }
 			|	'(' AS Idcl ':' Exp ')'						{ pprintf("exp22\n"); $$ = makeTree(CAST, 2, makeLeafStr(IDCL, $3), $5); }
 			|	NEW Idcl '(' ListArgO ')'					{ pprintf("exp23\n"); $$ = makeTree(INSTA, 2, makeLeafStr(IDCL, $2), $4); }
 			|	Exp2 '.' Id '(' ListArgO ')'				{ pprintf("exp24\n"); $$ = makeTree(MSGSNT, 3, $1, makeLeafStr(ID, $3), $5); }
+			|	Idcl '.' Id '(' ListArgO ')'				{ pprintf("exp24bis\n"); $$ = makeTree(MSGSNTS, 3, makeLeafStr(IDCL, $1), makeLeafStr(ID, $3), $5); }
 			| 	Exp2 '.' Id									{ pprintf("exp25\n"); $$ = makeTree(SELECT, 2, $1, makeLeafStr(ID, $3));}
 			|	CST											{ pprintf("exp26\n"); $$ = makeLeafInt(CST, yyval.I); }
 			|	STR											{ pprintf("exp27\n"); $$ = makeLeafStr(STR, yyval.S); }
