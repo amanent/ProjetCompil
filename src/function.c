@@ -73,3 +73,17 @@ string function_printFunc(FunctionP func){
 		
 	return str;
 }
+
+bool function_hasReturnType(FunctionP func){
+	return (func->returnType == NULL || func->returnName == NULL || !strcmp(func->returnName, ""));
+}
+
+int function_howManyArgs(FunctionP func){
+	int nArgs = 0;
+	ParamsListP tmp = func->paramsList;
+	while(tmp){
+		++nArgs;
+		tmp = tmp->next;
+	}
+	return nArgs;
+}

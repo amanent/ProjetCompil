@@ -31,4 +31,6 @@
 	bool prmlst_sameTypes (ParamsListP l, ParamsListP ll);
 	ParamsListP function_makeParam(string name, string type);
 	string function_printFunc(FunctionP func);
+	bool function_hasReturnType(FunctionP func);
+	int function_howManyArgs(FunctionP func);
 #endif
