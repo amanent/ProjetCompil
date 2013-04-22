@@ -86,7 +86,8 @@ void ppprint(TreeP tree) {
 	case UNARYSUB: 	printf("-"); ppprint(getChild(tree, 0)); break;
 	case UNARYADD: 	printf("+"); ppprint(getChild(tree, 0)); break;
 	case IF: 		pprintTree3(tree, "if ", " then ", " else ", ""); break;
-	case AFF: 		pprintTree2full(tree, "", " := ", ";"); break; 
+	case CMPAFF: 		
+  case DIRAFF:  pprintTree2full(tree, "", " := ", ";"); break; 
 	case RET: 		printf("return;"); break;
 	case LSTARG: 	pprintTree2(tree, ", "); break;
   default:
@@ -94,7 +95,7 @@ void ppprint(TreeP tree) {
      * car ce n'est pas dramatique !
      */
 
-    fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", 
+    fprintf(stderr, "Erreur! pprint : etiquette d'operateur inconnue: %d\n", 
 	    tree->op);
     setError(UNEXPECTED);
   }
