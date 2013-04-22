@@ -28,7 +28,7 @@
 #include "class.h"
 #include "function.h"
 
-#define VERBOSE
+#define NOVERBOSE
 
 extern int yylineno;
 extern int yychar;
@@ -43,17 +43,17 @@ void yyerror(char *ignore) {
 
 void pprintf(char *c) {
 #ifdef VERBOSE
-	printf("--%s\n", c);
+	printf("--l%d : %s\n", yylineno, c);
 #endif
 }
 void pprintfs(char* c, char* c2) {
 #ifdef VERBOSE
-	printf("--%s %s\n", c, c2);
+	printf("--l%d : %s %s\n", yylineno, c, c2);
 #endif
 }
 void pprintfi(char* c, int i) {
 #ifdef VERBOSE
-	printf("--%s %i\n", c, i);
+	printf("--l%d : %s %i\n", yylineno, c, i);
 #endif
 }
 /* Méthodes utilisées : 
@@ -135,7 +135,7 @@ OvOrStatO	:	/* epsilon */								{ pprintf("ovorstat null"); $$ = 0; }
 			|	STAT										{ pprintf("ovorstat stat"); $$ = 2; }
 			;
 
-ReturnO		:	/* epsilon */								{ pprintf("returno null"); $$ = NULL;}
+ReturnO		:	/* epsilon */								{ pprintf("returno null"); $$ = "";}
 			|	RETS Idcl									{ pprintf("returno non null"); $$ = $2;}
 			;
 
