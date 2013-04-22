@@ -71,11 +71,12 @@ void class_addMethod(ClassP c, int visi, string methodName, string returnType, P
 	FunctionP newMeth = NEW(1, Function);
 	
 	newMeth->ID = NEW(strlen(methodName)+1, char);
-	newMeth->returnName = NEW(strlen(returnType)+1, char);
 	strcpy(newMeth->ID,methodName);
+	
+	newMeth->returnName = NEW(strlen(returnType)+1, char);
 	strcpy(newMeth->returnName,returnType);
 
-	newMeth->override = visi==1;
+	newMeth->override = (visi==1);
 	newMeth->paramsList = paramList;
 	newMeth->code = code;
 
