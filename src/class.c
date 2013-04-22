@@ -55,12 +55,16 @@ void class_addField(ClassP c, bool isStatic, TreeP decl ) {
 	newClassField->value = decl->u.children[2];
 	ClassFieldListP newCFL = NEW(1, ClassFieldList);
 	newCFL->current = newClassField;
-	newCFL->next = c->cfl;
 	
-	if(isStatic)
+	if(isStatic){
+		newCFL->next = c->staticCfl;
 		c->staticCfl = newCFL;
+	}
 	else
+	{
+		newCFL->next = c->cfl;
 		c->cfl = newCFL;
+	}
 }
 
 void class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code) {
@@ -77,11 +81,16 @@ void class_addMethod(ClassP c, int visi, string methodName, string returnType, P
 
 	ClassMethodListP newCML = NEW(1, ClassMethodList);
 	newCML->current = newMeth;
-	newCML->next = c->cml;
+	
 	if(visi==2)
+	{
+		newCML->next = c->staticCml;
 		c->staticCml = newCML;
-	else
+	}
+	else {
+		newCML->next = c->cml;
 		c->cml = newCML;
+	}
 }
 
 void class_setConstructor(ClassP c, ParamsListP pl, TreeP code) {

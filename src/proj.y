@@ -9,8 +9,8 @@
 %token DECL LSTARG BLCDECL CAST INSTA INSTR MSGSNT MSGSNTS SELECT LSTINST CMPAFF DIRAFF 
 /* --------------------------------- */
 
-%nonassoc RELOP CONCAT
-%left ADD SUB 
+%nonassoc RELOP 
+%left ADD SUB CONCAT
 %left MUL DIV
 %left UNARYADD UNARYSUB
 
@@ -38,12 +38,12 @@ ClassP current;
 
 
 void yyerror(char *ignore) {
-  printf("erreur de syntaxe: Ligne %d : %d unknown\n", yylineno, yychar);
+  printf("erreur de syntaxe: Ligne %d : %d unexpected\n", yylineno, yychar);
 }
 
 void pprintf(char *c) {
 #ifdef VERBOSE
-	printf("--%s", c);
+	printf("--%s\n", c);
 #endif
 }
 void pprintfs(char* c, char* c2) {
@@ -68,15 +68,15 @@ void pprintfi(char* c, int i) {
 %}
 
 %%
-Program		:	Bloc										{	pprintf("prog bloc\n");
+Program		:	Bloc										{	pprintf("prog bloc");
 																mainCode = $1;
 																/*lancer la verif contextuelle */ 
 															}
-			|	Class Program								{ pprintf("prog class\n"); } /* Pas de traitement */
+			|	Class Program								{ pprintf("prog class"); } /* Pas de traitement */
 			;
 
 Class 		:	ClassAlloc Idcl '(' ListParamO ')' ExtendO BlocO IS '{' ListDeclO '}' {
-																pprintf("class\n");
+																pprintf("class");
 																class_setName(current, $2); /*param: nom de la classe */
 																class_setConstructor(current, $4, $7); 
 																/*params: classe, paramètres constructeur, code du constructeur */
@@ -86,129 +86,129 @@ Class 		:	ClassAlloc Idcl '(' ListParamO ')' ExtendO BlocO IS '{' ListDeclO '}' 
 															}
 			;
 
-ClassAlloc	:	CLASS										{ pprintf("class alloc\n"); current = NEW(1, Class); } /* uniquement pour faire l'allocation */
+ClassAlloc	:	CLASS										{ pprintf("class alloc"); current = NEW(1, Class); } /* uniquement pour faire l'allocation */
 
-ListParamO 	:	/* epsilon */								{ pprintf("listparamo null\n"); $$ = NULL; }
-			|	ListParam									{ pprintf("listparamo non null\n"); $$ = $1; }
+ListParamO 	:	/* epsilon */								{ pprintf("listparamo null"); $$ = NULL; }
+			|	ListParam									{ pprintf("listparamo non null"); $$ = $1; }
 			;
 
-ListParam	:	Param										{ pprintf("listparam final\n"); $$ = $1; }
+ListParam	:	Param										{ pprintf("listparam final"); $$ = $1; }
 			| 	Param ',' ListParam							{
-																pprintf("listparam continue\n"); 
+																pprintf("listparam continue"); 
 																ParamsListP tmp = $1;
 																tmp->next = $3;
 																$$=tmp;
 															}
 			;
 
-Param		:	Id ':' Idcl									{ pprintf("param\n"); $$ = function_makeParam($1, $3); /*params: nomParam, typeParam */ }
+Param		:	Id ':' Idcl									{ pprintf("param"); $$ = function_makeParam($1, $3); /*params: nomParam, typeParam */ }
 			;
 
-ExtendO		:	/* epsilon */								{ pprintf("extendo null\n");} /* Pas de traitement */
-			|	EXT Idcl '(' ListArgO ')'					{ pprintf("extendo non null\n"); class_setSuper(current, $2, $4); /*params: classe, superType, arguments constructeur père */ }
+ExtendO		:	/* epsilon */								{ pprintf("extendo null");} /* Pas de traitement */
+			|	EXT Idcl '(' ListArgO ')'					{ pprintf("extendo non null"); class_setSuper(current, $2, $4); /*params: classe, superType, arguments constructeur père */ }
 			;
 
-ListDeclO	:	/* epsilon */								{ pprintf("listdeclo null\n");} /* Pas de traitement */
-			|	Decl ListDeclO								{ pprintf("listdeclo non null\n");} /* Pas de traitement */
+ListDeclO	:	/* epsilon */								{ pprintf("listdeclo null");} /* Pas de traitement */
+			|	Decl ListDeclO								{ pprintf("listdeclo non null");} /* Pas de traitement */
 			;
 
-Decl		:	DeclField									{ pprintf("decl field\n");} /* Pas de traitement */
-			|	DeclMethod									{ pprintf("decl method\n");} /* Pas de traitement */
+Decl		:	DeclField									{ pprintf("decl field");} /* Pas de traitement */
+			|	DeclMethod									{ pprintf("decl method");} /* Pas de traitement */
 			;
 
-DeclField	:	StaticO DeclV								{ pprintf("declField\n"); class_addField(current, $1, $2); /*params: classe, isStatic, arbre de decl de la var */ }
+DeclField	:	StaticO DeclV								{ pprintf("declField"); class_addField(current, $1, $2); /*params: classe, isStatic, arbre de decl de la var */ }
 			;
 
-StaticO		:	/* epsilon */								{ pprintf("statico null\n"); $$ = 0; }
-			|	STAT										{ pprintf("statico non null\n"); $$ = 1; }
+StaticO		:	/* epsilon */								{ pprintf("statico null"); $$ = 0; }
+			|	STAT										{ pprintf("statico non null"); $$ = 1; }
 			;
 
 DeclMethod	:	OvOrStatO	DEF	Id '(' ListParamO ')' ReturnO IS Bloc {
-																pprintf("declmethod\n"); 
+																pprintf("declmethod"); 
 																class_addMethod(current, $1, $3, $7, $5, $9);
 																/*params: classe, visibility, nom, type de retour,liste des paramètres, arbre du corps de la fonction */
 															}
 			;
 
-OvOrStatO	:	/* epsilon */								{ pprintf("ovorstat null\n"); $$ = 0; }
-			|	OVR											{ pprintf("ovorstat ovr\n"); $$ = 1; }
-			|	STAT										{ pprintf("ovorstat stat\n"); $$ = 2; }
+OvOrStatO	:	/* epsilon */								{ pprintf("ovorstat null"); $$ = 0; }
+			|	OVR											{ pprintf("ovorstat ovr"); $$ = 1; }
+			|	STAT										{ pprintf("ovorstat stat"); $$ = 2; }
 			;
 
-ReturnO		:	/* epsilon */								{ pprintf("returno null\n"); $$ = NULL;}
-			|	RETS Idcl									{ pprintf("returno non null\n"); $$ = $2;}
+ReturnO		:	/* epsilon */								{ pprintf("returno null"); $$ = NULL;}
+			|	RETS Idcl									{ pprintf("returno non null"); $$ = $2;}
 			;
 
 /* ------------------------------------------------------ Fin creation structures, debut creation arbres --------------------------------------------- */
 
-ListDeclV	:	DeclV										{ pprintf("listdeclv final\n"); $$ = $1; }
-			|	DeclV ListDeclV								{ pprintf("listdeclv continue\n"); $$ = makeTree(DECL, 2, $1, $2); }
+ListDeclV	:	DeclV										{ pprintf("listdeclv final"); $$ = $1; }
+			|	DeclV ListDeclV								{ pprintf("listdeclv continue"); $$ = makeTree(DECL, 2, $1, $2); }
 			;
 
-DeclV		:	VAR Id ':' Idcl AffectO	';'					{	pprintf("declv\n");
+DeclV		:	VAR Id ':' Idcl AffectO	';'					{	pprintf("declv");
 																$$ = makeTree(VAR, 3, makeLeafStr(ID, $2), makeLeafStr(IDCL, $4), $5);
 																/* voir a pas ajouter un autre type "variable" aux feuilles de l'arbre */
 															} 
 			;
 			
-AffectO		:	/* epsilon */								{ pprintf("affect null\n"); $$ = NULL; }
-			|	AFF Exp									{ pprintf("affect non null\n"); $$ = $2; }
+AffectO		:	/* epsilon */								{ pprintf("affect null"); $$ = NULL; }
+			|	AFF Exp										{ pprintf("affect non null"); $$ = $2; }
 			;
 
-Affect 		:	Exp2 '.' Id AFF Exp ';' 					{ pprintf("affect1\n"); $$ = makeTree(CMPAFF, 3, $1, makeLeafStr(ID, $3), $5); }
-			|	Id AFF Exp ';'								{ pprintf("affect2\n"); $$ = makeTree(DIRAFF, 2, makeLeafStr(ID, $1), $3); }
+Affect 		:	Exp2 '.' Id AFF Exp ';' 					{ pprintf("affect1"); $$ = makeTree(CMPAFF, 3, $1, makeLeafStr(ID, $3), $5); }
+			|	Id AFF Exp ';'								{ pprintf("affect2"); $$ = makeTree(DIRAFF, 2, makeLeafStr(ID, $1), $3); }
 
-ListArgO	:	/* epsilon */								{ pprintf("listargo null\n"); $$ = NULL; }
-			|	ListArg										{ pprintf("listargo non null\n"); $$ = $1; }
+ListArgO	:	/* epsilon */								{ pprintf("listargo null"); $$ = NULL; }
+			|	ListArg										{ pprintf("listargo non null"); $$ = $1; }
 			;
 
-ListArg		:	Exp											{ pprintf("list arg final\n"); $$ = $1; }
-			|	Exp ',' ListArg								{ pprintf("list arg continue\n"); $$ = makeTree(LSTARG, 2, $1, $3); }
+ListArg		:	Exp											{ pprintf("list arg final"); $$ = $1; }
+			|	Exp ',' ListArg								{ pprintf("list arg continue"); $$ = makeTree(LSTARG, 2, $1, $3); }
 			;
 
-BlocO		:	/* epsilon */								{ pprintf("bloco null\n"); $$ = NULL; } /* voir a peut etre passer par des leafs avec un code particulier pour eviter les segflt */
-			|	Bloc										{ pprintf("bloco non null\n"); $$ = $1; }
+BlocO		:	/* epsilon */								{ pprintf("bloco null"); $$ = NULL; } /* voir a peut etre passer par des leafs avec un code particulier pour eviter les segflt */
+			|	Bloc										{ pprintf("bloco non null"); $$ = $1; }
 			;
 
-Bloc		:	'{' ListInstO '}'							{ pprintf("bloc final\n"); $$ = $2; }
-			|	'{' ListDeclV IS ListInst '}'				{ pprintf("bloc continue\n"); $$ = makeTree(BLCDECL, 2, $2, $4); }
+Bloc		:	'{' ListInstO '}'							{ pprintf("bloc final"); $$ = $2; }
+			|	'{' ListDeclV IS ListInst '}'				{ pprintf("bloc continue"); $$ = makeTree(BLCDECL, 2, $2, $4); }
 			;
 
-ListInstO	:	/* epsilon */								{ pprintf("listinstO null\n"); $$ = NULL; }
-			|	ListInst									{ pprintf("listinstO non null\n"); $$ = $1; }
+ListInstO	:	/* epsilon */								{ pprintf("listinstO null"); $$ = NULL; }
+			|	ListInst									{ pprintf("listinstO non null"); $$ = $1; }
 			;
 
-ListInst	:	Inst										{ pprintf("listinst final\n"); $$ = $1; }
-			|	Inst ListInst								{ pprintf("listinst continue\n"); $$ = makeTree(LSTINST, 2,  $1, $2); }
+ListInst	:	Inst										{ pprintf("listinst final"); $$ = $1; }
+			|	Inst ListInst								{ pprintf("listinst continue"); $$ = makeTree(LSTINST, 2,  $1, $2); }
 			;
 
-Inst		:	Exp ';'										{ pprintf("inst1\n"); $$ = makeTree(INSTR, 1, $1); }
-			|	Bloc										{ pprintf("inst2\n"); $$ = $1; }
-			|	RET ';'										{ pprintf("inst3\n"); $$ = makeLeafInt(RET, 0); /* 0 a defaut de savoir quoi mettre*/ }
-			|	Affect 										{ pprintf("inst4\n"); $$ = $1; }
-			|	IF Exp THEN Inst ELSE Inst					{ pprintf("inst5\n"); $$ = makeTree(IF, 3, $2, $4, $6); }
+Inst		:	Exp ';'										{ pprintf("inst1"); $$ = makeTree(INSTR, 1, $1); }
+			|	Bloc										{ pprintf("inst2"); $$ = $1; }
+			|	RET ';'										{ pprintf("inst3"); $$ = makeLeafInt(RET, 0); /* 0 a defaut de savoir quoi mettre*/ }
+			|	Affect 										{ pprintf("inst4"); $$ = $1; }
+			|	IF Exp THEN Inst ELSE Inst					{ pprintf("inst5"); $$ = makeTree(IF, 3, $2, $4, $6); }
 			;
 
-Exp			:	Exp Relop Exp %prec RELOP 					{ pprintf("exp1\n"); $$ = makeTree($2, 2, $1, $3); }
-			|	Exp CONCAT Exp								{ pprintf("exp2\n"); $$ = makeTree(CONCAT, 2, $1, $3); }
-			|	Exp ADD Exp									{ pprintf("exp3\n"); $$ = makeTree(ADD, 2, $1, $3); }
-			|	Exp SUB Exp									{ pprintf("exp4\n"); $$ = makeTree(SUB, 2, $1, $3); }
-			|	Exp MUL Exp									{ pprintf("exp5\n"); $$ = makeTree(MUL, 2, $1, $3); }
-			|	Exp DIV Exp									{ pprintf("exp6\n"); $$ = makeTree(DIV, 2, $1, $3); }
-			|	ADD Exp %prec UNARYADD						{ pprintf("exp7\n"); $$ = makeTree(UNARYADD, 1, $2); } /* vraiment nécéssaire ? */
-			|	SUB Exp %prec UNARYSUB						{ pprintf("exp8\n"); $$ = makeTree(UNARYSUB, 1, $2); }
-			|	Exp2										{ pprintf("exp9\n"); $$ = $1; }
+Exp			:	Exp Relop Exp %prec RELOP 					{ pprintf("exp1"); $$ = makeTree($2, 2, $1, $3); }
+			|	Exp CONCAT Exp								{ pprintf("exp2"); $$ = makeTree(CONCAT, 2, $1, $3); }
+			|	Exp ADD Exp									{ pprintf("exp3"); $$ = makeTree(ADD, 2, $1, $3); }
+			|	Exp SUB Exp									{ pprintf("exp4"); $$ = makeTree(SUB, 2, $1, $3); }
+			|	Exp MUL Exp									{ pprintf("exp5"); $$ = makeTree(MUL, 2, $1, $3); }
+			|	Exp DIV Exp									{ pprintf("exp6"); $$ = makeTree(DIV, 2, $1, $3); }
+			|	ADD Exp %prec UNARYADD						{ pprintf("exp7"); $$ = makeTree(UNARYADD, 1, $2); } /* vraiment nécéssaire ? */
+			|	SUB Exp %prec UNARYSUB						{ pprintf("exp8"); $$ = makeTree(UNARYSUB, 1, $2); }
+			|	Exp2										{ pprintf("exp9"); $$ = $1; }
 			;
 
-Exp2		:	'(' Exp ')'									{ pprintf("exp21\n"); $$ = $2; } 
-			|	'(' AS Idcl ':' Exp ')'						{ pprintf("exp22\n"); $$ = makeTree(CAST, 2, makeLeafStr(IDCL, $3), $5); }
-			|	NEW Idcl '(' ListArgO ')'					{ pprintf("exp23\n"); $$ = makeTree(INSTA, 2, makeLeafStr(IDCL, $2), $4); }
-			|	Exp2 '.' Id '(' ListArgO ')'				{ pprintf("exp24\n"); $$ = makeTree(MSGSNT, 3, $1, makeLeafStr(ID, $3), $5); }
-			|	Idcl '.' Id '(' ListArgO ')'				{ pprintf("exp24bis\n"); $$ = makeTree(MSGSNTS, 3, makeLeafStr(IDCL, $1), makeLeafStr(ID, $3), $5); }
-			| 	Exp2 '.' Id									{ pprintf("exp25\n"); $$ = makeTree(SELECT, 2, $1, makeLeafStr(ID, $3));}
-			|	CST											{ pprintf("exp26\n"); $$ = makeLeafInt(CST, yyval.I); }
-			|	STR											{ pprintf("exp27\n"); $$ = makeLeafStr(STR, yyval.S); }
-			|	Id 											{ pprintf("exp28\n"); $$ = makeLeafStr(ID, yyval.S); }
+Exp2		:	'(' Exp ')'									{ pprintf("exp21"); $$ = $2; } 
+			|	'(' AS Idcl ':' Exp ')'						{ pprintf("exp22"); $$ = makeTree(CAST, 2, makeLeafStr(IDCL, $3), $5); }
+			|	NEW Idcl '(' ListArgO ')'					{ pprintf("exp23"); $$ = makeTree(INSTA, 2, makeLeafStr(IDCL, $2), $4); }
+			|	Exp2 '.' Id '(' ListArgO ')'				{ pprintf("exp24"); $$ = makeTree(MSGSNT, 3, $1, makeLeafStr(ID, $3), $5); }
+			|	Idcl '.' Id '(' ListArgO ')'				{ pprintf("exp24bis"); $$ = makeTree(MSGSNTS, 3, makeLeafStr(IDCL, $1), makeLeafStr(ID, $3), $5); }
+			| 	Exp2 '.' Id									{ pprintf("exp25"); $$ = makeTree(SELECT, 2, $1, makeLeafStr(ID, $3));}
+			|	CST											{ pprintf("exp26"); $$ = makeLeafInt(CST, yyval.I); }
+			|	STR											{ pprintf("exp27"); $$ = makeLeafStr(STR, yyval.S); }
+			|	Id 											{ pprintf("exp28"); $$ = makeLeafStr(ID, yyval.S); }
 			;
 
 Id 			: 	ID											{ pprintfs("id", yyval.S); $$ = yyval.S; }

@@ -93,19 +93,19 @@ int main(int argc, char **argv) {
 	* c'est possible.
 	*/
 
-	
+	printf("--Compiling\n");
 	res = yyparse();
 	printf("--A priori c'est bon :)\n");
-	//printf("resultat:\n%s", classList_print());
-	//pprintMain(mainCode);
+	printf("resultat:\n%s", classList_print());
+	pprintMain(mainCode);
 	
-
+	/*
 	string toto = genBaseCode(classList);
 	//(string prevCode, bool breakPoint, string label, string code, string arg, string comm)
 	//toto = writeCode(toto, FALSE, NULL, "PUSHI", "3", NULL);
 	toto = writeCode(toto, 0, NULL, "START", NULL, NULL);
 
-	toto = strcatwalloc(toto, gencode(mainCode));
+	//toto = strcatwalloc(toto, gencode(mainCode));
 
 	writeCode(toto, FALSE, NULL, "WRITEI", NULL, NULL);
 	writeCode(toto, FALSE, NULL, "PUSHS", "\"\\n\"", NULL); 
@@ -113,7 +113,7 @@ int main(int argc, char **argv) {
 	writeCode(toto, FALSE, NULL, "STOP", NULL, NULL);
 
 	printf("--code :\n%s\n", toto);
-
+	*/
 	if (fd != NIL(FILE)) fclose(fd);
 	return res ? SYNTAX_ERROR : errorCode;
 }
