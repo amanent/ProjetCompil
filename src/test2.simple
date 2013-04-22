@@ -1,0 +1,459 @@
+--Compiling
+--A priori c'est bon :)
+
+s2:	NOP		
+	PUSHL	0	
+	PUSHL	0	
+	ADD		
+	STOREL	0	
+	STOREL	0	
+	RETURN		
+test0:	NOP		
+	PUSHN	1	--x
+	PUSHN	1	--y
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHI	7	--int cst
+	STOREL	0	
+	PUSHI	3	--int cst
+	PUSHL	0	
+	ADD		
+	PUSHL	0	
+	ADD		
+	STOREL	0	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	STOREL	0	
+	STOREL	0	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	RETURN		
+toString0:	NOP		
+	PUSHS	"("	--str cst
+	PUSHN	1	
+	PUSHA	toString	
+	CALL		
+	POPN	1	
+	CONCAT		
+	PUSHS	","	--str cst
+	CONCAT		
+	PUSHN	1	
+	PUSHA	toString	
+	CALL		
+	POPN	1	
+	CONCAT		
+	PUSHS	")"	--str cst
+	CONCAT		
+	STOREL	0	
+	RETURN		
+s2:	NOP		
+	PUSHL	0	
+	PUSHL	0	
+	ADD		
+	STOREL	0	
+	STOREL	0	
+	RETURN		
+s1:	NOP		
+	PUSHL	0	
+	PUSHI	1	--int cst
+	ADD		
+	STOREL	0	
+	PUSHL	0	
+	STOREL	0	
+	RETURN		
+constructor:	NOP		
+	RETURN		
+constructor:	NOP		
+	RETURN		
+test2:	NOP		
+	PUSHI	18	--int cst
+	STOREL	0	
+	PUSHN	1	--x
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	RETURN		
+test1:	NOP		
+	PUSHI	5	--int cst
+	STOREL	0	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHI	2	--int cst
+	PUSHL	0	
+	ADD		
+	STOREL	0	
+	PUSHI	3	--int cst
+	PUSHL	0	
+	PUSHI	2	--int cst
+	MUL		
+	ADD		
+	PUSHL	0	
+	PUSHI	3	--int cst
+	DIV		
+	ADD		
+	STOREL	0	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHI	11	--int cst
+	PUSHA	addx	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHI	2	--int cst
+	PUSHA	muly	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	STORE	0	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	STORE	0	
+	STORE	0	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHI	12	--int cst
+	PUSHA	addx	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHI	3	--int cst
+	PUSHA	muly	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	RETURN		
+toString:	NOP		
+	PUSHS	"("	--str cst
+	PUSHN	1	
+	PUSHA	toString	
+	CALL		
+	POPN	1	
+	CONCAT		
+	PUSHS	","	--str cst
+	CONCAT		
+	PUSHN	1	
+	PUSHA	toString	
+	CALL		
+	POPN	1	
+	CONCAT		
+	PUSHS	")"	--str cst
+	CONCAT		
+	STOREL	0	
+	RETURN		
+muly:	NOP		
+	STORE	0	
+	PUSHL	0	
+	LOAD	0	
+	STOREL	0	
+	RETURN		
+addx:	NOP		
+	PUSHL	0	
+	PUSHL	0	
+	ADD		
+	STOREL	0	
+	PUSHL	0	
+	STOREL	0	
+	RETURN		--code :
+
+--champs statiques :
+	PUSHN	1	--Cla2_single
+	PUSHN	1	--Cla2_y0
+	PUSHN	1	--Cla2_x0
+--methodes statiques :
+	--classe Cla3
+s2:	NOP		
+	PUSHL	0	
+	PUSHL	0	
+	ADD		
+	STOREL	0	
+	STOREL	0	
+	RETURN		
+	--classe Cla2
+test0:	NOP		
+	PUSHN	1	--x
+	PUSHN	1	--y
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHI	7	--int cst
+	STOREL	0	
+	PUSHI	3	--int cst
+	PUSHL	0	
+	ADD		
+	PUSHL	0	
+	ADD		
+	STOREL	0	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	STOREL	0	
+	STOREL	0	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	RETURN		
+toString0:	NOP		
+	PUSHS	"("	--str cst
+	PUSHN	1	
+	PUSHA	toString	
+	CALL		
+	POPN	1	
+	CONCAT		
+	PUSHS	","	--str cst
+	CONCAT		
+	PUSHN	1	
+	PUSHA	toString	
+	CALL		
+	POPN	1	
+	CONCAT		
+	PUSHS	")"	--str cst
+	CONCAT		
+	STOREL	0	
+	RETURN		
+s2:	NOP		
+	PUSHL	0	
+	PUSHL	0	
+	ADD		
+	STOREL	0	
+	STOREL	0	
+	RETURN		
+s1:	NOP		
+	PUSHL	0	
+	PUSHI	1	--int cst
+	ADD		
+	STOREL	0	
+	PUSHL	0	
+	STOREL	0	
+	RETURN		
+--methodes non statiques :
+constructor:	NOP		
+	RETURN		
+	--classe Cla3
+constructor:	NOP		
+	RETURN		
+	--classe Cla2
+test2:	NOP		
+	PUSHI	18	--int cst
+	STOREL	0	
+	PUSHN	1	--x
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	RETURN		
+test1:	NOP		
+	PUSHI	5	--int cst
+	STOREL	0	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHI	2	--int cst
+	PUSHL	0	
+	ADD		
+	STOREL	0	
+	PUSHI	3	--int cst
+	PUSHL	0	
+	PUSHI	2	--int cst
+	MUL		
+	ADD		
+	PUSHL	0	
+	PUSHI	3	--int cst
+	DIV		
+	ADD		
+	STOREL	0	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHI	11	--int cst
+	PUSHA	addx	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHI	2	--int cst
+	PUSHA	muly	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	STORE	0	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	STORE	0	
+	STORE	0	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHI	12	--int cst
+	PUSHA	addx	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHI	3	--int cst
+	PUSHA	muly	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	PUSHN	1	
+	PUSHA	println	
+	CALL		
+	POPN	1	
+--:	POPN	1	
+	RETURN		
+toString:	NOP		
+	PUSHS	"("	--str cst
+	PUSHN	1	
+	PUSHA	toString	
+	CALL		
+	POPN	1	
+	CONCAT		
+	PUSHS	","	--str cst
+	CONCAT		
+	PUSHN	1	
+	PUSHA	toString	
+	CALL		
+	POPN	1	
+	CONCAT		
+	PUSHS	")"	--str cst
+	CONCAT		
+	STOREL	0	
+	RETURN		
+muly:	NOP		
+	STORE	0	
+	PUSHL	0	
+	LOAD	0	
+	STOREL	0	
+	RETURN		
+addx:	NOP		
+	PUSHL	0	
+	PUSHL	0	
+	ADD		
+	STOREL	0	
+	PUSHL	0	
+	STOREL	0	
+	RETURN		
+	START		
+	WRITEI		
+	PUSHS	"\n"	
+	WRITES		
+	STOP		
