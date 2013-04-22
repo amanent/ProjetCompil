@@ -4,6 +4,7 @@
 	typedef struct _Tree Tree, *TreeP;
 
 	#include "variable.h"
+	#include "function.h"
 	/* la structure d'un arbre (noeud ou feuille) */
 	struct _Tree {
 	  short op;         /* etiquette de l'operateur courant */

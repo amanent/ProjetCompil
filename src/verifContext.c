@@ -5,7 +5,7 @@
  *      Author: Matthieu
  */
 #include "verifContext.h"
-#include "symboles.h"
+
 
 extern ClassListP classList;
 //extern TreeP mainCode;
@@ -84,6 +84,7 @@ bool verif_contextuelle(){ // need verif arg.
 	if(!verif_nameResolution())
 		return FALSE;
 
+	return TRUE;
 }
 
 bool verif_classCode(ClassP c){
@@ -94,23 +95,23 @@ bool verif_classCode(ClassP c){
 	fillSymTableClassVar(c->staticCfl, statictable);
 
 	fillSymTableClassFunc(c->cml, table);
-	fillSymTableClassFunc(c->StaticCml, table);
+	fillSymTableClassFunc(c->staticCml, table);
 
 
 
-
+	return TRUE;
 }
 
 void fillSymTableClassVar(ClassFieldListP cfl, SymbolesTableP st){
 	if(cfl->next)
-		fillSymTableGlobClass(cfl->next, st);
-	void symTable_addLine(st, cfl->current, variable);
+		fillSymTableClassVar(cfl->next, st);
+	symTable_addLine(st, cfl->current, variable);
 }
 
 void fillSymTableClassFunc(ClassMethodListP cml, SymbolesTableP st){
 	if(cml->next)
-		fillSymTableGlobClass(cml->next, st);
-	void symTable_addLine(st, cml->current, function);
+		fillSymTableClassFunc(cml->next, st);
+	symTable_addLine(st, cml->current, function);
 }
 
 bool verif_paramList(FunctionP func){
@@ -127,13 +128,13 @@ bool verif_paramList(FunctionP func){
 
 
 bool verif_func(SymbolesTableP st, FunctionP func){
-
+	return TRUE;
 }
 
 bool verif_var(SymbolesTableP st, VarP var){
-	
+	return TRUE;
 }
 
 bool verif_tree(SymbolesTableP st, TreeP tree) {
-
+	return TRUE;
 }

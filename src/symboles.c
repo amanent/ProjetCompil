@@ -37,7 +37,7 @@ void symTable_enterNewScope(SymbolesTableP table){
 }
 
 SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func){
-	//SymbolesTableP nt = symTable_duplicate(t, 0); FUCK YOU BENJAMIN ARTHUR PATRICK BOIS
+	//SymbolesTableP nt = symTable_duplicate(t, 0); FUCK YOU BENJAMIN ARTHUR PATRICK BLOIS
 	//Section 0 = Global
 	SymbolesTableP nt = symTable_newTable();
 	//Section 1 = Params -> sec0
