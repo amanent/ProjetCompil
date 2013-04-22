@@ -102,12 +102,12 @@ int main(int argc, char **argv) {
 	//*
 	string toto = NULL;
 	toto = genBaseCode(classList);
-	//(string prevCode, bool breakPoint, string label, string code, string arg, string comm)
+	
 	//toto = writeCode(toto, FALSE, NULL, "PUSHI", "3", NULL);
-	toto = writeCode(toto, 0, NULL, "START", NULL, NULL);
 
 	//toto = strcatwalloc(toto, gencode(mainCode));
 
+	//(string prevCode, bool breakPoint, string label, string code, string arg, string comm)
 	writeCode(toto, FALSE, NULL, "WRITEI", NULL, NULL);
 	writeCode(toto, FALSE, NULL, "PUSHS", "\"\\n\"", NULL); 
 	writeCode(toto, FALSE, NULL, "WRITES", NULL, NULL);

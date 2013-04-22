@@ -80,10 +80,6 @@ s1:	NOP
 	PUSHL	0	
 	STOREL	0	
 	RETURN		
-constructor:	NOP		
-	RETURN		
-constructor:	NOP		
-	RETURN		
 test2:	NOP		
 	PUSHI	18	--int cst
 	STOREL	0	
@@ -226,6 +222,7 @@ addx:	NOP
 	PUSHN	1	--Cla2_single
 	PUSHN	1	--Cla2_y0
 	PUSHN	1	--Cla2_x0
+	JUMP	start	
 --methodes statiques :
 	--classe Cla3
 s2:	NOP		
@@ -309,12 +306,18 @@ s1:	NOP
 	STOREL	0	
 	RETURN		
 --methodes non statiques :
-constructor:	NOP		
-	RETURN		
 	--classe Cla3
-constructor:	NOP		
+Cla3:	NOP		--constructor
+	ALLOC	0	
+	STOREL	-1	
+	POPN	0	
 	RETURN		
 	--classe Cla2
+Cla2:	NOP		--constructor
+	ALLOC	0	
+	STOREL	-1	
+	POPN	0	
+	RETURN		
 test2:	NOP		
 	PUSHI	18	--int cst
 	STOREL	0	
@@ -452,7 +455,7 @@ addx:	NOP
 	PUSHL	0	
 	STOREL	0	
 	RETURN		
-	START		
+start:	START		--main function
 	WRITEI		
 	PUSHS	"\n"	
 	WRITES		

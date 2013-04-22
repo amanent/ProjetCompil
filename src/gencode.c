@@ -203,7 +203,7 @@ string genCodeFunc(FunctionP func) {
 }
 
 string genCodeConst(ClassP c) {
-	string code;
+	string code = NULL;
 	char intToStr[20] = "";
 
 	code = writeCode(NULL, FALSE, c->IDClass, "NOP", NULL, "constructor");
@@ -217,15 +217,18 @@ string genCodeConst(ClassP c) {
 	}
 	else {
 		sprintf(intToStr, "%d", c->size);
-		code = writeCode(NULL, FALSE, NULL, "ALLOC", intToStr, NULL);
+		code = writeCode(code, FALSE, NULL, "ALLOC", intToStr, NULL);
 	}
 
 	code = strcatwalloc(code, gencode(c->constructor->code));
 
 	sprintf(intToStr, "%d", -1 - c->constructor->nbParam);
 	code = writeCode(code, FALSE, NULL, "STOREL", intToStr, NULL);
+
 	sprintf(intToStr, "%d", c->constructor->nbParam);
-	return writeCode(code, FALSE, NULL, "POPN", intToStr, NULL); // a priori on peut le faire ici sans problème et ca simplifie le traitement
+	code =  writeCode(code, FALSE, NULL, "POPN", intToStr, NULL); // a priori on peut le faire ici sans problème et ca simplifie le traitement
+	
+	return writeCode(code, FALSE, NULL, "RETURN", NULL, NULL);
 }
 
 string genBaseCode(ClassListP cl_par)
@@ -234,7 +237,6 @@ string genBaseCode(ClassListP cl_par)
 	char intToStr[30] = "";
 	ClassListP cl;
 
-	//printf("--champs statiques :\n");
 	code = strcatwalloc(code, "\n--champs statiques :");
 	cl = cl_par;
 	while(cl!=NULL)
@@ -248,48 +250,41 @@ string genBaseCode(ClassListP cl_par)
 		}
 		cl = cl->next;
 	}
+	code = writeCode(code, FALSE, NULL, "JUMP", "start" , NULL);
 
-	//printf("--methodes statiques :\n");
 	code = strcatwalloc(code, "\n--methodes statiques :");
 	cl = cl_par;
 	while(cl!=NULL)
 	{
 		ClassMethodListP scml = cl->current->staticCml;
-		//printf("\t--classe %s\n", cl->current->IDClass);
 		sprintf(intToStr, "\n\t--classe %s", cl->current->IDClass);
 		code = strcatwalloc(code, intToStr);
-		while(scml!=NULL) // réservation d'un espace pour chaque champ statique
+		while(scml!=NULL)
 		{
 			code = strcatwalloc(code, genCodeFunc(scml->current));
 			scml = scml->next;
-			//printf("testdfghnqdfojnhgwdfhi,wdcgnhkdfgkhwsfghjodwxf\n");
 		}
 		cl = cl->next;
 	}
 
-	//printf("--methodes non statique :\n");
 	code = strcatwalloc(code, "\n--methodes non statiques :");
 	cl = cl_par;
 	while(cl!=NULL)
 	{
 		ClassMethodListP cml = cl->current->cml;
-		code = strcatwalloc(code, genCodeFunc(cl->current->constructor));
-
-		//printf("\t--classe %s\n", cl->current->IDClass);
 		sprintf(intToStr, "\n\t--classe %s", cl->current->IDClass);
 		code = strcatwalloc(code, intToStr);
-		while(cml!=NULL) // réservation d'un espace pour chaque champ statique
+
+		code = strcatwalloc(code, genCodeConst(cl->current)); // constructeur
+		while(cml!=NULL)
 		{
 			code = strcatwalloc(code, genCodeFunc(cml->current));
 			cml = cml->next;
-			//printf("tesefg<rsgt\n");
 		}
-		//printf("tes333t\n");
 		cl = cl->next;
-		//printf("test\n");
 	}
-	//printf("test2\n");
-	return code;
+
+	return writeCode(code, FALSE, "start", "START", NULL , "main function");
 }
 
 /*
