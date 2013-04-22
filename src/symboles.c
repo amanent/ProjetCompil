@@ -37,10 +37,10 @@ void symTable_enterNewScope(SymbolesTableP table){
 }
 
 SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func){
-	SymbolesTableP nt = symTable_duplicate(t, 0);
+	//SymbolesTableP nt = symTable_duplicate(t, 0); FUCK YOU BENJAMIN ARTHUR PATRICK BOIS
 	//Section 0 = Global
-
-	//Section 1 = Params
+	SymbolesTableP nt = symTable_newTable();
+	//Section 1 = Params -> sec0
 	symTable_enterNewScope(nt);
 	ParamsListP prm = func->paramsList;
 	while(prm != NULL){
@@ -51,7 +51,7 @@ SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func){
 		symTable_addLine(nt, v, parameter);
 	}
 
-	//Section 2 = Entering function code
+	//Section 2 = Entering function code -> sec 1
 	symTable_enterNewScope(nt);
 
 	return nt;

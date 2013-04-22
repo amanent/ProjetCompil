@@ -5,19 +5,12 @@
  *      Author: Matthieu
  */
 #include "verifContext.h"
+#include "symboles.h"
 
 extern ClassListP classList;
 //extern TreeP mainCode;
 
-bool verif_contextuelle(){ // need verif arg.
-
-	/*foreach(class dans classlist){
-		foreach(var in static var && pas static var){
-			check type (if type = null && typeName == une des class de la class list alors maj pointeur vers cette classe);
-		}
-		foreach(func in static func && pas static func{
-		}
-	}*/
+bool verif_nameResolution(){
 	ClassListP currentCL = classList;
 
 	while(currentCL != NULL){
@@ -84,8 +77,41 @@ bool verif_contextuelle(){ // need verif arg.
 	}
 
 	return FALSE;
+
 }
 
+bool verif_contextuelle(){ // need verif arg.
+	if(!verif_nameResolution())
+		return FALSE;
+
+}
+
+bool verif_classCode(ClassP c){
+	SymbolesTableP table = symTable_newTable();
+	SymbolesTableP statictable = symTable_newTable();
+	
+	fillSymTableClassVar(c->cfl, table);
+	fillSymTableClassVar(c->staticCfl, statictable);
+
+	fillSymTableClassFunc(c->cml, table);
+	fillSymTableClassFunc(c->StaticCml, table);
+
+
+
+
+}
+
+void fillSymTableClassVar(ClassFieldListP cfl, SymbolesTableP st){
+	if(cfl->next)
+		fillSymTableGlobClass(cfl->next, st);
+	void symTable_addLine(st, cfl->current, variable);
+}
+
+void fillSymTableClassFunc(ClassMethodListP cml, SymbolesTableP st){
+	if(cml->next)
+		fillSymTableGlobClass(cml->next, st);
+	void symTable_addLine(st, cml->current, function);
+}
 
 bool verif_paramList(FunctionP func){
 	if(func == NULL)
@@ -99,3 +125,15 @@ bool verif_paramList(FunctionP func){
 	return TRUE;
 }
 
+
+bool verif_func(SymbolesTableP st, FunctionP func){
+
+}
+
+bool verif_var(SymbolesTableP st, VarP var){
+	
+}
+
+bool verif_tree(SymbolesTableP st, TreeP tree) {
+
+}

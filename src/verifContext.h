@@ -11,6 +11,8 @@
 
 bool verif_contextuelle();
 bool verif_paramList(FunctionP func);
+bool verif_classCode(ClassP c);
+bool verif_nameResolution();
 
 
 #endif /* VERIFCONTEXT_H_ */
