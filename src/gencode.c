@@ -114,7 +114,7 @@ string gencode(TreeP tree) {
 			tmp = strcatwalloc(tmp, gencode(getChild(tree, 2)));
 			return writeCode(tmp, FALSE, intToStr2, "NOP", NULL , "fin if");
 /**/	case CMPAFF: // Exp2 '.' Id AFF Exp ';'
-			sprintf(intToStr, "%d", getChild(tree, 1)->var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
+			sprintf(intToStr, "%d", 0);//getChild(tree, 1)->var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
 			
 			tmp = gencode(getChild(tree, 0));
 			tmp = strcatwalloc(tmp, gencode(getChild(tree, 2)));
@@ -133,14 +133,11 @@ string gencode(TreeP tree) {
 			}
 			return tmp;	
 /**/	case SELECT: // Exp2 '.' Id
-			sprintf(intToStr, "%d", getChild(tree, 1)->var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
+			sprintf(intToStr, "%d", 0);//getChild(tree, 1)->var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
 			tmp = gencode(getChild(tree, 0));
 			return writeCode(tmp, FALSE, NULL, "LOAD", intToStr , NULL);
 /**/	case RET:
-			/* pas sur que y'ait besoin de faire ca */ 
-			sprintf(intToStr, "%d", 10 /* indexofResult */); // champ rempli a la verif du type de retour de l'exp2.
-			tmp = writeCode(NULL, FALSE, NULL, "PUSH", intToStr , NULL); // valeur de result
-			return writeCode(tmp, FALSE, NULL, "STOREL", "" , NULL); // l'adresse de la valeur de retour
+			return writeCode(NULL, FALSE, NULL, "RETURN", NULL , NULL); // l'adresse de la valeur de retour
 		case VAR: //VAR Id ':' Idcl AffectO	';'
 			tmp = writeCode(NULL, FALSE, NULL, "PUSHN", "1" , getChild(tree, 0)->u.str); // valeur de result
 			if(getChild(tree, 2)!= NULL)
@@ -159,7 +156,7 @@ string gencode(TreeP tree) {
 			tmp = writeCode(tmp, FALSE, NULL, "PUSHA", getChild(tree, 1)->u.str , NULL);
 			tmp = writeCode(tmp, FALSE, NULL, "CALL", NULL , NULL);
 			return writeCode(tmp, FALSE, NULL, "POPN", intToStr , NULL);
-		case MSGSNTS:
+		case MSGSNTS: // voir a factoriser avec MSGSNT
 			return NULL;
 /**/	case ID: 
 			sprintf(intToStr, "%d", 0);//tree->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
@@ -199,7 +196,10 @@ string genCodeFunc(FunctionP func) {
 	string code;
 
 	code = writeCode(NULL, FALSE, func->ID, "NOP", NULL, NULL); /* voir a faire quelque chose pour la multiplicité des noms */
-	return strcatwalloc(code, gencode(func->code));
+	code = strcatwalloc(code, gencode(func->code));
+	code = writeCode(code, FALSE, NULL, "RETURN", NULL, NULL);
+	printf("%s", code);
+	return code; //strcatwalloc(code, gencode(func->code));
 }
 
 string genCodeConst(ClassP c) {
@@ -234,42 +234,61 @@ string genBaseCode(ClassListP cl_par)
 	char intToStr[30] = "";
 	ClassListP cl;
 
-	code = strcatwalloc(code, "--champs statiques :\n");
+	//printf("--champs statiques :\n");
+	code = strcatwalloc(code, "\n--champs statiques :");
 	cl = cl_par;
 	while(cl!=NULL)
 	{
-		while(cl->current->staticCfl!=NULL) // réservation d'un espace pour chaque champ statique
+		ClassFieldListP scfl = cl->current->staticCfl;
+		while(scfl!=NULL) // réservation d'un espace pour chaque champ statique
 		{
-			sprintf(intToStr, "%s_%s", cl->current->IDClass, cl->current->staticCfl->current->ID);
+			sprintf(intToStr, "%s_%s", cl->current->IDClass, scfl->current->ID);
 			code = writeCode(code, FALSE, NULL, "PUSHN", "1" , intToStr);
+			scfl = scfl->next;
 		}
+		cl = cl->next;
 	}
 
-	code = strcatwalloc(code, "--methodes statiques :\n");
+	//printf("--methodes statiques :\n");
+	code = strcatwalloc(code, "\n--methodes statiques :");
 	cl = cl_par;
 	while(cl!=NULL)
 	{
-		sprintf(intToStr, "\t--classe %s\n", cl->current->IDClass);
+		ClassMethodListP scml = cl->current->staticCml;
+		//printf("\t--classe %s\n", cl->current->IDClass);
+		sprintf(intToStr, "\n\t--classe %s", cl->current->IDClass);
 		code = strcatwalloc(code, intToStr);
-		while(cl->current->staticCml!=NULL) // réservation d'un espace pour chaque champ statique
+		while(scml!=NULL) // réservation d'un espace pour chaque champ statique
 		{
-			code = genCodeFunc(cl->current->staticCml->current);
+			code = strcatwalloc(code, genCodeFunc(scml->current));
+			scml = scml->next;
+			//printf("testdfghnqdfojnhgwdfhi,wdcgnhkdfgkhwsfghjodwxf\n");
 		}
+		cl = cl->next;
 	}
 
-	code = strcatwalloc(code, "--methodes non statiques :\n");
+	//printf("--methodes non statique :\n");
+	code = strcatwalloc(code, "\n--methodes non statiques :");
 	cl = cl_par;
 	while(cl!=NULL)
 	{
-		sprintf(intToStr, "\t--classe %s\n", cl->current->IDClass);
+		ClassMethodListP cml = cl->current->cml;
 		code = strcatwalloc(code, genCodeFunc(cl->current->constructor));
 
+		//printf("\t--classe %s\n", cl->current->IDClass);
+		sprintf(intToStr, "\n\t--classe %s", cl->current->IDClass);
 		code = strcatwalloc(code, intToStr);
-		while(cl->current->cml!=NULL) // réservation d'un espace pour chaque champ statique
+		while(cml!=NULL) // réservation d'un espace pour chaque champ statique
 		{
-			code = strcatwalloc(code, genCodeFunc(cl->current->cml->current));
+			code = strcatwalloc(code, genCodeFunc(cml->current));
+			cml = cml->next;
+			//printf("tesefg<rsgt\n");
 		}
+		//printf("tes333t\n");
+		cl = cl->next;
+		//printf("test\n");
 	}
+	//printf("test2\n");
 	return code;
 }
 
