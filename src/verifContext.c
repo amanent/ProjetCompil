@@ -251,19 +251,48 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 /**/	case RET: //verif type de retour de la func
 
 		case VAR: //VAR Id ':' Idcl AffectO	';' // add dans la table
+			return(getChild(tree, 1)->type == getChild(tree, 2)->type
+				|| getChild(tree, 2)->type == NULL
+				|| class_isinheritedFrom(getChild(tree, 2)->type, getChild(tree, 1)->type));
 	
 /**/	case MSGSNT: // Exp2 '.' Id '(' ListArgO ')' //verif params && id dans les func de exp2
+		{
+			ClassP c = tree->type;
+			if(!c) return FALSE;
+			Var v = tree->var;
+			FunctionP ff = NULL;
+			if(v){
+				ff = class_getInstanceMethFromName(c, getChild(tree, 1)->u.str);
+			}
+			else{
+				ff = class_getStaticMethFromName(c, getChild(tree, 1)->u.str);
+			}
+			ParamsListP pmlst = NULL;
+			//@TODO creation de la liste de parametres
+			return prmlst_sameTypes (ff->paramsList, pmlst);
 
+		}
 		case MSGSNTS: // voir a factoriser avec MSGSNT
 
 		case CAST: //verification heritage, type = type du cast
+			tree->type = getChild(tree, 0)->type;
+			return (class_canAffect(tree->type, getChild(tree, 1)->type));
 
 		case IDCL: // verif tabledesclasses
+			ClassP c = class_getClass(tree->u.str);
+			tree->type = c;
+			return (c != NULL)
 	
 /**/	case INSTA: // NEW Idcl '(' ListArgO ')' // verif de la liste d'args du const de idcl
+			tree->type = class_getClass(getChild(tree, 0)->u.str);
+			ParamsListP pl = NULL;//Construction de la liste
+			return (prmlst_sameTypes (tree->type->constructor->paramsList, pl));
 
 		case INSTR: //gogo child0
-
+			tree->type = getChild(tree, 0)->type;
+			tree->var = getChild(tree, 0)->var;
+			tree->func = getChild(tree, 0)->func;
+			return TRUE;
 		case LSTARG: //a faire apres
 
 		case BLCDECL: 

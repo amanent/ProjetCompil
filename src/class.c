@@ -207,6 +207,11 @@ bool class_isinheritedFrom(ClassP c, ClassP cc){
 		
 }
 
+bool class_canAffect(ClassP c, ClassP cc){
+	return (c == cc || class_isinheritedFrom(cc, c));
+}
+
+
 int class_getNbFields(ClassP c){
 	int sum = 0;
 	ClassFieldListP tmp = c->cfl;
@@ -389,6 +394,24 @@ VarP class_getStaticFieldFromName(ClassP c, string varName){
 	ClassFieldListP tmp = c->staticCfl;
 	while(tmp){
 		if(!strcmp(varName, tmp->current->ID))
+			return tmp->current;
+	}
+	return NULL;
+}
+
+VarP class_getInstanceMethFromName(ClassP c, string funcName){
+	ClassMethodListP tmp = c->cml;
+	while(tmp){
+		if(!strcmp(funcName, tmp->current->ID))
+			return tmp->current;
+	}
+	return NULL;
+
+}
+VarP class_getStaticMethFromName(ClassP c, string funcName){
+	ClassMethodListP tmp = c->staticCml;
+	while(tmp){
+		if(!strcmp(funcName, tmp->current->ID))
 			return tmp->current;
 	}
 	return NULL;
