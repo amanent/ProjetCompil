@@ -146,8 +146,6 @@ string gencode(TreeP tree) {
 			}
 			return tmp; //gencode(getChild(tree, 0));; 		
 /**/	case MSGSNT: // Exp2 '.' Id '(' ListArgO ')'
-			sprintf(intToStr, "%d", 1 /* nbParams + 1 */); /* +a pour l'appellant */
-			
 			if(1/*si valeur de retour*/)
 				tmp = writeCode(tmp, FALSE, NULL, "PUSHN", "1" , NULL); // pour la valeur de retour 
 			/* La valeur/adresse de Exp2 est deja sur la pile (elle doit etre passée a la func) */
@@ -155,7 +153,6 @@ string gencode(TreeP tree) {
 			
 			tmp = writeCode(tmp, FALSE, NULL, "PUSHA", getChild(tree, 1)->u.str , NULL);
 			tmp = writeCode(tmp, FALSE, NULL, "CALL", NULL , NULL);
-			return writeCode(tmp, FALSE, NULL, "POPN", intToStr , NULL);
 		case MSGSNTS: // voir a factoriser avec MSGSNT
 			return NULL;
 /**/	case ID: 
@@ -189,16 +186,21 @@ string gencode(TreeP tree) {
 	- attribut non statique
 	- paramètre
 	- var locale a un bloc
-	- var globale
+	// pas pour l'instant - var globale
+
+	switch()
 */
 
 string genCodeFunc(FunctionP func) {
+	char intToStr[20];
 	string code;
 
 	code = writeCode(NULL, FALSE, func->ID, "NOP", NULL, NULL); /* voir a faire quelque chose pour la multiplicité des noms */
 	code = strcatwalloc(code, gencode(func->code));
+
+	sprintf(intToStr, "%d", func->nbParam); /* voir a pas ajouter 1 pour l'appellant (et donc un swap a l'appel) */
+	code = writeCode(tmp, FALSE, NULL, "POPN", intToStr , NULL);
 	code = writeCode(code, FALSE, NULL, "RETURN", NULL, NULL);
-	printf("%s", code);
 	return code; //strcatwalloc(code, gencode(func->code));
 }
 
