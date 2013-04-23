@@ -92,6 +92,16 @@ bool symTable_isVarDefined(SymbolesTableP t, string varName, string className){
 	return FALSE;
 }
 
+bool symTable_isNameInUse(SymbolesTableP t, string varName){
+	LineP tmp = t->current;
+	while(tmp != NULL) {
+		if(!strcmp(varName, tmp->v->ID))
+			return TRUE;
+		tmp = tmp->next;
+	}
+	return FALSE;
+}
+
 SymbolesTableP symTable_duplicate(SymbolesTableP t, unsigned int depth) {
 	SymbolesTableP nt = symTable_newTable();
 	symTable_dupLine(t->sections[depth], nt);

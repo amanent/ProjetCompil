@@ -146,7 +146,7 @@ bool verif_var(SymbolesTableP st, VarP var){
 
 typedef struct _context{
 	FunctionP func;
-	int prevOP;
+	short prevOP;
 }Context;
 
 Context context = {NULL, 0};
@@ -159,7 +159,8 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 		return TRUE;
 	}
 	    
-	
+	short prevOP = context.prevOP;
+	context.prevOP = tree->op;
 	
 
 	switch (tree->op) {
@@ -172,15 +173,25 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 			return TRUE;
 
 /**/	case ID: //ajout dans la table
-/*			//aff ? dans inst ?
-			if(aff){
+			//aff ? dans inst ?
+		{	
+			if(prevOP == VAR){
 				//add to symtable + tree->var->ID = u.str
+				VarP v = NEW(1, Var);
+				v->ID = tree->u.str;
+				//v->typeName = prm->type;
+				//v->type = class_getClass(v->typeName); a ajouter dans la partie sup
+
+				if(symTable_isNameInUse(st, v->ID))
+					return FALSE;
+				symTable_addLine(st, v, variable);
 			}
 			else{
-				//verif presence dans symtable
-				//tree->type = symTable_getVar(tree->u.str)->type
+				
 			}
-*/			
+
+		}
+			
 		case EQ: //integer
 		case NE:
 		case GT:
@@ -270,7 +281,10 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 		case VAR: //VAR Id ':' Idcl AffectO	';' // add dans la table
 			for(i = 0; i < tree->nbChildren; ++i)
 				if(!verif_types(st, getChild(tree, i)))
-					return FALSE;			
+					return FALSE;
+			getChild(tree, 0)->var->type = getChild(tree, 1)->type;
+			getChild(tree, 0)->var->typeName = getChild(tree, 0)->var->type->IDClass;
+
 			return(	   getChild(tree, 1)->type == getChild(tree, 2)->type
 					|| getChild(tree, 2)->type == NULL
 					|| class_isinheritedFrom(getChild(tree, 2)->type, getChild(tree, 1)->type));
@@ -290,7 +304,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 			else{
 				ff = class_getStaticMethFromName(c, getChild(tree, 1)->u.str);
 			}
-
+			//Comparaison des lstArg
 
 		}
 		
@@ -334,12 +348,18 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 			for(i = 0; i < tree->nbChildren; ++i)
 				if(!verif_types(st, getChild(tree, i)))
 					return FALSE;
-
 			symTable_exitScope(st);
-
+			return TRUE;
 		case DECL: 
-
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;
+				return TRUE;
 		case LSTINST:
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;
+			return TRUE;
 
 
 		default: //   (seulement géré a la verif context, va modifier directement l'offset)
