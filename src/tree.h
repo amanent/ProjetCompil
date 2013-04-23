@@ -17,6 +17,7 @@
 	  char* code;
 	  VarP var;
 	  FunctionP func; // ces deux derniers champs peuvent etre dans une union
+	  ClassP type;
 	};
 
 	/* construction et accesseur pour les arbres */

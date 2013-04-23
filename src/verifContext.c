@@ -5,7 +5,13 @@
  *      Author: Matthieu
  */
 #include "verifContext.h"
-
+#include "proj.h"
+#include "proj_y.h"
+#include "tree.h"
+#include "stdlib.h"
+#include "stdio.h"
+#include "variable.h"
+#include "class.h"
 
 extern ClassListP classList;
 //extern TreeP mainCode;
@@ -111,7 +117,7 @@ void fillSymTableClassVar(ClassFieldListP cfl, SymbolesTableP st){
 void fillSymTableClassFunc(ClassMethodListP cml, SymbolesTableP st){
 	if(cml->next)
 		fillSymTableClassFunc(cml->next, st);
-	symTable_addLine(st, cml->current, function);
+//	symTable_addLine(st, cml->current, function);
 }
 
 bool verif_paramList(FunctionP func){
@@ -135,6 +141,141 @@ bool verif_var(SymbolesTableP st, VarP var){
 	return TRUE;
 }
 
-bool verif_tree(SymbolesTableP st, TreeP tree) {
-	return TRUE;
+
+
+typedef struct _context{
+	FunctionP func;
+	int prevOP;
+}Context;
+
+Context context = {NULL, 0};
+
+bool verif_types(SymbolesTableP st, TreeP tree) {
+	int i = 0;
+	
+	if (tree == NULL){
+		printf("Verif d'un arbre vide\n");
+		return TRUE;
+	}
+	    
+	
+	for(i = 0; i < tree->nbChildren; ++i)
+		if(!verif_types(st, getChild(tree, i)))
+			return FALSE;
+
+	switch (tree->op) {
+		case STR: //return true, tree->type = String
+			tree->type = class_getClass("String"); //???
+			return TRUE;
+			
+		case CST: //return true, tree->type = Integer
+			tree->type = class_getClass("Integer"); //???
+			return TRUE;
+
+/**/	case ID: //ajout dans la table
+/*			//aff ? dans inst ?
+			if(aff){
+				//add to symtable + tree->var->ID = u.str
+			}
+			else{
+				//verif presence dans symtable
+				//tree->type = symTable_getVar(u.str)->type
+			}
+*/			
+		case EQ: //integer
+		case NE:
+		case GT:
+		case GE:
+		case LT:
+		case LE:
+		case ADD: // verif integer , type integer
+		case SUB:
+		case MUL:
+		case DIV:
+
+			if(		getChild(tree, 0)->type == class_getClass("Integer")
+				&&	getChild(tree, 1)->type == class_getClass("Integer"))			
+			{	
+				tree->type = class_getClass("Integer");
+				return TRUE;
+			}
+			return FALSE;
+
+
+		case CONCAT: // string
+			if(		getChild(tree, 0)->type == class_getClass("String")
+				&&	getChild(tree, 1)->type == class_getClass("String"))			
+			{	
+				tree->type = class_getClass("String");
+				return TRUE;
+			}
+			return FALSE;
+
+		case UNARYSUB: //integer
+		case UNARYADD: 
+			if(		getChild(tree, 0)->type == class_getClass("Integer"))		
+			{	
+				tree->type = class_getClass("Integer");
+				return TRUE;
+			}
+			return FALSE;
+
+		case IF: /*IF Exp THEN Inst ELSE Inst*/
+			return (getChild(tree, 0)->type == class_getClass("Integer"));
+
+/**/	case CMPAFF: // Exp2 '.' Id AFF Exp ';' //verif types
+/**/	case DIRAFF: // Id AFF Exp ';'
+			return (	(getChild(tree, 1)->type == getChild(tree, 0)->type)||(class_isinheritedFrom(getChild(tree, 1)->type, getChild(tree, 0)->type)));
+				
+
+/**/	case SELECT: // Exp2 '.' Id //verif id est dans exp2
+		{			
+			ClassP c = tree->type;
+			VarP v = tree->var;
+			VarP vv = NULL;
+			if(v)
+			{
+				vv = class_getInstanceFieldFromName(c, getChild(tree, 1)->u.str);
+			}
+			else 
+			{
+				vv = class_getStaticFieldFromName(c, getChild(tree, 1)->u.str);
+			}
+			if(vv){
+				tree->var = vv;
+				tree->type = vv->type;
+				return TRUE;
+			}
+			return FALSE;
+		}
+/**/	case RET: //verif type de retour de la func
+
+		case VAR: //VAR Id ':' Idcl AffectO	';' // add dans la table
+	
+/**/	case MSGSNT: // Exp2 '.' Id '(' ListArgO ')' //verif params && id dans les func de exp2
+
+		case MSGSNTS: // voir a factoriser avec MSGSNT
+
+		case CAST: //verification heritage, type = type du cast
+
+		case IDCL: // verif tabledesclasses
+	
+/**/	case INSTA: // NEW Idcl '(' ListArgO ')' // verif de la liste d'args du const de idcl
+
+		case INSTR: //gogo child0
+
+		case LSTARG: //a faire apres
+
+		case BLCDECL: 
+
+		case DECL: 
+
+		case LSTINST:
+
+
+		default: //   (seulement géré a la verif context, va modifier directement l'offset)
+		fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", tree->op);
+		break; 
+	}
+	return FALSE;
 }

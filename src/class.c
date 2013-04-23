@@ -203,9 +203,8 @@ string class_print(ClassP class){
 bool class_isinheritedFrom(ClassP c, ClassP cc){
 	if(c->super == NULL)
 		return FALSE;
-	if(c->super == cc || class_isinheritedFrom(c->super, cc))
-		return TRUE;
-	return FALSE;
+	return (c->super == cc || class_isinheritedFrom(c->super, cc));
+		
 }
 
 int class_getNbFields(ClassP c){
@@ -375,4 +374,22 @@ int jtable_getOffsetStatic(ClassP c, string argName){
 		cmltmp = cmltmp->next;
 	}
 	return -1;
+}
+
+VarP class_getInstanceFieldFromName(ClassP c, string varName){
+	ClassFieldListP tmp = c->cfl;
+	while(tmp){
+		if(!strcmp(varName, tmp->current->ID))
+			return tmp->current;
+	}
+	return NULL;
+}
+
+VarP class_getStaticFieldFromName(ClassP c, string varName){
+	ClassFieldListP tmp = c->staticCfl;
+	while(tmp){
+		if(!strcmp(varName, tmp->current->ID))
+			return tmp->current;
+	}
+	return NULL;
 }
