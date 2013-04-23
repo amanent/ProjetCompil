@@ -70,7 +70,6 @@ void pprintfi(char* c, int i) {
 %%
 Program		:	Bloc										{	pprintf("prog bloc");
 																mainCode = $1;
-																/*lancer la verif contextuelle */ 
 															}
 			|	Class Program								{ pprintf("prog class"); } /* Pas de traitement */
 			;
