@@ -64,9 +64,13 @@
 	string classList_print();
 	string class_print(ClassP class);
 	bool class_isinheritedFrom(ClassP c, ClassP cc);
+	bool class_canAffect(ClassP c, ClassP cc);
+
 	VarP class_getInstanceFieldFromName(ClassP c, string varName);
 	VarP class_getStaticFieldFromName(ClassP c, string varName);
 
+	FunctionP class_getInstanceMethFromName(ClassP c, string funcName);
+	FunctionP class_getStaticMethFromName(ClassP c, string funcName);
 
 	int class_getNbFields(ClassP c);
 

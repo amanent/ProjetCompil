@@ -399,7 +399,7 @@ VarP class_getStaticFieldFromName(ClassP c, string varName){
 	return NULL;
 }
 
-VarP class_getInstanceMethFromName(ClassP c, string funcName){
+FunctionP class_getInstanceMethFromName(ClassP c, string funcName){
 	ClassMethodListP tmp = c->cml;
 	while(tmp){
 		if(!strcmp(funcName, tmp->current->ID))
@@ -408,7 +408,7 @@ VarP class_getInstanceMethFromName(ClassP c, string funcName){
 	return NULL;
 
 }
-VarP class_getStaticMethFromName(ClassP c, string funcName){
+FunctionP class_getStaticMethFromName(ClassP c, string funcName){
 	ClassMethodListP tmp = c->staticCml;
 	while(tmp){
 		if(!strcmp(funcName, tmp->current->ID))

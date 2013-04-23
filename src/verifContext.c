@@ -259,9 +259,8 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 		{
 			ClassP c = tree->type;
 			if(!c) return FALSE;
-			Var v = tree->var;
 			FunctionP ff = NULL;
-			if(v){
+			if(tree->var){
 				ff = class_getInstanceMethFromName(c, getChild(tree, 1)->u.str);
 			}
 			else{
@@ -279,10 +278,11 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 			return (class_canAffect(tree->type, getChild(tree, 1)->type));
 
 		case IDCL: // verif tabledesclasses
+		{
 			ClassP c = class_getClass(tree->u.str);
 			tree->type = c;
-			return (c != NULL)
-	
+			return (c != NULL);
+		}
 /**/	case INSTA: // NEW Idcl '(' ListArgO ')' // verif de la liste d'args du const de idcl
 			tree->type = class_getClass(getChild(tree, 0)->u.str);
 			ParamsListP pl = NULL;//Construction de la liste
