@@ -203,10 +203,14 @@ string class_print(ClassP class){
 bool class_isinheritedFrom(ClassP c, ClassP cc){
 	if(c->super == NULL)
 		return FALSE;
-	if(c->super == cc || class_isinheritedFrom(c->super, cc))
-		return TRUE;
-	return FALSE;
+	return (c->super == cc || class_isinheritedFrom(c->super, cc));
+		
 }
+
+bool class_canAffect(ClassP c, ClassP cc){
+	return (c == cc || class_isinheritedFrom(cc, c));
+}
+
 
 int class_getNbFields(ClassP c){
 	int sum = 0;
@@ -375,4 +379,40 @@ int jtable_getOffsetStatic(ClassP c, string argName){
 		cmltmp = cmltmp->next;
 	}
 	return -1;
+}
+
+VarP class_getInstanceFieldFromName(ClassP c, string varName){
+	ClassFieldListP tmp = c->cfl;
+	while(tmp){
+		if(!strcmp(varName, tmp->current->ID))
+			return tmp->current;
+	}
+	return NULL;
+}
+
+VarP class_getStaticFieldFromName(ClassP c, string varName){
+	ClassFieldListP tmp = c->staticCfl;
+	while(tmp){
+		if(!strcmp(varName, tmp->current->ID))
+			return tmp->current;
+	}
+	return NULL;
+}
+
+FunctionP class_getInstanceMethFromName(ClassP c, string funcName){
+	ClassMethodListP tmp = c->cml;
+	while(tmp){
+		if(!strcmp(funcName, tmp->current->ID))
+			return tmp->current;
+	}
+	return NULL;
+
+}
+FunctionP class_getStaticMethFromName(ClassP c, string funcName){
+	ClassMethodListP tmp = c->staticCml;
+	while(tmp){
+		if(!strcmp(funcName, tmp->current->ID))
+			return tmp->current;
+	}
+	return NULL;
 }

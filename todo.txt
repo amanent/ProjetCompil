@@ -1,6 +1,6 @@
 Verif contextuelle :
  (a peu près par ordre de priorité)
-	☐ passe de résolution des noms
+	✔ passe de résolution des noms @done (13-04-23 10:40)
 	☐  génération de la table des symboles
 	☐  passe de résolution des types
 	☐  verif du type pour les opérations (+, -, ... que sur entiers, cat que sur string)
