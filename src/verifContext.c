@@ -12,6 +12,7 @@
 #include "stdio.h"
 #include "variable.h"
 #include "class.h"
+#include "symboles.h"
 
 extern ClassListP classList;
 //extern TreeP mainCode;
@@ -159,17 +160,15 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 	}
 	    
 	
-	for(i = 0; i < tree->nbChildren; ++i)
-		if(!verif_types(st, getChild(tree, i)))
-			return FALSE;
+	
 
 	switch (tree->op) {
 		case STR: //return true, tree->type = String
-			tree->type = class_getClass("String"); //???
+			tree->type = class_getClass("String"); 
 			return TRUE;
 			
 		case CST: //return true, tree->type = Integer
-			tree->type = class_getClass("Integer"); //???
+			tree->type = class_getClass("Integer"); 
 			return TRUE;
 
 /**/	case ID: //ajout dans la table
@@ -179,7 +178,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 			}
 			else{
 				//verif presence dans symtable
-				//tree->type = symTable_getVar(u.str)->type
+				//tree->type = symTable_getVar(tree->u.str)->type
 			}
 */			
 		case EQ: //integer
@@ -192,7 +191,9 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 		case SUB:
 		case MUL:
 		case DIV:
-
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;
 			if(		getChild(tree, 0)->type == class_getClass("Integer")
 				&&	getChild(tree, 1)->type == class_getClass("Integer"))			
 			{	
@@ -203,6 +204,9 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 
 
 		case CONCAT: // string
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;
 			if(		getChild(tree, 0)->type == class_getClass("String")
 				&&	getChild(tree, 1)->type == class_getClass("String"))			
 			{	
@@ -213,6 +217,9 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 
 		case UNARYSUB: //integer
 		case UNARYADD: 
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;
 			if(		getChild(tree, 0)->type == class_getClass("Integer"))		
 			{	
 				tree->type = class_getClass("Integer");
@@ -221,15 +228,25 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 			return FALSE;
 
 		case IF: /*IF Exp THEN Inst ELSE Inst*/
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;
 			return (getChild(tree, 0)->type == class_getClass("Integer"));
 
 /**/	case CMPAFF: // Exp2 '.' Id AFF Exp ';' //verif types
 /**/	case DIRAFF: // Id AFF Exp ';'
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;
 			return (	(getChild(tree, 1)->type == getChild(tree, 0)->type)||(class_isinheritedFrom(getChild(tree, 1)->type, getChild(tree, 0)->type)));
 				
 
 /**/	case SELECT: // Exp2 '.' Id //verif id est dans exp2
-		{			
+		{	
+
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;				
 			ClassP c = tree->type;
 			VarP v = tree->var;
 			VarP vv = NULL;
@@ -251,12 +268,19 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 /**/	case RET: //verif type de retour de la func
 
 		case VAR: //VAR Id ':' Idcl AffectO	';' // add dans la table
-			return(getChild(tree, 1)->type == getChild(tree, 2)->type
-				|| getChild(tree, 2)->type == NULL
-				|| class_isinheritedFrom(getChild(tree, 2)->type, getChild(tree, 1)->type));
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;			
+			return(	   getChild(tree, 1)->type == getChild(tree, 2)->type
+					|| getChild(tree, 2)->type == NULL
+					|| class_isinheritedFrom(getChild(tree, 2)->type, getChild(tree, 1)->type));
 	
+		case MSGSNTS: // voir a factoriser avec MSGSNT
 /**/	case MSGSNT: // Exp2 '.' Id '(' ListArgO ')' //verif params && id dans les func de exp2
 		{
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;
 			ClassP c = tree->type;
 			if(!c) return FALSE;
 			FunctionP ff = NULL;
@@ -266,36 +290,52 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 			else{
 				ff = class_getStaticMethFromName(c, getChild(tree, 1)->u.str);
 			}
-			ParamsListP pmlst = NULL;
-			//@TODO creation de la liste de parametres
-			return prmlst_sameTypes (ff->paramsList, pmlst);
+
 
 		}
-		case MSGSNTS: // voir a factoriser avec MSGSNT
+		
 
 		case CAST: //verification heritage, type = type du cast
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;			
 			tree->type = getChild(tree, 0)->type;
 			return (class_canAffect(tree->type, getChild(tree, 1)->type));
 
 		case IDCL: // verif tabledesclasses
 		{
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;
 			ClassP c = class_getClass(tree->u.str);
 			tree->type = c;
 			return (c != NULL);
 		}
 /**/	case INSTA: // NEW Idcl '(' ListArgO ')' // verif de la liste d'args du const de idcl
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;			
 			tree->type = class_getClass(getChild(tree, 0)->u.str);
 			ParamsListP pl = NULL;//Construction de la liste
 			return (prmlst_sameTypes (tree->type->constructor->paramsList, pl));
 
 		case INSTR: //gogo child0
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;		
 			tree->type = getChild(tree, 0)->type;
 			tree->var = getChild(tree, 0)->var;
 			tree->func = getChild(tree, 0)->func;
 			return TRUE;
 		case LSTARG: //a faire apres
 
-		case BLCDECL: 
+		case BLCDECL:
+			symTable_enterNewScope(st);
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;
+
+			symTable_exitScope(st);
 
 		case DECL: 
 

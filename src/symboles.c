@@ -50,7 +50,13 @@ SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func){
 		v->type = class_getClass(v->typeName);
 		symTable_addLine(nt, v, parameter);
 	}
-
+	if(func->returnType) {
+		VarP res = NEW(1, Var);
+		res->ID = "result";
+		res->type = func->returnType;
+		res->typeName = res->type->IDClass;
+		symTable_addLine(nt, res, parameter);
+	}
 	//Section 2 = Entering function code -> sec 1
 	symTable_enterNewScope(nt);
 
