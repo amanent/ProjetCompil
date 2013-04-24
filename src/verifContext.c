@@ -56,6 +56,7 @@ bool verif_nameResolution(){
 				currentFunc->returnType = class_getClass(currentFunc->returnName);
 				if(currentFunc->returnType == NULL || verif_paramList(currentFunc) == FALSE) // si on a pas trouvé la classe.
 					return FALSE;
+				function_howManyArgs(currentFunc);
 			}
 			currentCML = currentCML->next;
 		}
@@ -69,6 +70,7 @@ bool verif_nameResolution(){
 				currentSFunc->returnType = class_getClass(currentSFunc->returnName);
 				if(currentSFunc->returnType == NULL || verif_paramList(currentSFunc) == FALSE) // si on a pas trouvé la classe.
 					return FALSE;
+				function_howManyArgs(currentSFunc);
 			}
 			currentCML = currentCML->next;
 		}
@@ -265,7 +267,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 				return FALSE;
 			return (	(getChild(tree, 1)->type == getChild(tree, 0)->type)||(class_isinheritedFrom(getChild(tree, 1)->type, getChild(tree, 0)->type)));
 
-/**/	case CMPAFF: // Exp2 '.' Id AFF Exp ';' //verif types
+/**/	case CMPAFF: // l AFF Exp ';' //verif types
 			for(i = 0; i < tree->nbChildren; ++i)
 				if(!verif_types(st, getChild(tree, i)))
 					return FALSE;
@@ -319,7 +321,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 			ClassP c = getChild(tree, 0)->type;
 			if(!c) return FALSE;
 			FunctionP ff = NULL;
-			if(getChild(tree, 0)->var){
+			if(getChild(tree, 0)->var || getChild(tree, 0)->func){
 				ff = class_getInstanceMethFromName(c, getChild(tree, 1)->u.str);
 			}
 			else{
