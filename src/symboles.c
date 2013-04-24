@@ -48,7 +48,7 @@ SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func){
 		v->ID = prm->name;
 		v->typeName = prm->type;
 		v->type = class_getClass(v->typeName);
-		symTable_addLine(nt, v, parameter);
+		symTable_addLine(nt, v, PARAM);
 	}
 	if(func->returnType) {
 		VarP res = NEW(1, Var);

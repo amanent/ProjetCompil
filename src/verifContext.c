@@ -227,7 +227,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 
 				if(symTable_isNameInUse(st, v->ID))
 					return FALSE;
-				symTable_addLine(st, v, variable);
+				symTable_addLine(st, v, LOCAL);
 			}
 			else{
 				 tree->var = symTable_getVarFromName(st, tree->u.str);
