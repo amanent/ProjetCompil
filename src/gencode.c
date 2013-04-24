@@ -59,7 +59,7 @@ int nbIf=0;
 // Voir a différencier selection et affectation 
 string gencode(TreeP tree) {
 	char *code = NULL;
-	char intToStr[30] = "", intToStr2[30] = ""; /* normalement pas de int de plus de 20 digit gérés par la machine (18 max pour un nombre sur 64 bits, plus le signe plus \0 = 20) */
+	char intToStr[40] = "", intToStr2[30] = ""; /* normalement pas de int de plus de 20 digit gérés par la machine (18 max pour un nombre sur 64 bits, plus le signe plus \0 = 20) */
 
 	if (tree == NULL)
 	    return "";
@@ -123,29 +123,80 @@ string gencode(TreeP tree) {
 			code = strcatwalloc(code, gencode(getChild(tree, 2)));
 			return writeCode(code, FALSE, intToStr2, "NOP", NULL , "fin if");
 /**/	case CMPAFF: // Exp2 '.' Id AFF Exp ';'
+			code = gencode(getChild(tree, 1)); /* le code de l'expression */
+			
+			if(tree->var==NULL) 
+				return writeCode(NULL, FALSE, NULL, "PUSHL", "0", "Gros hack permettant la compilation tant que les champs ne sont pas mis a jour");
+			else
+			{
+				sprintf(intToStr, "%d", getChild(tree, 1)->var->offset); 
+				
+				switch(tree->var->nature)
+				{
+					case STATIC: // offset par rapport a GP
+						return writeCode(code, FALSE, NULL, "STOREG", intToStr , NULL);
+					case NONSTATIC: // offset par rapport a adresse Classe
+						if(tree->fContext != NULL) {
+							sprintf(intToStr2, "%d", - tree->fContext->nbParam - 1); // empilage de l'adresse de l'appelant
+							code = writeCode(code, FALSE, NULL, "PUSHL", intToStr2, NULL);
+							code = writeCode(code, FALSE, NULL, "SWAP", NULL, NULL); // pour remettre les paramètres dans le bon sens
+							return writeCode(code, FALSE, NULL, "STORE", intToStr, NULL);
+						}
+						return writeCode(code, FALSE, NULL, "NOP", NULL, "erreur d'adressage");
+					case PARAM: // offset par rapport a FP (negatif)
+						return writeCode(code, FALSE, NULL, "STOREL", intToStr , NULL);
+					case LOCAL: // offset par rapport a FP (positif)
+						return writeCode(code, FALSE, NULL, "STOREL", intToStr , NULL);
+				}
+			return code;
+
+
 			sprintf(intToStr, "%d", 0);//getChild(tree, 1)->var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
 			
 			code = gencode(getChild(tree, 0));
 			code = strcatwalloc(code, gencode(getChild(tree, 2)));
 
 			return writeCode(NULL, FALSE, NULL, "STORE", intToStr , NULL);
-/**/	case DIRAFF: // Id AFF Exp ';'
-			sprintf(intToStr, "%d", 0);//getChild(tree, 0)->u.var->local_offset);
-
+		case DIRAFF: // Id AFF Exp ';'
 			code = gencode(getChild(tree, 1)); /* le code de l'expression */
 			
-			//switch(tree->var->nature)
+			if(tree->var==NULL) 
+				return writeCode(NULL, FALSE, NULL, "PUSHL", "0", "Gros hack permettant la compilation tant que les champs ne sont pas mis a jour");
+			else
 			{
-				//case STATIC: // offset par rapport a GP
-				//	return writeCode(code, FALSE, NULL, "STOREG", intToStr , NULL);
-				//case NONSTATIC: // offset par rapport a adresse Classe
-					// pour l'instant on suppose que l'adressage doit etre explicite
-				//case PARAM: // offset par rapport a FP (negatif)
-				//	return writeCode(code, FALSE, NULL, "STOREL", intToStr , NULL);
-				//case LOCAL: // offset par rapport a FP (positif)
-					return writeCode(code, FALSE, NULL, "STOREL", intToStr , NULL);
-			}
+				sprintf(intToStr, "%d", getChild(tree, 1)->var->offset); 
+				
+				switch(tree->var->nature)
+				{
+					case STATIC: // offset par rapport a GP
+						return writeCode(code, FALSE, NULL, "STOREG", intToStr , NULL);
+					case NONSTATIC: // offset par rapport a adresse Classe
+						if(tree->fContext != NULL) {
+							sprintf(intToStr2, "%d", - tree->fContext->nbParam - 1); // empilage de l'adresse de l'appelant
+							code = writeCode(code, FALSE, NULL, "PUSHL", intToStr2, NULL);
+							code = writeCode(code, FALSE, NULL, "SWAP", NULL, NULL); // pour remettre les paramètres dans le bon sens
+							return writeCode(code, FALSE, NULL, "STORE", intToStr, NULL);
+						}
+						return writeCode(code, FALSE, NULL, "NOP", NULL, "erreur d'adressage");
+					case PARAM: // offset par rapport a FP (negatif)
+						return writeCode(code, FALSE, NULL, "STOREL", intToStr , NULL);
+					case LOCAL: // offset par rapport a FP (positif)
+						return writeCode(code, FALSE, NULL, "STOREL", intToStr , NULL);
+				}
 			return code;	
+		case SELECTS: // Idcl '.' Id
+			if(getChild(tree, 1)->var != NULL)
+				sprintf(intToStr, "%d", getChild(tree, 1)->var->offset); // on suppose que pour les séléctions, l'offset de l'adresse (si besoin) est dans le membre, et celle du décalage dans le fils.
+			else
+				sprintf(intToStr, "%d", 0); // debug
+
+			if(tree->var != NULL)
+				sprintf(intToStr2, "%d", tree->var->offset);
+			else
+				sprintf(intToStr2, "%d", 0); // debug
+
+			code = writeCode(NULL, FALSE, NULL, "PUSHI", intToStr2 , NULL);
+			return writeCode(code, FALSE, NULL, "LOAD", intToStr , NULL);
 /**/	case SELECT: // Exp2 '.' Id
 			sprintf(intToStr, "%d", 0);//getChild(tree, 1)->var->offset); // champ rempli a la verif du type de retour de l'exp2.
 			code = gencode(getChild(tree, 0));
@@ -158,42 +209,64 @@ string gencode(TreeP tree) {
 				/* faire l'affectation */
 			}
 			return code; //gencode(getChild(tree, 0));; 		
-/**/	case MSGSNT: // Exp2 '.' Id '(' ListArgO ')'
-			code = gencode(getChild(tree, 0));
-			if(1/*si valeur de retour*/) {
-				code = writeCode(code, FALSE, NULL, "PUSHN", "1" , NULL); // pour la valeur de retour
-				code = writeCode(code, FALSE, NULL, "SWAP", NULL , NULL);
-			}
-			/* La valeur/adresse de Exp2 est deja sur la pile (elle doit etre passée a la func) */
+		case MSGSNT: // Exp2 '.' Id '(' ListArgO ')'
+			if(tree->func==NULL || function_hasReturnType(tree->func))
+				code = writeCode(code, FALSE, NULL, "PUSHN", "1" , "return value"); // pour la valeur de retour
+	
+			code = gencode(getChild(tree, 0)); // pour mettre l'appelant sur la pile
 			code = strcatwalloc(code, gencode(getChild(tree, 2))); //push des n arguments
 			
 			code = writeCode(code, FALSE, NULL, "PUSHA", getChild(tree, 1)->u.str , NULL);
 			code = writeCode(code, TRUE, NULL, "CALL", NULL , NULL);
-			//sprintf(intToStr, "%d", func->nbParam+1); /* on dépile aussi l'appelant */
-			//code = writeCode(code, FALSE, NULL, "POPN", intToStr , NULL);
-			return writeCode(code, FALSE, NULL, "POPN", "1" , NULL); // nb paramètres
-		case MSGSNTS: // voir a factoriser avec MSGSNT
-			return NULL;
+			
+			if(tree->func!=NULL)
+			{
+				sprintf(intToStr, "%d", tree->func->nbParam+1); // pour l'appellant
+				return writeCode(code, FALSE, NULL, "POPN", intToStr , NULL);
+			}
+			else
+				return writeCode(code, FALSE, NULL, "POPN", "1" , NULL);
+		case MSGSNTS: // Idcl '.' Id '(' ListArgO ')'
+			if(tree->func==NULL || function_hasReturnType(tree->func))
+				code = writeCode(code, FALSE, NULL, "PUSHN", "1" , "return value"); // pour la valeur de retour
+			code = strcatwalloc(code, gencode(getChild(tree, 2))); //push des n arguments
+			
+			//sprintf(intToStr, "%s_%s", getChild(tree, 0)->u.str, getChild(tree, 1)->u.str); // pour eviter la multiplicité des noms
+			code = writeCode(code, FALSE, NULL, "PUSHA", getChild(tree, 1)->u.str, NULL);
+			code = writeCode(code, TRUE, NULL, "CALL", NULL , NULL);
+
+			if(tree->func!=NULL)
+			{
+				sprintf(intToStr, "%d", tree->func->nbParam);
+				return writeCode(code, FALSE, NULL, "POPN", intToStr , NULL);
+			}
+			else
+				return writeCode(code, FALSE, NULL, "POPN", "1" , NULL);
 		case ID: // seulement possible en partie droite
 			if(tree->var==NULL)
-				return writeCode(NULL, FALSE, NULL, "PUSHL", "0", "Gros hack permettant la compilation tant uqe les champs ne sont pas mis a jour");
+				return writeCode(NULL, FALSE, NULL, "PUSHL", "0", "Gros hack permettant la compilation tant que les champs ne sont pas mis a jour");
 			else
-			{
+			{	
 				sprintf(intToStr, "%d", tree->var->offset); // champ rempli a la verif du type de retour de l'exp2.
 				switch(tree->var->nature)
 				{
 					case STATIC: // offset par rapport a GP
-						return writeCode(code, FALSE, NULL, "PUSHG", intToStr, NULL);
-					//case NONSTATIC: // offset par rapport a adresse Classe
-					//	 pour l'instant on suppose que l'adressage doit etre explicite
+						return writeCode(NULL, FALSE, NULL, "PUSHG", intToStr, NULL);
+					case NONSTATIC: // offset par rapport a adresse Classe
+						if(tree->fContext != NULL) {
+							sprintf(intToStr2, "%d", - tree->fContext->nbParam - 1); // empilage de l'adresse de l'appelant
+							code = writeCode(NULL, FALSE, NULL, "PUSHL", intToStr2, NULL);
+							return writeCode(code, FALSE, NULL, "LOAD", intToStr, NULL);
+						}
+						return writeCode(NULL, FALSE, NULL, "NOP", NULL, "erreur d'adressage");
 					case PARAM: // offset par rapport a FP (negatif)
-						return writeCode(code, FALSE, NULL, "PUSHL", intToStr, NULL);
+						return writeCode(NULL, FALSE, NULL, "PUSHL", intToStr, NULL);
 					case LOCAL: // offset par rapport a FP (positif)
 						return writeCode(NULL, FALSE, NULL, "PUSHL", intToStr, NULL);
 				}
 			}
 			return NULL;
-	case INSTA: // NEW Idcl '(' ListArgO ')'
+		case INSTA: // NEW Idcl '(' ListArgO ')'
 			code = writeCode(NULL, FALSE, NULL, "PUSHN", "1" , NULL);
 			code = strcatwalloc(code, gencode(getChild(tree, 1)));
 			code = writeCode(code, FALSE, NULL, "PUSHA", getChild(tree, 0)->u.str, NULL);
@@ -283,7 +356,7 @@ string genBaseFuncCode()
 string genBaseCode(ClassListP cl_par)
 {
 	string code = NULL;
-	char intToStr[30] = "";
+	char intToStr[40] = "";
 	ClassListP cl;
 
 	code = strcatwalloc(code, "\n--champs statiques :");

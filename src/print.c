@@ -60,7 +60,7 @@ void ppprint(TreeP tree) {
   }
   switch (tree->op) {
 	case ID: case IDCL: case STR:
-					printf("%s", tree->u.str); break;
+              printf("%s", tree->u.str); break;
 	case CST:		printf("%d", tree->u.val); break;
 	case EQ:		pprintTree2(tree, " = "); break;
 	case NE:		pprintTree2(tree, " <> "); break;
@@ -82,7 +82,8 @@ void ppprint(TreeP tree) {
 	case CAST: 		pprintTree2full(tree, "(as ", ": ", ")"); break;
 	case INSTA: 		pprintTree2full(tree, "new ", "(", ")"); break;
   case INSTR:   ppprint(getChild(tree, 0)); printf(";"); break;
-	case SELECT: 	pprintTree2(tree, "."); break;
+	case SELECT:
+  case SELECTS: 	pprintTree2(tree, "."); break;
 	case UNARYSUB: 	printf("-"); ppprint(getChild(tree, 0)); break;
 	case UNARYADD: 	printf("+"); ppprint(getChild(tree, 0)); break;
 	case IF: 		pprintTree3(tree, "if ", " then ", " else ", ""); break;
