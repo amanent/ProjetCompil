@@ -13,6 +13,7 @@
 #include "variable.h"
 #include "class.h"
 #include "symboles.h"
+#include <string.h>
 
 extern ClassListP classList;
 //extern TreeP mainCode;
@@ -87,9 +88,18 @@ bool verif_nameResolution(){
 
 }
 
+void verif_contructJumpTable(){
+	ClassListP tmp = classList;
+	while(tmp){
+		class_generateJumpTable(tmp->current);
+		tmp = tmp->next;
+	}
+}
+
 bool verif_contextuelle(){ // need verif arg.
 	if(!verif_nameResolution())
 		return FALSE;
+	verif_contructJumpTable();
 
 	return TRUE;
 }
@@ -244,8 +254,18 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 					return FALSE;
 			return (getChild(tree, 0)->type == class_getClass("Integer"));
 
-/**/	case CMPAFF: // Exp2 '.' Id AFF Exp ';' //verif types
+
 /**/	case DIRAFF: // Id AFF Exp ';'
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i)))
+					return FALSE;
+			string idtxt = getChild(tree, 0)->u.str;
+
+			if(!strcmp(idtxt, "this") || !strcmp(idtxt, "super"))
+				return FALSE;
+			return (	(getChild(tree, 1)->type == getChild(tree, 0)->type)||(class_isinheritedFrom(getChild(tree, 1)->type, getChild(tree, 0)->type)));
+
+/**/	case CMPAFF: // Exp2 '.' Id AFF Exp ';' //verif types
 			for(i = 0; i < tree->nbChildren; ++i)
 				if(!verif_types(st, getChild(tree, i)))
 					return FALSE;
@@ -258,8 +278,8 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 			for(i = 0; i < tree->nbChildren; ++i)
 				if(!verif_types(st, getChild(tree, i)))
 					return FALSE;				
-			ClassP c = tree->type;
-			VarP v = tree->var;
+			ClassP c = getChild(tree, 0)->type;
+			VarP v = getChild(tree, 0)->var;
 			VarP vv = NULL;
 			if(v)
 			{
@@ -284,6 +304,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 					return FALSE;
 			getChild(tree, 0)->var->type = getChild(tree, 1)->type;
 			getChild(tree, 0)->var->typeName = getChild(tree, 0)->var->type->IDClass;
+			getChild(tree, 0)->type = getChild(tree, 1)->type;
 
 			return(	   getChild(tree, 1)->type == getChild(tree, 2)->type
 					|| getChild(tree, 2)->type == NULL
@@ -295,16 +316,22 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 			for(i = 0; i < tree->nbChildren; ++i)
 				if(!verif_types(st, getChild(tree, i)))
 					return FALSE;
-			ClassP c = tree->type;
+			ClassP c = getChild(tree, 0)->type;
 			if(!c) return FALSE;
 			FunctionP ff = NULL;
-			if(tree->var){
+			if(getChild(tree, 0)->var){
 				ff = class_getInstanceMethFromName(c, getChild(tree, 1)->u.str);
 			}
 			else{
 				ff = class_getStaticMethFromName(c, getChild(tree, 1)->u.str);
 			}
-			//Comparaison des lstArg
+			if(ff && 1//Comparaison des lstArg)
+			{
+				tree->type = ff->returnType;
+				tree->func = ff;
+				return TRUE;
+			}
+			return FALSE;
 
 		}
 		

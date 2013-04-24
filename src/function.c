@@ -85,5 +85,6 @@ int function_howManyArgs(FunctionP func){
 		++nArgs;
 		tmp = tmp->next;
 	}
+	func->nbParam = nArgs;
 	return nArgs;
 }
