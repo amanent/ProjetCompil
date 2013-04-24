@@ -7,5 +7,6 @@
 	string genCodeFunc(FunctionP func);
 	string genCodeConst(ClassP c);
 	string genBaseCode(ClassListP cl_par);
+	string genBaseFuncCode();
 
 #endif

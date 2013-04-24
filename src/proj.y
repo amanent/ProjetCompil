@@ -210,6 +210,10 @@ Exp2		:	'(' Exp ')'									{ pprintf("exp21"); $$ = $2; }
 			|	Id 											{ pprintf("exp28"); $$ = makeLeafStr(ID, yyval.S); }
 			;
 
+Select 		:	Exp2 '.' Id
+			|	Idcl '.' Id
+			;
+
 Id 			: 	ID											{ pprintfs("id", yyval.S); $$ = yyval.S; }
 			;
 

@@ -1,8 +1,33 @@
+--Compiling
 --A priori c'est bon :)
 --code :
 
-	START		
+--champs statiques :
+	JUMP	start	
+--methodes statiques :
+--methodes non statiques :
+--code des fonctions de base
+toString:	PUSHL	-1	
+	STR		
+	STOREL	-2	
+	RETURN		--fin toString
+
+print:	PUSHL	-1	
+	WRITES		
+	SWAP		
+	RETURN		--fin print
+
+println:	PUSHL	-1	
+	PUSHS	"\n"	
+	CONCAT		
+	WRITES		
+	SWAP		
+	RETURN		--fin println
+
+start:	START		--main function
 	PUSHN	1	--a
+	PUSHI	10	--int cst
+	STOREL	0	
 	PUSHL	0	
 	PUSHI	5	--int cst
 	INFEQ		
@@ -12,15 +37,24 @@
 	PUSHI	5	--int cst
 	SUB		
 	MUL		
---:	POPN	1	
+	STOREL	0	
 	JUMP	suite_0	
 else_0:	NOP		
 	PUSHI	4	--int cst
 	PUSHI	5	--int cst
 	MUL		
---:	POPN	1	
+	STOREL	0	
 suite_0:	NOP		--fin if
-	WRITEI		
-	PUSHS	"\n"	
-	WRITES		
+	PUSHL	0	
+	PUSHN	1	
+	SWAP		
+	PUSHA	toString	
+* 	CALL		
+	POPN	1	
+	PUSHN	1	
+	SWAP		
+	PUSHA	println	
+* 	CALL		
+	POPN	1	
+	POPN	1	
 	STOP		

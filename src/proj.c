@@ -103,16 +103,15 @@ int main(int argc, char **argv) {
 	string toto = NULL;
 	toto = genBaseCode(classList);
 	
-	//toto = writeCode(toto, FALSE, NULL, "PUSHI", "3", NULL);
+	toto = strcatwalloc(toto, gencode(mainCode));
+	toto = writeCode(toto, FALSE, NULL, "STOP", NULL, NULL);
 
-	//toto = strcatwalloc(toto, gencode(mainCode));
-
-	//(string prevCode, bool breakPoint, string label, string code, string arg, string comm)
+	/*/(string prevCode, bool breakPoint, string label, string code, string arg, string comm)
 	writeCode(toto, FALSE, NULL, "WRITEI", NULL, NULL);
 	writeCode(toto, FALSE, NULL, "PUSHS", "\"\\n\"", NULL); 
 	writeCode(toto, FALSE, NULL, "WRITES", NULL, NULL);
 	writeCode(toto, FALSE, NULL, "STOP", NULL, NULL);
-
+	*/
 	printf("--code :\n%s\n", toto);
 	//*/
 	if (fd != NIL(FILE)) fclose(fd);

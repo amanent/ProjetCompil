@@ -4,6 +4,7 @@
 
 #include "proj.h"
 #include "proj_y.h"
+#include "variable.h"
 
 string writeCode(string prevCode, bool breakPoint, string label, string code, string arg, string comm) { // ne marche pas avec une chaine constante en premier paramètre.
 	string newCode = realloc(prevCode, (prevCode==NULL?0:strlen(prevCode))
@@ -33,12 +34,18 @@ string writeCode(string prevCode, bool breakPoint, string label, string code, st
 	if(comm!=NULL && strlen(comm)>0) {
 		strcat(newCode, "--");
 		strcat(newCode, comm);
+		//printf("%s", comm);
 	}
+	//strcat(newCode, "toy\n\0");
 	return newCode;
 }
 
 string strcatwalloc(string s1, string s2) {
 	string res = realloc(s1, (s1==NULL?0:strlen(s1)) + (s2==NULL?0:strlen(s2))+1);
+	
+	if(s1==NULL)
+		res[0]='\0';
+
 	if(s2!=NULL && strlen(s2)>0)
 		strcat(res, s2);
 	return res;
@@ -51,8 +58,8 @@ int nbIf=0;
 
 // Voir a différencier selection et affectation 
 string gencode(TreeP tree) {
-	char *tmp=NULL;
-	char intToStr[20] = "", intToStr2[20] = ""; /* normalement pas de int de plus de 20 digit gérés par la machine (18 max pour un nombre sur 64 bits, plus le signe plus \0 = 20) */
+	char *code = NULL;
+	char intToStr[30] = "", intToStr2[30] = ""; /* normalement pas de int de plus de 20 digit gérés par la machine (18 max pour un nombre sur 64 bits, plus le signe plus \0 = 20) */
 
 	if (tree == NULL)
 	    return "";
@@ -64,147 +71,163 @@ string gencode(TreeP tree) {
 			sprintf(intToStr, "%d", tree->u.val);
 			return writeCode(NULL, FALSE, NULL, "PUSHI", intToStr, "int cst"); 		
 		case EQ:
-			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, FALSE, NULL, "EQUAL", NULL, NULL);
+			code = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(code, FALSE, NULL, "EQUAL", NULL, NULL);
 		case NE:
-			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			tmp = writeCode(tmp, FALSE, NULL, "EQUAL", NULL, NULL);
-			return writeCode(tmp, FALSE, NULL, "NOT", NULL, NULL);
+			code = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			code = writeCode(code, FALSE, NULL, "EQUAL", NULL, NULL);
+			return writeCode(code, FALSE, NULL, "NOT", NULL, NULL);
 		case GT:
-			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, FALSE, NULL, "SUP", NULL, NULL);
+			code = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(code, FALSE, NULL, "SUP", NULL, NULL);
 		case GE:
-			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, FALSE, NULL, "SUPEQ", NULL, NULL);
+			code = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(code, FALSE, NULL, "SUPEQ", NULL, NULL);
 		case LT:
-			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, FALSE, NULL, "INF", NULL, NULL);
+			code = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(code, FALSE, NULL, "INF", NULL, NULL);
 		case LE:
-			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, FALSE, NULL, "INFEQ", NULL, NULL);
+			code = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(code, FALSE, NULL, "INFEQ", NULL, NULL);
 		case ADD:
-			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, FALSE, NULL, "ADD", NULL, NULL);
+			code = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(code, FALSE, NULL, "ADD", NULL, NULL);
 		case SUB:
-			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, FALSE, NULL, "SUB", NULL, NULL);
+			code = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(code, FALSE, NULL, "SUB", NULL, NULL);
 		case MUL:
-			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, FALSE, NULL, "MUL", NULL, NULL);
+			code = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(code, FALSE, NULL, "MUL", NULL, NULL);
 		case DIV:
-			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, FALSE, NULL, "DIV", NULL, NULL);
+			code = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(code, FALSE, NULL, "DIV", NULL, NULL);
 		case CONCAT:
-			tmp = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-			return writeCode(tmp, FALSE, NULL, "CONCAT", NULL, NULL);
+			code = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(code, FALSE, NULL, "CONCAT", NULL, NULL);
 		case UNARYSUB:
-			tmp = writeCode(NULL, FALSE, NULL, "PUSHI", "0", NULL);
-			tmp = strcatwalloc(tmp, gencode(getChild(tree, 0)));
-			return writeCode(tmp, FALSE, NULL, "SUB", NULL, NULL);
+			code = writeCode(NULL, FALSE, NULL, "PUSHI", "0", NULL);
+			code = strcatwalloc(code, gencode(getChild(tree, 0)));
+			return writeCode(code, FALSE, NULL, "SUB", NULL, NULL);
 		case UNARYADD: 
 			return gencode(getChild(tree, 0));
+		case RET:
+			return writeCode(NULL, FALSE, NULL, "RETURN", NULL , NULL);
 		case IF: 
 			sprintf(intToStr, "else_%d", nbIf);
 			sprintf(intToStr2, "suite_%d", nbIf++);
 
-			tmp = writeCode(gencode(getChild(tree, 0)), FALSE, NULL, "JZ", intToStr, "if");
-			tmp = strcatwalloc(tmp, gencode(getChild(tree, 1)));
-			tmp = writeCode(tmp, FALSE, NULL, "JUMP", intToStr2, NULL);
-			tmp = writeCode(tmp, FALSE, intToStr, "NOP", NULL , NULL);
-			tmp = strcatwalloc(tmp, gencode(getChild(tree, 2)));
-			return writeCode(tmp, FALSE, intToStr2, "NOP", NULL , "fin if");
+			code = writeCode(gencode(getChild(tree, 0)), FALSE, NULL, "JZ", intToStr, "if");
+			code = strcatwalloc(code, gencode(getChild(tree, 1)));
+			code = writeCode(code, FALSE, NULL, "JUMP", intToStr2, NULL);
+			code = writeCode(code, FALSE, intToStr, "NOP", NULL , NULL);
+			code = strcatwalloc(code, gencode(getChild(tree, 2)));
+			return writeCode(code, FALSE, intToStr2, "NOP", NULL , "fin if");
 /**/	case CMPAFF: // Exp2 '.' Id AFF Exp ';'
 			sprintf(intToStr, "%d", 0);//getChild(tree, 1)->var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
 			
-			tmp = gencode(getChild(tree, 0));
-			tmp = strcatwalloc(tmp, gencode(getChild(tree, 2)));
+			code = gencode(getChild(tree, 0));
+			code = strcatwalloc(code, gencode(getChild(tree, 2)));
 
 			return writeCode(NULL, FALSE, NULL, "STORE", intToStr , NULL);
 /**/	case DIRAFF: // Id AFF Exp ';'
 			sprintf(intToStr, "%d", 0);//getChild(tree, 0)->u.var->local_offset);
 
-			tmp = gencode(getChild(tree, 1)); /* le code de l'expression */
-
-			//switch(getChild(tree, 0)->u.var->nature)
+			code = gencode(getChild(tree, 1)); /* le code de l'expression */
+			
+			//switch(tree->var->nature)
 			{
-				//case 1:
-					return writeCode(tmp, FALSE, NULL, "STOREL", intToStr , NULL);
-				//tmp = writeCode(NULL, FALSE, NULL, "STOREL", intToStr , NULL);
+				//case STATIC: // offset par rapport a GP
+				//	return writeCode(code, FALSE, NULL, "STOREG", intToStr , NULL);
+				//case NONSTATIC: // offset par rapport a adresse Classe
+					// pour l'instant on suppose que l'adressage doit etre explicite
+				//case PARAM: // offset par rapport a FP (negatif)
+				//	return writeCode(code, FALSE, NULL, "STOREL", intToStr , NULL);
+				//case LOCAL: // offset par rapport a FP (positif)
+					return writeCode(code, FALSE, NULL, "STOREL", intToStr , NULL);
 			}
-			return tmp;	
+			return code;	
 /**/	case SELECT: // Exp2 '.' Id
-			sprintf(intToStr, "%d", 0);//getChild(tree, 1)->var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
-			tmp = gencode(getChild(tree, 0));
-			return writeCode(tmp, FALSE, NULL, "LOAD", intToStr , NULL);
-/**/	case RET:
-			return writeCode(NULL, FALSE, NULL, "RETURN", NULL , NULL); // l'adresse de la valeur de retour
-		case VAR: //VAR Id ':' Idcl AffectO	';'
-			tmp = writeCode(NULL, FALSE, NULL, "PUSHN", "1" , getChild(tree, 0)->u.str); // valeur de result
+			sprintf(intToStr, "%d", 0);//getChild(tree, 1)->var->offset); // champ rempli a la verif du type de retour de l'exp2.
+			code = gencode(getChild(tree, 0));
+			return writeCode(code, FALSE, NULL, "LOAD", intToStr , NULL);
+/**/	case VAR: //VAR Id ':' Idcl AffectO	';'
+			//printf("%s    ", getChild(tree, 0)->u.str);
+			code = writeCode(NULL, FALSE, NULL, "PUSHN", "1" , getChild(tree, 0)->u.str); // valeur de result
 			if(getChild(tree, 2)!= NULL)
 			{
 				/* faire l'affectation */
 			}
-			return tmp; //gencode(getChild(tree, 0));; 		
+			return code; //gencode(getChild(tree, 0));; 		
 /**/	case MSGSNT: // Exp2 '.' Id '(' ListArgO ')'
-			if(1/*si valeur de retour*/)
-				tmp = writeCode(tmp, FALSE, NULL, "PUSHN", "1" , NULL); // pour la valeur de retour 
+			code = gencode(getChild(tree, 0));
+			if(1/*si valeur de retour*/) {
+				code = writeCode(code, FALSE, NULL, "PUSHN", "1" , NULL); // pour la valeur de retour
+				code = writeCode(code, FALSE, NULL, "SWAP", NULL , NULL);
+			}
 			/* La valeur/adresse de Exp2 est deja sur la pile (elle doit etre passée a la func) */
-			tmp = strcatwalloc(tmp, gencode(getChild(tree, 2))); //push des n arguments
+			code = strcatwalloc(code, gencode(getChild(tree, 2))); //push des n arguments
 			
-			tmp = writeCode(tmp, FALSE, NULL, "PUSHA", getChild(tree, 1)->u.str , NULL);
-			tmp = writeCode(tmp, FALSE, NULL, "CALL", NULL , NULL);
+			code = writeCode(code, FALSE, NULL, "PUSHA", getChild(tree, 1)->u.str , NULL);
+			code = writeCode(code, TRUE, NULL, "CALL", NULL , NULL);
+			//sprintf(intToStr, "%d", func->nbParam+1); /* on dépile aussi l'appelant */
+			//code = writeCode(code, FALSE, NULL, "POPN", intToStr , NULL);
+			return writeCode(code, FALSE, NULL, "POPN", "1" , NULL); // nb paramètres
 		case MSGSNTS: // voir a factoriser avec MSGSNT
 			return NULL;
-/**/	case ID: 
-			sprintf(intToStr, "%d", 0);//tree->u.var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
-			//switch(tree->u.var->nature)
+		case ID: // seulement possible en partie droite
+			if(tree->var==NULL)
+				return writeCode(NULL, FALSE, NULL, "PUSHL", "0", "Gros hack permettant la compilation tant uqe les champs ne sont pas mis a jour");
+			else
 			{
-				//case 1: /* variable locale a un bloc => decalage par rapport au FP*/
-					return writeCode(tmp, FALSE, NULL, "PUSHL", intToStr, NULL);
+				sprintf(intToStr, "%d", tree->var->offset); // champ rempli a la verif du type de retour de l'exp2.
+				switch(tree->var->nature)
+				{
+					case STATIC: // offset par rapport a GP
+						return writeCode(code, FALSE, NULL, "PUSHG", intToStr, NULL);
+					//case NONSTATIC: // offset par rapport a adresse Classe
+					//	 pour l'instant on suppose que l'adressage doit etre explicite
+					case PARAM: // offset par rapport a FP (negatif)
+						return writeCode(code, FALSE, NULL, "PUSHL", intToStr, NULL);
+					case LOCAL: // offset par rapport a FP (positif)
+						return writeCode(NULL, FALSE, NULL, "PUSHL", intToStr, NULL);
+				}
 			}
-			return NULL;	
-/**/	case INSTA: // NEW Idcl '(' ListArgO ')'
-			//sprintf(intToStr, "%d", 1 /* nbParams +1 */);
-			tmp = writeCode(NULL, FALSE, NULL, "PUSHN", "1" , NULL);
-			tmp = strcatwalloc(tmp, gencode(getChild(tree, 1)));
-			tmp = writeCode(tmp, FALSE, NULL, "PUSHA", getChild(tree, 0)->u.str, NULL); /* appel de la methode ayant le nom du constructeur */
-			tmp = writeCode(tmp, FALSE, NULL, "CALL", NULL , NULL); /* appel du constructeur */
-			return tmp; // writeCode(tmp, FALSE, NULL, "POPN", intToStr , NULL); pas nécéssaire a priori si on pop dans le constructeur.
+			return NULL;
+	case INSTA: // NEW Idcl '(' ListArgO ')'
+			code = writeCode(NULL, FALSE, NULL, "PUSHN", "1" , NULL);
+			code = strcatwalloc(code, gencode(getChild(tree, 1)));
+			code = writeCode(code, FALSE, NULL, "PUSHA", getChild(tree, 0)->u.str, NULL);
+			code = writeCode(code, FALSE, NULL, "CALL", NULL , NULL); /* appel du constructeur */
+			
+			sprintf(intToStr, "%d", class_getClass(getChild(tree, 0)->u.str)->constructor->nbParam);
+			return writeCode(code, FALSE, NULL, "POPN", intToStr , NULL); pas nécéssaire a priori si on pop dans le constructeur.
 		case INSTR: 
-			return strcatwalloc(gencode(getChild(tree, 0)), writeCode(NULL, FALSE, "--", "POPN", "1", NULL)); // TWEEEEEEEEAK
+			return strcatwalloc(gencode(getChild(tree, 0)), writeCode(NULL, FALSE, NULL, "POPN", "1", NULL));
 		case LSTARG: case BLCDECL: case DECL: case LSTINST:  
 			return strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
-		default: // case IDCL: case CAST: (seulement géré a la verif context, va modifier directement l'offset)
+		case CAST: // (seulement géré a la verif context, va modifier directement l'offset)
+			return gencode(getChild(tree, 1));
+		default: // case IDCL: case CAST: 
 		fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", tree->op);
 		break; 
 	}
 	return NULL;
 }
-/*
-!= types de variables :
-	- attribut statique
-	- attribut non statique
-	- paramètre
-	- var locale a un bloc
-	// pas pour l'instant - var globale
 
-	switch()
-*/
 
-string genCodeFunc(FunctionP func) {
-	char intToStr[20];
-	string code;
+string genCodeFunc(FunctionP func) 
+{
+	char intToStr[30] = "";
+	string code = NULL;
 
 	code = writeCode(NULL, FALSE, func->ID, "NOP", NULL, NULL); /* voir a faire quelque chose pour la multiplicité des noms */
 	code = strcatwalloc(code, gencode(func->code));
 
-	sprintf(intToStr, "%d", func->nbParam); /* voir a pas ajouter 1 pour l'appellant (et donc un swap a l'appel) */
-	code = writeCode(tmp, FALSE, NULL, "POPN", intToStr , NULL);
-	code = writeCode(code, FALSE, NULL, "RETURN", NULL, NULL);
-	return code; //strcatwalloc(code, gencode(func->code));
+	return writeCode(code, FALSE, NULL, "RETURN", NULL, NULL);
 }
 
-string genCodeConst(ClassP c) {
+string genCodeConst(ClassP c) 
+{
 	string code = NULL;
 	char intToStr[20] = "";
 
@@ -215,7 +238,9 @@ string genCodeConst(ClassP c) {
 		code = strcatwalloc(code, gencode(c->superCallArgs)); //push des n arguments
 		code = writeCode(code, FALSE, NULL, "PUSHA", c->superName , NULL);
 		code = writeCode(code, FALSE, NULL, "CALL", NULL , NULL);
-		//code = writeCode(code, FALSE, NULL, "POPN", intToStr , NULL);
+		
+		sprintf(intToStr, "%d", c->super->constructor->nbParam);
+		code =  writeCode(code, FALSE, NULL, "POPN", intToStr, NULL);
 	}
 	else {
 		sprintf(intToStr, "%d", c->size);
@@ -226,11 +251,33 @@ string genCodeConst(ClassP c) {
 
 	sprintf(intToStr, "%d", -1 - c->constructor->nbParam);
 	code = writeCode(code, FALSE, NULL, "STOREL", intToStr, NULL);
-
-	sprintf(intToStr, "%d", c->constructor->nbParam);
-	code =  writeCode(code, FALSE, NULL, "POPN", intToStr, NULL); // a priori on peut le faire ici sans problème et ca simplifie le traitement
 	
 	return writeCode(code, FALSE, NULL, "RETURN", NULL, NULL);
+}
+
+string genBaseFuncCode()
+{
+	string code = NULL;
+
+	code = strcatwalloc(code, "\n--code des fonctions de base");
+	code = writeCode(code, FALSE, "toString", "PUSHL", "-1" , NULL);
+	code = writeCode(code, FALSE, NULL, "STR", NULL , NULL);
+	code = writeCode(code, FALSE, NULL, "STOREL", "-2" , NULL);
+	code = writeCode(code, FALSE, NULL, "RETURN", NULL , "fin toString\n");
+
+	code = writeCode(code, FALSE, "print", "PUSHL", "-1" , NULL);
+	code = writeCode(code, FALSE, NULL, "WRITES", NULL , NULL);
+	code = writeCode(code, FALSE, NULL, "SWAP", NULL, NULL);
+	code = writeCode(code, FALSE, NULL, "RETURN", NULL , "fin print\n");
+
+	code = writeCode(code, FALSE, "println", "PUSHL", "-1" , NULL);
+	code = writeCode(code, FALSE, NULL, "PUSHS", "\"\\n\"" , NULL);
+	code = writeCode(code, FALSE, NULL, "CONCAT", NULL , NULL);
+	code = writeCode(code, FALSE, NULL, "WRITES", NULL , NULL);
+	code = writeCode(code, FALSE, NULL, "SWAP", NULL, NULL);
+	code = writeCode(code, FALSE, NULL, "RETURN", NULL , "fin println\n");
+
+	return code;
 }
 
 string genBaseCode(ClassListP cl_par)
@@ -286,34 +333,7 @@ string genBaseCode(ClassListP cl_par)
 		cl = cl->next;
 	}
 
+	code = strcatwalloc(code, genBaseFuncCode());
 	return writeCode(code, FALSE, "start", "START", NULL , "main function");
 }
 
-/*
-struct _Class{
-	  string IDClass;
-	  FunctionP constructor;
-	  ClassFieldListP staticCfl;
-	  ClassMethodListP staticCml;
-	  ClassFieldListP cfl;
-	  ClassMethodListP cml;
-	  struct  _Class * super;
-	  string superName;
-	  TreeP superCallArgs;
-
-	  JumpTableP instance;
-	  JumpTableP statics;
-
-	};
-
-
-struct _Function {
-		bool override;
-		string ID;
-		ParamsListP paramsList;
-		TreeP code;
-		ClassP returnType;
-		string returnName;
-		int nbParam
-	};
-*/
