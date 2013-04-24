@@ -31,6 +31,9 @@
 
 	bool symTable_isVarDefined(SymbolesTableP t, string varName, string className);
 	bool symTable_isNameInUse(SymbolesTableP t, string varName);
+	VarP symTable_getVarFromName(SymbolesTableP t, string varName);
+
+
 	void symTable_enterNewScope(SymbolesTableP table);
 	void symTable_exitScope(SymbolesTableP table);
 	void symTable_eraseSection(SymbolesTableP t, int sect);
