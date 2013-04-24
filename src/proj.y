@@ -205,13 +205,10 @@ Exp2		:	'(' Exp ')'									{ pprintf("exp21"); $$ = $2; }
 			|	Exp2 '.' Id '(' ListArgO ')'				{ pprintf("exp24"); $$ = makeTree(MSGSNT, 3, $1, makeLeafStr(ID, $3), $5); }
 			|	Idcl '.' Id '(' ListArgO ')'				{ pprintf("exp24bis"); $$ = makeTree(MSGSNTS, 3, makeLeafStr(IDCL, $1), makeLeafStr(ID, $3), $5); }
 			| 	Exp2 '.' Id									{ pprintf("exp25"); $$ = makeTree(SELECT, 2, $1, makeLeafStr(ID, $3));}
+			|	Idcl '.' Id									{ pprintf("exp25"); $$ = makeTree(SELECTS, 2, $1, makeLeafStr(ID, $3));}
 			|	CST											{ pprintf("exp26"); $$ = makeLeafInt(CST, yyval.I); }
 			|	STR											{ pprintf("exp27"); $$ = makeLeafStr(STR, yyval.S); }
 			|	Id 											{ pprintf("exp28"); $$ = makeLeafStr(ID, yyval.S); }
-			;
-
-Select 		:	Exp2 '.' Id
-			|	Idcl '.' Id
 			;
 
 Id 			: 	ID											{ pprintfs("id", yyval.S); $$ = yyval.S; }
