@@ -1,6 +1,6 @@
 # Makefile pour le projet Compilation
 
-OBJ = proj.o proj_l.o proj_y.o class.o function.o tree.o print.o gencode.o verifContext.o symboles.o variable.o
+OBJ = proj.o proj_l.o proj_y.o class.o function.o tree.o print.o  verifContext.o symboles.o variable.o gencode.o
 CC = gcc
 CFLAGS = -Wall -ansi -I./ -g -std=c99 #-Werror
 LDFLAGS = -g -lfl

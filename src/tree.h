@@ -18,6 +18,9 @@
 	  VarP var;
 	  FunctionP func; // ces deux derniers champs peuvent etre dans une union
 	  ClassP type;
+
+	  FunctionP fContext;
+	  ClassP	cContext;
 	};
 
 	/* construction et accesseur pour les arbres */

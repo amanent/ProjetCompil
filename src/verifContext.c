@@ -13,7 +13,6 @@
 #include "variable.h"
 #include "class.h"
 #include "symboles.h"
-#include <string.h>
 
 extern ClassListP classList;
 //extern TreeP mainCode;
@@ -146,12 +145,42 @@ bool verif_paramList(FunctionP func){
 }
 
 
-bool verif_func(SymbolesTableP st, FunctionP func){
+bool verif_class(ClassP c){
+	//Instance
+	SymbolesTableP table = symTable_newTable();
+	ClassFieldListP ftmp = c->cfl;
+	while(ftmp){
+		symTable_addLine(table, ftmp->current, NONSTATIC);
+		ftmp = ftmp->next;
+	}
+	ClassMethodListP mtmp = c->cml;
+	while(mtmp){
+		if(!verif_func(table, mtmp->current, c))
+			return FALSE;
+	}
+
+	//Static
+	table = symTable_newTable();
+	ftmp = c->staticCfl;
+	while(ftmp){
+		symTable_addLine(table, ftmp->current, STATIC);
+		ftmp = ftmp->next;
+	}
+	mtmp = c->staticCml;
+	while(mtmp){
+		if(!verif_func(table, mtmp->current, c))
+			return FALSE;
+	}
+
 	return TRUE;
 }
 
-bool verif_var(SymbolesTableP st, VarP var){
-	return TRUE;
+
+bool verif_func(SymbolesTableP st, FunctionP func, ClassP c){
+	symTable_enterFunction(st, func);
+	bool res = verif_types(st, func->code, c, func);
+	symTable_exitScope(st);
+	return res;
 }
 
 
@@ -163,7 +192,7 @@ typedef struct _context{
 
 Context context = {NULL, 0};
 
-bool verif_types(SymbolesTableP st, TreeP tree) {
+bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 	int i = 0;
 	
 	if (tree == NULL){
@@ -174,6 +203,8 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 	short prevOP = context.prevOP;
 	context.prevOP = tree->op;
 	
+	tree->cContext = c;
+	tree->fContext = f;
 
 	switch (tree->op) {
 		case STR: //return true, tree->type = String
@@ -199,9 +230,11 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 				symTable_addLine(st, v, variable);
 			}
 			else{
-				
+				 tree->var = symTable_getVarFromName(st, tree->u.str);
+				 if(tree->var)
+				 	tree->type = tree->var->type;				
 			}
-
+			return TRUE;
 		}
 			
 		case EQ: //integer
@@ -215,7 +248,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 		case MUL:
 		case DIV:
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
 			if(		getChild(tree, 0)->type == class_getClass("Integer")
 				&&	getChild(tree, 1)->type == class_getClass("Integer"))			
@@ -228,7 +261,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 
 		case CONCAT: // string
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
 			if(		getChild(tree, 0)->type == class_getClass("String")
 				&&	getChild(tree, 1)->type == class_getClass("String"))			
@@ -241,7 +274,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 		case UNARYSUB: //integer
 		case UNARYADD: 
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
 			if(		getChild(tree, 0)->type == class_getClass("Integer"))		
 			{	
@@ -252,24 +285,24 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 
 		case IF: /*IF Exp THEN Inst ELSE Inst*/
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
 			return (getChild(tree, 0)->type == class_getClass("Integer"));
 
 
 /**/	case DIRAFF: // Id AFF Exp ';'
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
 			string idtxt = getChild(tree, 0)->u.str;
 
-			if(!strcmp(idtxt, "this") || !strcmp(idtxt, "super"))
+			if(!strcmp(idtxt, "this") || !strcmp(idtxt, "super"))
 				return FALSE;
 			return (	(getChild(tree, 1)->type == getChild(tree, 0)->type)||(class_isinheritedFrom(getChild(tree, 1)->type, getChild(tree, 0)->type)));
 
 /**/	case CMPAFF: // l AFF Exp ';' //verif types
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
 			return (	(getChild(tree, 1)->type == getChild(tree, 0)->type)||(class_isinheritedFrom(getChild(tree, 1)->type, getChild(tree, 0)->type)));
 				
@@ -278,7 +311,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 		{	
 
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;				
 			ClassP c = getChild(tree, 0)->type;
 			VarP v = getChild(tree, 0)->var;
@@ -302,7 +335,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 
 		case VAR: //VAR Id ':' Idcl AffectO	';' // add dans la table
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
 			getChild(tree, 0)->var->type = getChild(tree, 1)->type;
 			getChild(tree, 0)->var->typeName = getChild(tree, 0)->var->type->IDClass;
@@ -316,7 +349,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 /**/	case MSGSNT: // Exp2 '.' Id '(' ListArgO ')' //verif params && id dans les func de exp2
 		{
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
 			ClassP c = getChild(tree, 0)->type;
 			if(!c) return FALSE;
@@ -327,7 +360,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 			else{
 				ff = class_getStaticMethFromName(c, getChild(tree, 1)->u.str);
 			}
-			if(ff && 1//Comparaison des lstArg)
+			if(ff && 1 /*Comparaison des lstArg*/)
 			{
 				tree->type = ff->returnType;
 				tree->func = ff;
@@ -340,7 +373,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 
 		case CAST: //verification heritage, type = type du cast
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;			
 			tree->type = getChild(tree, 0)->type;
 			return (class_canAffect(tree->type, getChild(tree, 1)->type));
@@ -348,7 +381,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 		case IDCL: // verif tabledesclasses
 		{
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
 			ClassP c = class_getClass(tree->u.str);
 			tree->type = c;
@@ -356,7 +389,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 		}
 /**/	case INSTA: // NEW Idcl '(' ListArgO ')' // verif de la liste d'args du const de idcl
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;			
 			tree->type = class_getClass(getChild(tree, 0)->u.str);
 			ParamsListP pl = NULL;//Construction de la liste
@@ -364,7 +397,7 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 
 		case INSTR: //gogo child0
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;		
 			tree->type = getChild(tree, 0)->type;
 			tree->var = getChild(tree, 0)->var;
@@ -375,18 +408,18 @@ bool verif_types(SymbolesTableP st, TreeP tree) {
 		case BLCDECL:
 			symTable_enterNewScope(st);
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
 			symTable_exitScope(st);
 			return TRUE;
 		case DECL: 
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
 				return TRUE;
 		case LSTINST:
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i)))
+				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
 			return TRUE;
 
