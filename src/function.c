@@ -88,3 +88,20 @@ int function_howManyArgs(FunctionP func){
 	func->nbParam = nArgs;
 	return nArgs;
 }
+
+bool prmlst_goodCallArgs (FunctionP f, ArgListP args){
+	ParamsListP params = f->paramsList;
+	ArgListElemP arg = args->top;
+	if(params == NULL && args == NULL )
+		return TRUE;
+	while(params != NULL && arg != NULL){
+		if(params != NULL || arg != NULL)
+			return FALSE;
+
+		if(arg->current != class_getClass(params->type))
+			return FALSE;
+		arg = arg->next;
+		params = params->next;
+	}
+	return TRUE;
+}

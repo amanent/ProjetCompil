@@ -3,10 +3,12 @@
 
 	typedef struct _ParamsList ParamsList, *ParamsListP;
 	typedef struct _Function Function, *FunctionP;
+	typedef struct _ArgList ArgList, *ArgListP;
 
 	#include "tree.h"
 	#include "class.h"
 	#include "proj.h"
+	#include "variable.h"
 
 	struct _ParamsList {
 		string type;
@@ -30,6 +32,7 @@
 	ParamsListP prmlst_getLast (ParamsListP elem);
 */
 	bool prmlst_sameTypes (ParamsListP l, ParamsListP ll);
+	bool prmlst_goodCallArgs (FunctionP f, ArgListP args);
 	ParamsListP function_makeParam(string name, string type);
 	string function_printFunc(FunctionP func);
 	bool function_hasReturnType(FunctionP func);

@@ -36,6 +36,7 @@
 	  TreeP superCallArgs;
 	  int nbFields;
 	  int nbFunc;
+	  int offsetTV;
 
 	  JumpTableP instance;
 	  JumpTableP statics;
