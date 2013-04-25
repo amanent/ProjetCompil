@@ -246,7 +246,8 @@ string gencode(TreeP tree) {
 			}
 			return NULL;
 		case INSTA: // NEW Idcl '(' ListArgO ')'
-			code = writeCode(NULL, FALSE, NULL, "PUSHN", "1" , NULL);
+			sprintf(intToStr, "%d", class_getClass(getChild(tree, 0)->u.str)->nbFields+1); // +1 pour la TV
+			code = writeCode(code, FALSE, NULL, "ALLOC", intToStr, NULL); // allocation de l'objet avant d'appeller le const
 			code = strcatwalloc(code, gencode(getChild(tree, 1)));
 			code = writeCode(code, FALSE, NULL, "PUSHA", getChild(tree, 0)->u.str, NULL);
 			code = writeCode(code, FALSE, NULL, "CALL", NULL , NULL); /* appel du constructeur */
@@ -267,7 +268,7 @@ string gencode(TreeP tree) {
 }
 
 
-string genCodeFunc(FunctionP func) 
+string genCodeFunc(Class c, FunctionP func) 
 {
 	string code = NULL;
 
@@ -277,7 +278,7 @@ string genCodeFunc(FunctionP func)
 	return writeCode(code, FALSE, NULL, "RETURN", NULL, NULL);
 }
 
-string genCodeConst(ClassP c, int ize, int nbFuncSup) 
+string genCodeConst(ClassP c) // l'objet est alloué avant les paramètres
 {
 	string code = NULL;
 	char intToStr[20] = "";
@@ -292,10 +293,6 @@ string genCodeConst(ClassP c, int ize, int nbFuncSup)
 		
 		sprintf(intToStr, "%d", c->super->constructor->nbParam);
 		code =  writeCode(code, FALSE, NULL, "POPN", intToStr, NULL);
-	}
-	else {
-		sprintf(intToStr, "%d", c->nbFields);
-		code = writeCode(code, FALSE, NULL, "ALLOC", intToStr, NULL);
 	}
 
 	code = strcatwalloc(code, gencode(c->constructor->code));
@@ -337,7 +334,7 @@ string genBaseCode(ClassListP cl_par)
 	char intToStr[40] = "";
 	ClassListP cl;
 
-	code = strcatwalloc(code, "\n--champs statiques :");
+	code = strcatwalloc(code, "\n--champs statiques : (ne pas se fier a l'ordre)");
 	cl = cl_par;
 	while(cl!=NULL)
 	{
@@ -348,6 +345,8 @@ string genBaseCode(ClassListP cl_par)
 			code = writeCode(code, FALSE, NULL, "PUSHN", "1" , intToStr);
 			scfl = scfl->next;
 		}
+		sprintf(intToStr, "%s_TV", cl->current->IDClass);
+		code = writeCode(code, FALSE, NULL, "PUSHN", "1" , intToStr);
 		cl = cl->next;
 	}
 	code = writeCode(code, FALSE, NULL, "JUMP", "start" , NULL);
