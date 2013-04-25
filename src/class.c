@@ -222,7 +222,7 @@ int class_getNbFields(ClassP c){
 	return sum;
 }
 
-void class_generateJumpTable(ClassP c){
+bool class_generateJumpTable(ClassP c){
 	if(c->super != NULL){
 		if(c->super->instance == NULL){
 			class_generateJumpTable(c->super);
@@ -235,6 +235,8 @@ void class_generateJumpTable(ClassP c){
 	while(cmltmp){
 		ClassMethodListP over = override(c->instance->methods, cmltmp->current);
 		if(over){
+			if(cmltmp->current->override == FALSE)
+				return FALSE;
 			over->current = cmltmp->current;
 		}
 		else{
@@ -280,6 +282,7 @@ void class_generateJumpTable(ClassP c){
 		else
 			c->instance->fields = newField;
 	}
+	return TRUE;
 
 }
 

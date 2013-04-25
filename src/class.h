@@ -47,8 +47,6 @@
 		struct _ClassList * next;
 	}ClassList, *ClassListP;
 
-	
-	void class_generateJumpTable(ClassP c);
 
 	void classList_addClass(ClassP c);
 	
@@ -80,7 +78,7 @@
 	ClassFieldListP fl_getLast(ClassFieldListP fl);
 	ClassMethodListP ml_getLast(ClassMethodListP ml);
 	ClassMethodListP override(ClassMethodListP orig, FunctionP func);
-	void class_generateJumpTable(ClassP c);
+	bool class_generateJumpTable(ClassP c);
 
 
 

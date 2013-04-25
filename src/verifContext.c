@@ -112,6 +112,7 @@ bool verif_contextuelle(){ // need verif arg.
 		return FALSE;
 	verif_contructJumpTable();
 	verif_allClassesCode();
+	verif_types(symTable_newTable(), mainCode, NULL, NULL);
 
 
 

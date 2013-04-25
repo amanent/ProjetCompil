@@ -1,12 +1,12 @@
 Verif contextuelle :
  (a peu près par ordre de priorité)
 	✔ passe de résolution des noms @done (13-04-23 10:40)
-	☐  génération de la table des symboles
-	☐  passe de résolution des types
-	☐  verif du type pour les opérations (+, -, ... que sur entiers, cat que sur string)
-	☐  verif des portées
+	✔ génération de la table des symboles @done (13-04-25 12:28)
+	✔ passe de résolution des types @done (13-04-25 12:28)
+	✔ verif du type pour les opérations (+, -, ... que sur entiers, cat que sur string) @done (13-04-25 12:28)
+	✔ verif des portées @done (13-04-25 12:28)
 	☐  définition des 2 types de bases et des 3 variables implicites / classe
-	☐  champs et methodes static n'ont acces qu'a des champs et methodes static
+	✔ champs et methodes static n'ont acces qu'a des champs et methodes static @done (13-04-25 12:28)
 	☐  pas d'homonymie, a part spécifié explicitement par un override
 	
 Génération de code :
