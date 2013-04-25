@@ -240,6 +240,7 @@ bool class_generateJumpTable(ClassP c){
 			over->current = cmltmp->current;
 		}
 		else{
+			c->nbFunc++;
 			ClassMethodListP newMethod = NEW(1, ClassMethodList);
 			newMethod->next = NULL;
 			newMethod->current  = cmltmp->current;
@@ -263,6 +264,7 @@ bool class_generateJumpTable(ClassP c){
 
 	ClassFieldListP clftmp = c->cfl;
 	while(clftmp){
+		c->nbFields++;
 		ClassFieldListP newField = NEW(1, ClassFieldList);
 		newField->next = NULL;
 		newField->current = clftmp->current;

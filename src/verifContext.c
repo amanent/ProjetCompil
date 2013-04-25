@@ -243,6 +243,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 	    
 	short prevOP = context.prevOP;
 	context.prevOP = tree->op;
+	ArgListP arglist = context.arglst;
 	
 	tree->cContext = c;
 	tree->fContext = f;
@@ -448,7 +449,19 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 			tree->func = getChild(tree, 0)->func;
 			return TRUE;
 		case LSTARG: //a faire apres
-
+			if(prevOP == INSTA || prevOP == MSGSNT || prevOP == MSGSNTS){
+				context.arglst = arglst_newList();
+			}
+			tree->type = getChild(tree, 0)->type;
+			if(tree->type == NULL)
+				return FALSE;
+			tree->var  = getChild(tree, 0)->var;
+			tree->func = getChild(tree, 0)->func;
+			arglst_pushBack(arglist, tree->type);
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i), c, f))
+					return FALSE;
+			return TRUE;
 		case BLCDECL:
 			symTable_enterNewScope(st);
 			for(i = 0; i < tree->nbChildren; ++i)

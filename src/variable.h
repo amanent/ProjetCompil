@@ -21,7 +21,7 @@
 	};
 
 	typedef struct _ArgListElem{
-		VarP current;
+		ClassP current;
 		struct _ArgListElem* next;
 	}ArgListElem, *ArgListElemP;
 
@@ -34,9 +34,9 @@
 
 	bool var_areEquals(VarP v, string varName, string varClass);
 	ArgListP arglst_newList();
-	ArgListElemP arglm_newElem(VarP v);
-	void arglst_pushFront(ArgListP list, VarP v);
-	void arglst_pushBack(ArgListP list, VarP v);
+	ArgListElemP arglm_newElem(ClassP c);
+	void arglst_pushFront(ArgListP list, ClassP c);
+	void arglst_pushBack(ArgListP list, ClassP c);
 
 
 
