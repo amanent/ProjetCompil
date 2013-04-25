@@ -100,6 +100,18 @@ bool verif_nameResolution(){
 
 }
 
+bool verif_paramList(FunctionP func){
+	if(func == NULL)
+		return FALSE;
+	ParamsListP param = func->paramsList;
+	while(param){
+		if(!class_getClass(param->type))
+			return FALSE;
+		param = param->next;
+	}
+	return TRUE;
+}
+
 void verif_contructJumpTable(){
 	ClassListP tmp = classList;
 	while(tmp){
@@ -137,10 +149,20 @@ bool verif_classCode(ClassP c){
 	fillSymTableStaticVar(c->staticCfl, statictable);
 
 	fillSymTableClassFunc(c->cml, table);
-	fillSymTableClassFunc(c->staticCml, table);
+	fillSymTableClassFunc(c->staticCml, statictable);
 
 
+	ClassMethodListP mtmp = c->cml;
+	while(mtmp){
+		if(!verif_func(table, mtmp->current, c))
+			return FALSE;
+	}
 
+	mtmp = c->staticCml;
+	while(mtmp){
+		if(!verif_func(statictable, mtmp->current, c))
+			return FALSE;
+	}
 	return TRUE;
 }
 
@@ -171,24 +193,13 @@ int fillSymTableClassFunc(ClassMethodListP cml, SymbolesTableP st){
 		return 0;
 	if(cml->next)
 		n = fillSymTableClassFunc(cml->next, st) + 1;
-//	symTable_addLine(st, cml->current, function);
 	cml->current->offset = n;
 	return n;
 }
 
-bool verif_paramList(FunctionP func){
-	if(func == NULL)
-		return FALSE;
-	ParamsListP param = func->paramsList;
-	while(param){
-		if(!class_getClass(param->type))
-			return FALSE;
-		param = param->next;
-	}
-	return TRUE;
-}
 
 
+/*
 bool verif_class(ClassP c){
 	//Instance
 	SymbolesTableP table = symTable_newTable();
@@ -218,7 +229,7 @@ bool verif_class(ClassP c){
 
 	return TRUE;
 }
-
+*/
 
 bool verif_func(SymbolesTableP st, FunctionP func, ClassP c){
 	symTable_enterFunction(st, func, c);
@@ -405,12 +416,26 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 			else{
 				ff = class_getStaticMethFromName(exp2type, getChild(tree, 1)->u.str);
 			}
-			if(ff && 1 /*Comparaison des lstArg*/)
+			if(ff && prmlst_goodCallArgs(ff, context.arglst))
 			{
 				tree->type = ff->returnType;
 				tree->func = ff;
 				return TRUE;
 			}
+			//FONCTIONS SPECIALES
+
+			if(getChild(tree, 0)->type == class_getClass("Integer")){
+				if(!strcmp("toString", getChild(tree, 1)->u.str)){
+					tree->type = class_getClass("String");
+					return TRUE;
+				}
+			}
+			if(getChild(tree, 0)->type == class_getClass("String")){
+				if(		!strcmp("println", getChild(tree, 1)->u.str)
+					||	!strcmp("print", getChild(tree, 1)->u.str))
+					return TRUE;
+			}
+
 			return FALSE;
 
 		}
@@ -430,15 +455,15 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 					return FALSE;
 			ClassP c = class_getClass(tree->u.str);
 			tree->type = c;
-			return (c == NULL);
+			return (c != NULL);
 		}
 /**/	case INSTA: // NEW Idcl '(' ListArgO ')' // verif de la liste d'args du const de idcl
 			for(i = 0; i < tree->nbChildren; ++i)
 				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;			
 			tree->type = class_getClass(getChild(tree, 0)->u.str);
-			ParamsListP pl = NULL;//Construction de la liste
-			return (prmlst_sameTypes (tree->type->constructor->paramsList, pl));
+
+			return (prmlst_goodCallArgs(tree->type->constructor, context.arglst));
 
 		case INSTR: //gogo child0
 			for(i = 0; i < tree->nbChildren; ++i)
@@ -448,7 +473,12 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 			tree->var = getChild(tree, 0)->var;
 			tree->func = getChild(tree, 0)->func;
 			return TRUE;
-		case LSTARG: //a faire apres
+		case LSTARG:
+
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i), c, f))
+					return FALSE;
+
 			if(prevOP == INSTA || prevOP == MSGSNT || prevOP == MSGSNTS){
 				context.arglst = arglst_newList();
 			}
@@ -457,10 +487,8 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 				return FALSE;
 			tree->var  = getChild(tree, 0)->var;
 			tree->func = getChild(tree, 0)->func;
-			arglst_pushBack(arglist, tree->type);
-			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i), c, f))
-					return FALSE;
+			arglst_pushFront(arglist, tree->type);
+			context.arglst = arglist;
 			return TRUE;
 		case BLCDECL:
 			symTable_enterNewScope(st);
@@ -485,5 +513,5 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 		fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", tree->op);
 		break; 
 	}
-	return FALSE;
+	return TRUE;
 }
