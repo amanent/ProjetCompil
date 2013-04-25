@@ -101,7 +101,11 @@ int main(int argc, char **argv) {
 	//pprintMain(mainCode);
 	
 	//*
-
+	ClassP integer = NEW(1, Class), sstring = NEW(1, Class);
+	class_setName(integer, "Integer");
+	class_setName(sstring, "String");
+	classList_addClass(integer);
+	classList_addClass(sstring);
 
 	if(!verif_contextuelle()) {
 		fprintf(stderr, "Erreur a la verif contextuelle\n");
