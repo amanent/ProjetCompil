@@ -59,10 +59,10 @@ int nbIf=0;
 // Voir a différencier selection et affectation 
 string gencode(TreeP tree) {
 	char *code = NULL;
-	char intToStr[40] = "", intToStr2[30] = ""; /* normalement pas de int de plus de 20 digit gérés par la machine (18 max pour un nombre sur 64 bits, plus le signe plus \0 = 20) */
+	char intToStr[40] = "", intToStr2[40] = ""; /* normalement pas de int de plus de 20 digit gérés par la machine (18 max pour un nombre sur 64 bits, plus le signe plus \0 = 20) */
 
 	if (tree == NULL)
-	    return "";
+	    return NULL;
 	//printf("--treating : %d\n", tree->op);
 	switch (tree->op) {
 		case STR: 
@@ -122,46 +122,22 @@ string gencode(TreeP tree) {
 			code = writeCode(code, FALSE, intToStr, "NOP", NULL , NULL);
 			code = strcatwalloc(code, gencode(getChild(tree, 2)));
 			return writeCode(code, FALSE, intToStr2, "NOP", NULL , "fin if");
-/**/	case CMPAFF: // Exp2 '.' Id AFF Exp ';'
-			code = gencode(getChild(tree, 1)); /* le code de l'expression */
+		case CMPAFF: // Exp2 '.' Id AFF Exp ';'
+			code = gencode(getChild(tree, 0)); /* le code de l'exp2 */
+			code = strcatwalloc(code, gencode(getChild(tree, 2))); /* le code de l'expression à affectée */
 			
 			if(tree->var==NULL) 
-				return writeCode(NULL, FALSE, NULL, "PUSHL", "0", "Gros hack permettant la compilation tant que les champs ne sont pas mis a jour");
+				return writeCode(NULL, FALSE, NULL, "ERR", "non gere actuellement", "-----------------------------------------------------------------6");
 			else
 			{
-				sprintf(intToStr, "%d", getChild(tree, 1)->var->offset); 
-				
-				switch(tree->var->nature)
-				{
-					case STATIC: // offset par rapport a GP
-						return writeCode(code, FALSE, NULL, "STOREG", intToStr , NULL);
-					case NONSTATIC: // offset par rapport a adresse Classe
-						if(tree->fContext != NULL) {
-							sprintf(intToStr2, "%d", - tree->fContext->nbParam - 1); // empilage de l'adresse de l'appelant
-							code = writeCode(code, FALSE, NULL, "PUSHL", intToStr2, NULL);
-							code = writeCode(code, FALSE, NULL, "SWAP", NULL, NULL); // pour remettre les paramètres dans le bon sens
-							return writeCode(code, FALSE, NULL, "STORE", intToStr, NULL);
-						}
-						return writeCode(code, FALSE, NULL, "NOP", NULL, "erreur d'adressage");
-					case PARAM: // offset par rapport a FP (negatif)
-						return writeCode(code, FALSE, NULL, "STOREL", intToStr , NULL);
-					case LOCAL: // offset par rapport a FP (positif)
-						return writeCode(code, FALSE, NULL, "STOREL", intToStr , NULL);
-				}
-			return code;
-
-
-			sprintf(intToStr, "%d", 0);//getChild(tree, 1)->var->local_offset); // champ rempli a la verif du type de retour de l'exp2.
-			
-			code = gencode(getChild(tree, 0));
-			code = strcatwalloc(code, gencode(getChild(tree, 2)));
-
-			return writeCode(NULL, FALSE, NULL, "STORE", intToStr , NULL);
+				sprintf(intToStr, "%d", getChild(tree, 1)->var->offset); // offset du id
+				return writeCode(code, FALSE, NULL, "STORE", intToStr , NULL);
+			}
 		case DIRAFF: // Id AFF Exp ';'
 			code = gencode(getChild(tree, 1)); /* le code de l'expression */
 			
 			if(tree->var==NULL) 
-				return writeCode(NULL, FALSE, NULL, "PUSHL", "0", "Gros hack permettant la compilation tant que les champs ne sont pas mis a jour");
+				return writeCode(code, FALSE, NULL, "STOREL", "0", "-----------------------------------------------------------------5");
 			else
 			{
 				sprintf(intToStr, "%d", getChild(tree, 1)->var->offset); 
@@ -183,37 +159,40 @@ string gencode(TreeP tree) {
 					case LOCAL: // offset par rapport a FP (positif)
 						return writeCode(code, FALSE, NULL, "STOREL", intToStr , NULL);
 				}
+			}
+
 			return code;	
 		case SELECTS: // Idcl '.' Id
 			if(getChild(tree, 1)->var != NULL)
 				sprintf(intToStr, "%d", getChild(tree, 1)->var->offset); // on suppose que pour les séléctions, l'offset de l'adresse (si besoin) est dans le membre, et celle du décalage dans le fils.
 			else
-				sprintf(intToStr, "%d", 0); // debug
+				sprintf(intToStr, "%d------------4", 0); // debug
 
 			if(tree->var != NULL)
 				sprintf(intToStr2, "%d", tree->var->offset);
 			else
-				sprintf(intToStr2, "%d", 0); // debug
+				sprintf(intToStr2, "%d------------3", 0); // debug
 
 			code = writeCode(NULL, FALSE, NULL, "PUSHI", intToStr2 , NULL);
 			return writeCode(code, FALSE, NULL, "LOAD", intToStr , NULL);
-/**/	case SELECT: // Exp2 '.' Id
-			sprintf(intToStr, "%d", 0);//getChild(tree, 1)->var->offset); // champ rempli a la verif du type de retour de l'exp2.
-			code = gencode(getChild(tree, 0));
+		case SELECT: // Exp2 '.' Id
+			if(getChild(tree, 1)->var != NULL)
+				sprintf(intToStr, "%d", getChild(tree, 1)->var->offset); // on suppose que pour les séléctions, l'offset de l'adresse (si besoin) est dans le membre, et celle du décalage dans le fils.
+			else
+				sprintf(intToStr, "%d ------------2", 0); // debug
+
+			code = gencode(getChild(tree, 0)); // pas sur que ca marche
 			return writeCode(code, FALSE, NULL, "LOAD", intToStr , NULL);
-/**/	case VAR: //VAR Id ':' Idcl AffectO	';'
-			//printf("%s    ", getChild(tree, 0)->u.str);
-			code = writeCode(NULL, FALSE, NULL, "PUSHN", "1" , getChild(tree, 0)->u.str); // valeur de result
-			if(getChild(tree, 2)!= NULL)
-			{
-				/* faire l'affectation */
-			}
-			return code; //gencode(getChild(tree, 0));; 		
+		case VAR: //VAR Id ':' Idcl AffectO	';'
+			if(getChild(tree, 2)== NULL) // si affectation directement a la déclaration
+				return writeCode(NULL, FALSE, NULL, "PUSHN", "1" , getChild(tree, 0)->u.str); //si pas d'affectation, on prépare un emlplacement pour la variable.
+			else
+				return gencode(getChild(tree, 2)); // sinon mets le code d'initialisation de la variable, qui laissera une valeur en tete de pile, qui équivant a l'espace reservé au cas précédent.		
 		case MSGSNT: // Exp2 '.' Id '(' ListArgO ')'
 			if(tree->func==NULL || function_hasReturnType(tree->func))
 				code = writeCode(code, FALSE, NULL, "PUSHN", "1" , "return value"); // pour la valeur de retour
 	
-			code = gencode(getChild(tree, 0)); // pour mettre l'appelant sur la pile
+			code = strcatwalloc(code, gencode(getChild(tree, 0))); // pour mettre l'appelant sur la pile
 			code = strcatwalloc(code, gencode(getChild(tree, 2))); //push des n arguments
 			
 			code = writeCode(code, FALSE, NULL, "PUSHA", getChild(tree, 1)->u.str , NULL);
@@ -242,9 +221,9 @@ string gencode(TreeP tree) {
 			}
 			else
 				return writeCode(code, FALSE, NULL, "POPN", "1" , NULL);
-		case ID: // seulement possible en partie droite
+		case ID: // seulement possible en partie droite d'affect, ou en partie gauche de select ?
 			if(tree->var==NULL)
-				return writeCode(NULL, FALSE, NULL, "PUSHL", "0", "Gros hack permettant la compilation tant que les champs ne sont pas mis a jour");
+				return writeCode(NULL, FALSE, NULL, "PUSHL", "0", "-----------------------------------------------------------------1");
 			else
 			{	
 				sprintf(intToStr, "%d", tree->var->offset); // champ rempli a la verif du type de retour de l'exp2.
@@ -290,7 +269,6 @@ string gencode(TreeP tree) {
 
 string genCodeFunc(FunctionP func) 
 {
-	char intToStr[30] = "";
 	string code = NULL;
 
 	code = writeCode(NULL, FALSE, func->ID, "NOP", NULL, NULL); /* voir a faire quelque chose pour la multiplicité des noms */

@@ -6,6 +6,7 @@
 #include "proj.h"
 #include "proj_y.h"
 #include "gencode.h"
+#include "verifContext.h"
 
 extern int yyparse();
 extern TreeP mainCode;
@@ -100,6 +101,12 @@ int main(int argc, char **argv) {
 	//pprintMain(mainCode);
 	
 	//*
+
+	//if(!verif_contextuelle()) {
+		fprintf(stderr, "Erreur a la verif contextuelle\n");
+		//return -1;
+	//}
+
 	string toto = NULL;
 	toto = genBaseCode(classList);
 	

@@ -27,8 +27,8 @@ println:	PUSHL	-1
 start:	START		--main function
 	PUSHN	1	--a
 	PUSHI	10	--int cst
-	STOREL	0	
-	PUSHL	0	
+	STOREL	0	-------------------------------------------------------------------5
+	PUSHL	0	-------------------------------------------------------------------1
 	PUSHI	5	--int cst
 	INFEQ		
 	JZ	else_0	--if
@@ -37,22 +37,20 @@ start:	START		--main function
 	PUSHI	5	--int cst
 	SUB		
 	MUL		
-	STOREL	0	
+	STOREL	0	-------------------------------------------------------------------5
 	JUMP	suite_0	
 else_0:	NOP		
 	PUSHI	4	--int cst
 	PUSHI	5	--int cst
 	MUL		
-	STOREL	0	
+	STOREL	0	-------------------------------------------------------------------5
 suite_0:	NOP		--fin if
-	PUSHL	0	
-	PUSHN	1	
-	SWAP		
+	PUSHN	1	--return value
+	PUSHN	1	--return value
+	PUSHL	0	-------------------------------------------------------------------1
 	PUSHA	toString	
 * 	CALL		
 	POPN	1	
-	PUSHN	1	
-	SWAP		
 	PUSHA	println	
 * 	CALL		
 	POPN	1	

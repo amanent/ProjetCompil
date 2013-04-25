@@ -268,7 +268,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 				symTable_addLine(st, v, LOCAL);
 			}
 			else{
-				 tree->var = symTable_getVarFromName(st, tree->u.str);
+				 //tree->var = symTable_getVarFromName(st, tree->u.str);
 				 if(tree->var)
 				 	tree->type = tree->var->type;				
 			}
