@@ -229,7 +229,10 @@ bool class_generateJumpTable(ClassP c){
 		}
 		c->instance = jtable_duplicate(c->super->instance);
 		c->statics = NEW(1, JumpTable);
+		c->nbFields = c->super->nbFields;
+		c->nbFunc = c->super->nbFunc;
 	}
+
 
 	ClassMethodListP cmltmp = c->cml;
 	while(cmltmp){
