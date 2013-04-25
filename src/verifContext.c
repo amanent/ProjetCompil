@@ -95,7 +95,7 @@ bool verif_nameResolution(){
 		currentCL = currentCL->next;
 	}
 
-	return FALSE;
+	return TRUE;
 
 }
 
@@ -108,13 +108,11 @@ void verif_contructJumpTable(){
 }
 
 bool verif_contextuelle(){ // need verif arg.
-	if(!verif_nameResolution())
-		return FALSE;
+	bool verif = TRUE;
+	verif &= verif_nameResolution(); if(!verif) return FALSE;
 	verif_contructJumpTable();
-	verif_allClassesCode();
-	verif_types(symTable_newTable(), mainCode, NULL, NULL);
-
-
+	verif &= verif_allClassesCode(); if(!verif) return FALSE;
+	verif &= verif_types(symTable_newTable(), mainCode, NULL, NULL); if(!verif) return FALSE;
 
 	return TRUE;
 }
