@@ -128,12 +128,13 @@ bool verif_allClassesCode(){
 	return TRUE;
 }
 
+int nbStaticVars = 0;
 bool verif_classCode(ClassP c){
 	SymbolesTableP table = symTable_newTable();
 	SymbolesTableP statictable = symTable_newTable();
 	
 	fillSymTableClassVar(c->cfl, table);
-	fillSymTableClassVar(c->staticCfl, statictable);
+	fillSymTableStaticVar(c->staticCfl, statictable);
 
 	fillSymTableClassFunc(c->cml, table);
 	fillSymTableClassFunc(c->staticCml, table);
@@ -151,6 +152,15 @@ int fillSymTableClassVar(ClassFieldListP cfl, SymbolesTableP st){
 	symTable_addLine(st, cfl->current, NONSTATIC);
 	cfl->current->offset = n + 1;
 	return n + 1;
+}
+
+void fillSymTableStaticVar(ClassFieldListP cfl, SymbolesTableP st){
+	ClassFieldListP tmp = cfl;
+	while(tmp){
+		cfl->current->offset = nbStaticVars++;
+		symTable_addLine(st, tmp->current, STATIC);
+		tmp = tmp->next;
+	}
 }
 
 int fillSymTableClassFunc(ClassMethodListP cml, SymbolesTableP st){

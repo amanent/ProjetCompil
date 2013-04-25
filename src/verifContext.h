@@ -19,6 +19,7 @@ void verif_contructJumpTable();
 
 int fillSymTableClassVar(ClassFieldListP cfl, SymbolesTableP st);
 int fillSymTableClassFunc(ClassMethodListP cml, SymbolesTableP st);
+void fillSymTableStaticVar(ClassFieldListP cfl, SymbolesTableP st);
 bool verif_paramList(FunctionP func);
 bool verif_classCode(ClassP c);
 bool verif_class(ClassP c);
