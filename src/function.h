@@ -22,6 +22,7 @@
 		ClassP returnType;
 		string returnName;
 		int nbParam;
+		int offset;
 	};
 	
 /*

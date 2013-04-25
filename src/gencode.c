@@ -273,7 +273,7 @@ string gencode(TreeP tree) {
 			code = writeCode(code, FALSE, NULL, "CALL", NULL , NULL); /* appel du constructeur */
 			
 			sprintf(intToStr, "%d", class_getClass(getChild(tree, 0)->u.str)->constructor->nbParam);
-			return writeCode(code, FALSE, NULL, "POPN", intToStr , NULL); pas nécéssaire a priori si on pop dans le constructeur.
+			return writeCode(code, FALSE, NULL, "POPN", intToStr , NULL);// pas nécéssaire a priori si on pop dans le constructeur.
 		case INSTR: 
 			return strcatwalloc(gencode(getChild(tree, 0)), writeCode(NULL, FALSE, NULL, "POPN", "1", NULL));
 		case LSTARG: case BLCDECL: case DECL: case LSTINST:  

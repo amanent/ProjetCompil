@@ -4,15 +4,12 @@
 	#include "variable.h"
 	#include <string.h>
 
-	typedef enum{
-		variable,function,parameter
-	}Nature;
 
 	typedef struct _Line
 	{
 		VarP v;
 		unsigned int depth;
-		Nature n;
+		e_nature n;
 		unsigned int rang;
 		struct _Line * next;
 	}Line, *LineP;
@@ -26,7 +23,7 @@
 
 	SymbolesTableP symTable_newTable();
 	void symTable_addLineFromLine(SymbolesTableP theTable, LineP l);
-	void symTable_addLine(SymbolesTableP theTable, VarP var, Nature n);
+	void symTable_addLine(SymbolesTableP theTable, VarP var, e_nature n);
 	void symTable_addLineFromScratch();
 
 	bool symTable_isVarDefined(SymbolesTableP t, string varName, string className);
@@ -37,8 +34,8 @@
 	void symTable_enterNewScope(SymbolesTableP table);
 	void symTable_exitScope(SymbolesTableP table);
 	void symTable_eraseSection(SymbolesTableP t, int sect);
-	SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func);
-	LineP symbLine_newLine(VarP var, Nature n);
+	SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func, ClassP c);
+	LineP symbLine_newLine(VarP var, e_nature n);
 
 	SymbolesTableP symTable_duplicate(SymbolesTableP t, unsigned int depth);
 	LineP symTable_dupLine(LineP origin,SymbolesTableP receiver);

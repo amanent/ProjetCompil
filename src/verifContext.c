@@ -14,8 +14,18 @@
 #include "class.h"
 #include "symboles.h"
 
+
+extern TreeP mainCode;
 extern ClassListP classList;
-//extern TreeP mainCode;
+
+typedef struct _context{
+	FunctionP func;
+	short prevOP;
+}Context;
+
+Context context = {NULL, 0};
+int local_offset = 0;
+
 
 bool verif_nameResolution(){
 	ClassListP currentCL = classList;
@@ -101,7 +111,20 @@ bool verif_contextuelle(){ // need verif arg.
 	if(!verif_nameResolution())
 		return FALSE;
 	verif_contructJumpTable();
+	verif_allClassesCode();
 
+
+
+	return TRUE;
+}
+
+bool verif_allClassesCode(){
+	ClassListP tmp = classList;
+	while(tmp){
+		if(!verif_classCode(tmp->current))
+			return FALSE;
+		tmp = tmp->next;
+	}
 	return TRUE;
 }
 
@@ -120,16 +143,23 @@ bool verif_classCode(ClassP c){
 	return TRUE;
 }
 
-void fillSymTableClassVar(ClassFieldListP cfl, SymbolesTableP st){
-	if(cfl->next)
-		fillSymTableClassVar(cfl->next, st);
-	symTable_addLine(st, cfl->current, variable);
+int fillSymTableClassVar(ClassFieldListP cfl, SymbolesTableP st){
+	int n = 0;
+	if(cfl->next){
+		n = fillSymTableClassVar(cfl->next, st) + 1;
+	}
+	symTable_addLine(st, cfl->current, NONSTATIC);
+	cfl->current->offset = n + 1;
+	return n + 1;
 }
 
-void fillSymTableClassFunc(ClassMethodListP cml, SymbolesTableP st){
+int fillSymTableClassFunc(ClassMethodListP cml, SymbolesTableP st){
+	int n = 0;
 	if(cml->next)
-		fillSymTableClassFunc(cml->next, st);
+		n = fillSymTableClassFunc(cml->next, st) + 1;
 //	symTable_addLine(st, cml->current, function);
+	cml->current->offset = n;
+	return n;
 }
 
 bool verif_paramList(FunctionP func){
@@ -177,20 +207,17 @@ bool verif_class(ClassP c){
 
 
 bool verif_func(SymbolesTableP st, FunctionP func, ClassP c){
-	symTable_enterFunction(st, func);
+	symTable_enterFunction(st, func, c);
+	local_offset = 0;
 	bool res = verif_types(st, func->code, c, func);
+	local_offset = 0;
 	symTable_exitScope(st);
 	return res;
 }
 
 
 
-typedef struct _context{
-	FunctionP func;
-	short prevOP;
-}Context;
 
-Context context = {NULL, 0};
 
 bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 	int i = 0;
@@ -224,7 +251,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 				v->ID = tree->u.str;
 				//v->typeName = prm->type;
 				//v->type = class_getClass(v->typeName); a ajouter dans la partie sup
-
+				v->offset = local_offset;
 				if(symTable_isNameInUse(st, v->ID))
 					return FALSE;
 				symTable_addLine(st, v, LOCAL);

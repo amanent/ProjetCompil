@@ -16,7 +16,7 @@ void symTable_addLineFromLine(SymbolesTableP theTable, LineP l){
 	l->rang = ++(theTable->nbVarAtRank[theTable->max_rank]);
 }
 
-void symTable_addLine(SymbolesTableP theTable, VarP var, Nature n){
+void symTable_addLine(SymbolesTableP theTable, VarP var, e_nature n){
 	LineP current = theTable->current;
 	LineP l = symbLine_newLine(var, n);
 	theTable->current = l;
@@ -36,27 +36,41 @@ void symTable_enterNewScope(SymbolesTableP table){
 
 }
 
-SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func){
+SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func, ClassP c){
 	//SymbolesTableP nt = symTable_duplicate(t, 0); FUCK YOU BENJAMIN ARTHUR PATRICK BLOIS
 	//Section 0 = Global
 	SymbolesTableP nt = symTable_newTable();
 	//Section 1 = Params -> sec0
 	symTable_enterNewScope(nt);
 	ParamsListP prm = func->paramsList;
+	int nbParams = func->nbParam;
+	int i = 0;
 	while(prm != NULL){
 		VarP v = NEW(1, Var);
 		v->ID = prm->name;
 		v->typeName = prm->type;
 		v->type = class_getClass(v->typeName);
+		v->offset = -nbParams + (i++);
 		symTable_addLine(nt, v, PARAM);
 	}
+	{
+		VarP this = NEW(1, Var);
+		this->ID = "this";
+		this->type = c;
+		this->typeName = c->IDClass;
+		this->offset = -nbParams - 1;
+		symTable_addLine(nt, this, PARAM);
+	}
+
 	if(func->returnType) {
 		VarP res = NEW(1, Var);
 		res->ID = "result";
 		res->type = func->returnType;
 		res->typeName = res->type->IDClass;
-		symTable_addLine(nt, res, parameter);
+		res->offset = -nbParams - 2;
+		symTable_addLine(nt, res, PARAM);
 	}
+
 	//Section 2 = Entering function code -> sec 1
 	symTable_enterNewScope(nt);
 
@@ -75,7 +89,7 @@ void symTable_eraseSection(SymbolesTableP t, int sect){
 	t->current = t->sections[t->max_rank-1];
 }
 
-LineP symbLine_newLine(VarP var, Nature n){
+LineP symbLine_newLine(VarP var, e_nature n){
 	LineP line =  NEW(1, Line);
 	line->n = n;
 	line->v = var;
