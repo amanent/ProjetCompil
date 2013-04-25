@@ -20,6 +20,24 @@
 		e_nature nature;
 	};
 
+	typedef struct _ArgListElem{
+		VarP current;
+		struct _ArgListElem* next;
+	}ArgListElem, *ArgListElemP;
+
+	typedef struct _ArgList{
+		ArgListElemP top;
+		ArgListElemP bottom;
+	}ArgList, *ArgListP;
+
+
+
 	bool var_areEquals(VarP v, string varName, string varClass);
+	ArgListP arglst_newList();
+	ArgListElemP arglm_newElem(VarP v);
+	void arglst_pushFront(ArgListP list, VarP v);
+	void arglst_pushBack(ArgListP list, VarP v);
+
+
 
 #endif

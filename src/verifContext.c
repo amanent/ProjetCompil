@@ -21,9 +21,10 @@ extern ClassListP classList;
 typedef struct _context{
 	FunctionP func;
 	short prevOP;
+	ArgListP arglst;
 }Context;
 
-Context context = {NULL, 0};
+Context context = {NULL, 0, NULL};
 int local_offset = 0;
 
 
