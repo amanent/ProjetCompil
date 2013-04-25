@@ -428,7 +428,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 					return FALSE;
 			ClassP c = class_getClass(tree->u.str);
 			tree->type = c;
-			return (c);
+			return (c == NULL);
 		}
 /**/	case INSTA: // NEW Idcl '(' ListArgO ')' // verif de la liste d'args du const de idcl
 			for(i = 0; i < tree->nbChildren; ++i)
