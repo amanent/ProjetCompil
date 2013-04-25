@@ -21,9 +21,10 @@ extern ClassListP classList;
 typedef struct _context{
 	FunctionP func;
 	short prevOP;
+	ArgListP arglst;
 }Context;
 
-Context context = {NULL, 0};
+Context context = {NULL, 0, NULL};
 int local_offset = 0;
 
 
@@ -242,6 +243,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 	    
 	short prevOP = context.prevOP;
 	context.prevOP = tree->op;
+	ArgListP arglist = context.arglst;
 	
 	tree->cContext = c;
 	tree->fContext = f;
@@ -428,7 +430,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 					return FALSE;
 			ClassP c = class_getClass(tree->u.str);
 			tree->type = c;
-			return (c);
+			return (c == NULL);
 		}
 /**/	case INSTA: // NEW Idcl '(' ListArgO ')' // verif de la liste d'args du const de idcl
 			for(i = 0; i < tree->nbChildren; ++i)
@@ -447,7 +449,19 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 			tree->func = getChild(tree, 0)->func;
 			return TRUE;
 		case LSTARG: //a faire apres
-
+			if(prevOP == INSTA || prevOP == MSGSNT || prevOP == MSGSNTS){
+				context.arglst = arglst_newList();
+			}
+			tree->type = getChild(tree, 0)->type;
+			if(tree->type == NULL)
+				return FALSE;
+			tree->var  = getChild(tree, 0)->var;
+			tree->func = getChild(tree, 0)->func;
+			arglst_pushBack(arglist, tree->type);
+			for(i = 0; i < tree->nbChildren; ++i)
+				if(!verif_types(st, getChild(tree, i), c, f))
+					return FALSE;
+			return TRUE;
 		case BLCDECL:
 			symTable_enterNewScope(st);
 			for(i = 0; i < tree->nbChildren; ++i)

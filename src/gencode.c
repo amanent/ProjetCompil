@@ -294,7 +294,7 @@ string genCodeConst(ClassP c, int ize, int nbFuncSup)
 		code =  writeCode(code, FALSE, NULL, "POPN", intToStr, NULL);
 	}
 	else {
-		sprintf(intToStr, "%d", c->size);
+		sprintf(intToStr, "%d", c->nbFields);
 		code = writeCode(code, FALSE, NULL, "ALLOC", intToStr, NULL);
 	}
 
