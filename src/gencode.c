@@ -277,7 +277,7 @@ string genCodeFunc(FunctionP func)
 	return writeCode(code, FALSE, NULL, "RETURN", NULL, NULL);
 }
 
-string genCodeConst(ClassP c) 
+string genCodeConst(ClassP c, int ize, int nbFuncSup) 
 {
 	string code = NULL;
 	char intToStr[20] = "";
