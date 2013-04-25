@@ -106,7 +106,7 @@ bool symTable_isVarDefined(SymbolesTableP t, string varName, string className){
 	return FALSE;
 }
 
-VarP getVarFromName(SymbolesTableP t, string varName){
+VarP symTable_getVarFromName(SymbolesTableP t, string varName){
 	LineP tmp = t->current;
 	while(tmp != NULL) {
 		if(!strcmp(varName, tmp->v->ID))

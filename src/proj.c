@@ -107,10 +107,12 @@ int main(int argc, char **argv) {
 	classList_addClass(integer);
 	classList_addClass(sstring);
 
+
 	if(!verif_contextuelle()) {
 		fprintf(stderr, "Erreur a la verif contextuelle\n");
 		return -1;
 	}
+	fprintf(stderr, "Verif contextuelle pass\n");
 
 	string toto = NULL;
 	toto = genBaseCode(classList);

@@ -35,7 +35,7 @@ int class_getNb(ClassP c){
 int class_getNbFromName(string className){
 	ClassListP tmp = classList;
 	while(tmp){
-		if(tmp->current->IDClass == className);
+		if(tmp->current->IDClass == className)
 			return tmp->n;
 		tmp = tmp->next;
 	}

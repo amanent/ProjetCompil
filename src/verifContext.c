@@ -145,6 +145,8 @@ bool verif_classCode(ClassP c){
 
 int fillSymTableClassVar(ClassFieldListP cfl, SymbolesTableP st){
 	int n = 0;
+	if(!cfl)
+		return 0;
 	if(cfl->next){
 		n = fillSymTableClassVar(cfl->next, st) + 1;
 	}
@@ -164,6 +166,8 @@ void fillSymTableStaticVar(ClassFieldListP cfl, SymbolesTableP st){
 
 int fillSymTableClassFunc(ClassMethodListP cml, SymbolesTableP st){
 	int n = 0;
+	if(!cml)
+		return 0;
 	if(cml->next)
 		n = fillSymTableClassFunc(cml->next, st) + 1;
 //	symTable_addLine(st, cml->current, function);
@@ -264,9 +268,10 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 				if(symTable_isNameInUse(st, v->ID))
 					return FALSE;
 				symTable_addLine(st, v, LOCAL);
+				tree->var = v;
 			}
 			else{
-				 //tree->var = symTable_getVarFromName(st, tree->u.str);
+				 tree->var = symTable_getVarFromName(st, tree->u.str);
 				 if(tree->var)
 				 	tree->type = tree->var->type;				
 			}
@@ -376,7 +381,8 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 			getChild(tree, 0)->var->type = getChild(tree, 1)->type;
 			getChild(tree, 0)->var->typeName = getChild(tree, 0)->var->type->IDClass;
 			getChild(tree, 0)->type = getChild(tree, 1)->type;
-
+			if(!getChild(tree, 2))
+				return TRUE;
 			return(	   getChild(tree, 1)->type == getChild(tree, 2)->type
 					|| getChild(tree, 2)->type == NULL
 					|| class_isinheritedFrom(getChild(tree, 2)->type, getChild(tree, 1)->type));
@@ -387,14 +393,15 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 			for(i = 0; i < tree->nbChildren; ++i)
 				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
-			ClassP c = getChild(tree, 0)->type;
-			if(!c) return FALSE;
+			ClassP exp2type = getChild(tree, 0)->type;
+			if(!exp2type)
+				return FALSE;
 			FunctionP ff = NULL;
 			if(getChild(tree, 0)->var || getChild(tree, 0)->func){
-				ff = class_getInstanceMethFromName(c, getChild(tree, 1)->u.str);
+				ff = class_getInstanceMethFromName(exp2type, getChild(tree, 1)->u.str);
 			}
 			else{
-				ff = class_getStaticMethFromName(c, getChild(tree, 1)->u.str);
+				ff = class_getStaticMethFromName(exp2type, getChild(tree, 1)->u.str);
 			}
 			if(ff && 1 /*Comparaison des lstArg*/)
 			{
