@@ -270,9 +270,11 @@ string gencode(TreeP tree) {
 
 string genCodeFunc(Class c, FunctionP func) 
 {
+	char intToStr[40] = "";
 	string code = NULL;
 
-	code = writeCode(NULL, FALSE, func->ID, "NOP", NULL, NULL); /* voir a faire quelque chose pour la multiplicité des noms */
+	sprintf(intToStr, "%s_%s", c->IDClass, func->ID);
+	code = writeCode(NULL, FALSE, intToStr, "NOP", NULL, NULL); /* voir a faire quelque chose pour la multiplicité des noms */
 	code = strcatwalloc(code, gencode(func->code));
 
 	return writeCode(code, FALSE, NULL, "RETURN", NULL, NULL);
@@ -284,23 +286,46 @@ string genCodeConst(ClassP c) // l'objet est alloué avant les paramètres
 	char intToStr[20] = "";
 
 	code = writeCode(NULL, FALSE, c->IDClass, "NOP", NULL, "constructor");
+	sprintf(intToStr, "%d", -c->constructor->nbParam-1);
+	code = writeCode(code, FALSE, NULL, "PUSHL", intToStr, NULL); //on met l'adresse de l'objet en tete de pile
 
 	if(c->superName != NULL) {
-		code = writeCode(code, FALSE, NULL, "PUSHN", "1" , NULL); // pour la valeur de retour 
+		sprintf(intToStr, "%d", -c->constructor->nbParam-1);
+		code = writeCode(code, FALSE, NULL, "PUSHL", intToStr, NULL); //on met l'adresse de l'objet en tete de pile
 		code = strcatwalloc(code, gencode(c->superCallArgs)); //push des n arguments
 		code = writeCode(code, FALSE, NULL, "PUSHA", c->superName , NULL);
 		code = writeCode(code, FALSE, NULL, "CALL", NULL , NULL);
 		
-		sprintf(intToStr, "%d", c->super->constructor->nbParam);
-		code =  writeCode(code, FALSE, NULL, "POPN", intToStr, NULL);
+		//code = writeCode(code, FALSE, NULL, "STOREL", intToStr , NULL); // on stocke le résultat
+		sprintf(intToStr, "%d", c->super->constructor->nbParam); // +1 pour la valeur de retour, deja sauvegardée
+		code =  writeCode(code, FALSE, NULL, "POPN", intToStr, NULL); // et on retire la pile d'appel
 	}
+	
+	// ici quel que soit le chemin on a l'adresse de l'objet en tete de pile
+	sprintf(intToStr, "%d", c->offsetTV);
+	code =  writeCode(code, FALSE, NULL, "PUSHG", intToStr, NULL); // chargement de la table des symboles de la classe
+	code =  writeCode(code, FALSE, NULL, "STORE", "0", NULL); // puis on la stocke dans l'objet a l'offset reservé aux TV
 
-	code = strcatwalloc(code, gencode(c->constructor->code));
+	code = strcatwalloc(code, genFieldInitCode(c->cfl)); // initialisation des champs non statiques
 
-	sprintf(intToStr, "%d", -1 - c->constructor->nbParam);
-	code = writeCode(code, FALSE, NULL, "STOREL", intToStr, NULL);
+	code = strcatwalloc(code, gencode(c->constructor->code)); // le constructeur
+
+	//sprintf(intToStr, "%d", -1 - c->constructor->nbParam);
+	//code = writeCode(code, FALSE, NULL, "STOREL", intToStr, NULL); // obsolette ?
 	
 	return writeCode(code, FALSE, NULL, "RETURN", NULL, NULL);
+}
+
+string genFieldInitCode(ClassFieldListP cfl) { // miam la recursion non terminale a cause des structures de données pourries d'Arnaud
+	if(cfl==NULL)
+		return NULL;
+	return strcatwalloc(genFieldInitCode(cfl->next), gencode(cfl->current->value));
+}
+
+string genStaticFieldInitCode(ClassListP cl) {
+	if(cl==NULL)
+		return NULL;
+	return strcatwalloc(genStaticFieldInitCode(cl->next), genFieldInitCode(cl->current->staticCfl));
 }
 
 string genBaseFuncCode()
@@ -360,7 +385,7 @@ string genBaseCode(ClassListP cl_par)
 		code = strcatwalloc(code, intToStr);
 		while(scml!=NULL)
 		{
-			code = strcatwalloc(code, genCodeFunc(scml->current));
+			code = strcatwalloc(code, genCodeFunc(cl->current, scml->current));
 			scml = scml->next;
 		}
 		cl = cl->next;
@@ -374,16 +399,42 @@ string genBaseCode(ClassListP cl_par)
 		sprintf(intToStr, "\n\t--classe %s", cl->current->IDClass);
 		code = strcatwalloc(code, intToStr);
 
-		code = strcatwalloc(code, genCodeConst(cl->current)); // constructeur
+		code = strcatwalloc(code, genCodeConst(cl->current, cl->current)); // constructeur
 		while(cml!=NULL)
 		{
-			code = strcatwalloc(code, genCodeFunc(cml->current));
+			code = strcatwalloc(code, genCodeFunc(cl->current, cml->current));
 			cml = cml->next;
 		}
 		cl = cl->next;
 	}
 
 	code = strcatwalloc(code, genBaseFuncCode());
-	return writeCode(code, FALSE, "start", "START", NULL , "main function");
+	code = writeCode(code, FALSE, "start", "START", NULL , "main function");
+
+	code = strcatwalloc(code, genStaticFieldInitCode(cl_par));
+
+	return strcatwalloc(code, genTVCode(cl_par));
 }
 
+string genTVCode(ClassListP cl) {
+	char intToStr[40] = "", intToStr2[40] = "";
+	string code = NULL;
+
+	code = strcatwalloc(code, "\n--generation des TV:");
+	while(cl!=NULL) {
+		ClassMethodListP cml = cl->current->instance->methods;
+
+		sprintf(intToStr, "%s", cl->current->offsetTV);
+
+		while(cml!=NULL)
+		{
+			code = writeCode(code, FALSE, NULL, "PUSHI", intToStr, "adresse TV");
+
+			sprintf(intToStr2, "%s_%s", cl->current->IDClass, cml->current->ID);
+			code = writeCode(code, FALSE, NULL, "PUSHA", intToStr2, NULL);
+			cml=cml->next;
+		}
+		cl = cl->next;
+	}
+	return strcatwalloc(code, "\n-- fin generation des TV:");
+}
