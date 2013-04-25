@@ -195,7 +195,9 @@ string gencode(TreeP tree) {
 			code = strcatwalloc(code, gencode(getChild(tree, 0))); // pour mettre l'appelant sur la pile
 			code = strcatwalloc(code, gencode(getChild(tree, 2))); //push des n arguments
 			
-			code = writeCode(code, FALSE, NULL, "PUSHA", getChild(tree, 1)->u.str , NULL);
+			sprintf(intToStr, "%d", getChild(tree, 0)->type->offsetTV);
+			code = writeCode(code, FALSE, NULL, "PUSHI", intToStr , "@ TV");
+			code = writeCode(code, FALSE, NULL, "LOAD", tree->func->offset , "index function");
 			code = writeCode(code, TRUE, NULL, "CALL", NULL , NULL);
 			
 			if(tree->func!=NULL)
@@ -210,8 +212,8 @@ string gencode(TreeP tree) {
 				code = writeCode(code, FALSE, NULL, "PUSHN", "1" , "return value"); // pour la valeur de retour
 			code = strcatwalloc(code, gencode(getChild(tree, 2))); //push des n arguments
 			
-			//sprintf(intToStr, "%s_%s", getChild(tree, 0)->u.str, getChild(tree, 1)->u.str); // pour eviter la multiplicité des noms
-			code = writeCode(code, FALSE, NULL, "PUSHA", getChild(tree, 1)->u.str, NULL);
+			sprintf(intToStr, "%s_%s", getChild(tree, 0)->u.str, getChild(tree, 1)->u.str); // pour eviter la multiplicité des noms
+			code = writeCode(code, FALSE, NULL, "PUSHA", intToStr, NULL);
 			code = writeCode(code, TRUE, NULL, "CALL", NULL , NULL);
 
 			if(tree->func!=NULL)
@@ -274,7 +276,7 @@ string genCodeFunc(Class c, FunctionP func)
 	string code = NULL;
 
 	sprintf(intToStr, "%s_%s", c->IDClass, func->ID);
-	code = writeCode(NULL, FALSE, intToStr, "NOP", NULL, NULL); /* voir a faire quelque chose pour la multiplicité des noms */
+	code = writeCode(NULL, FALSE, intToStr, "NOP", NULL, NULL);
 	code = strcatwalloc(code, gencode(func->code));
 
 	return writeCode(code, FALSE, NULL, "RETURN", NULL, NULL);
