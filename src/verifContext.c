@@ -168,7 +168,7 @@ int fillSymTableClassVar(ClassFieldListP cfl, SymbolesTableP st){
 		n = fillSymTableClassVar(cfl->next, st) + 1;
 	}
 	symTable_addLine(st, cfl->current, NONSTATIC);
-	cfl->current->offset = n + 1;
+	cfl->current->offset = n;
 	return n;
 }
 
