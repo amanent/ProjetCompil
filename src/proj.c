@@ -107,6 +107,7 @@ int main(int argc, char **argv) {
 	classList_addClass(integer);
 	classList_addClass(sstring);
 
+	printf("--Fin des initialisation des classes de base\n");
 
 	if(!verif_contextuelle()) {
 		fprintf(stderr, "Erreur a la verif contextuelle\n");

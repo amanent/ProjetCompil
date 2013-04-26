@@ -1,0 +1,37 @@
+class Test1()
+is {
+  var x : Integer := 1;
+  var y : Integer := 2;
+  def m1() returns Integer is {
+    result := x;
+  }
+  def m2() returns Integer is {
+    result := y;
+  }
+}
+class Test2(xc : Integer, yc : Integer)
+  extends Test1()
+  { 
+    x := xc;
+    y := yc;
+  }
+is {
+  override def m2() returns Integer is {
+    result := x;
+  }
+  def m3() returns Integer is {
+    result := super.m2();
+  }
+}
+class Test3(xc : Integer)
+  extends Test2(xc, 5)
+  {
+    x := xc;
+    z := x + y;
+  }
+is {
+  var z : Integer := 3;
+}
+{
+  new Test3(0);
+}
