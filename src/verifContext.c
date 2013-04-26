@@ -262,6 +262,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 	tree->cContext = c;
 	tree->fContext = f;
 
+printf("--treating : %d\n", tree->op);
 	switch (tree->op) {
 		case STR: //return true, tree->type = String
 			tree->type = class_getClass("String"); 
