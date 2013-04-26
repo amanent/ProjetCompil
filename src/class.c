@@ -263,6 +263,7 @@ bool class_generateJumpTable(ClassP c){
 
 	cmltmp = c->staticCml;
 	while(cmltmp){
+		c->nbFields++;
 		ClassMethodListP newMethod = NEW(1, ClassMethodList);
 		newMethod->next = NULL;
 		newMethod->current  = cmltmp->current;
