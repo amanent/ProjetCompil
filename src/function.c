@@ -92,9 +92,9 @@ int function_howManyArgs(FunctionP func){
 bool prmlst_goodCallArgs (FunctionP f, ArgListP args){
 	ParamsListP params;
 	ArgListElemP arg;
-	
-	if( (f==NULL || f->paramsList == NULL) && args == NULL )
-		return TRUE;
+
+	if(f==NULL || args == NULL)
+		return (f==NULL || f->paramsList == NULL) && args==NULL;
 	
 	params = f->paramsList;
 	arg = args->top;
