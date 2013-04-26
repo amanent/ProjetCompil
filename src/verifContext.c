@@ -109,18 +109,17 @@ void verif_contructJumpTable(){
 	}
 }
 
-bool verif_contextuelle(){ // need verif arg.
-	bool verif = TRUE;
+int verif_contextuelle(){ // need verif arg.
 //printf("-- toto1\n");
-	verif &= verif_nameResolution(); if(!verif) return FALSE;
+	if(!verif_nameResolution()) return -1;
 //printf("-- toto2\n");
 	verif_contructJumpTable();
 //printf("-- toto3\n");	
-	verif &= verif_allClassesCode(); if(!verif) return FALSE;
+	if(!verif_allClassesCode()) return -2;
 //printf("-- toto4\n");	
-	verif &= verif_types(symTable_newTable(), mainCode, NULL, NULL); if(!verif) return FALSE;
+	if(!verif_types(symTable_newTable(), mainCode, NULL, NULL)) return -3;
 //printf("-- toto5\n");
-	return TRUE;
+	return 1;
 }
 
 bool verif_allClassesCode(){

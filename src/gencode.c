@@ -239,18 +239,18 @@ string gencode(TreeP tree) {
 				switch(tree->var->nature)
 				{
 					case STATIC: // offset par rapport a GP
-						return writeCode(NULL, FALSE, NULL, "PUSHG", intToStr, NULL);
+						return writeCode(NULL, FALSE, NULL, "PUSHG", intToStr, "static");
 					case NONSTATIC: // offset par rapport a adresse Classe
 						if(tree->fContext != NULL) {
 							sprintf(intToStr2, "%d", - tree->fContext->nbParam - 1); // empilage de l'adresse de l'appelant
-							code = writeCode(NULL, FALSE, NULL, "PUSHL", intToStr2, NULL);
-							return writeCode(code, FALSE, NULL, "LOAD", intToStr, NULL);
+							code = writeCode(NULL, FALSE, NULL, "PUSHL", intToStr2, "nonstatic 1/2");
+							return writeCode(code, FALSE, NULL, "LOAD", intToStr, "nonstatic 2/2");
 						}
 						return writeCode(NULL, FALSE, NULL, "NOP", NULL, "erreur d'adressage");
 					case PARAM: // offset par rapport a FP (negatif)
-						return writeCode(NULL, FALSE, NULL, "PUSHL", intToStr, NULL);
+						return writeCode(NULL, FALSE, NULL, "PUSHL", intToStr, "param");
 					case LOCAL: // offset par rapport a FP (positif)
-						return writeCode(NULL, FALSE, NULL, "PUSHL", intToStr, NULL);
+						return writeCode(NULL, FALSE, NULL, "PUSHL", intToStr, "local");
 				}
 			}
 			return NULL;

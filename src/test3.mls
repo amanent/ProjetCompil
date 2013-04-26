@@ -13,16 +13,18 @@ is {
 class Test3(aa : Integer, strp : String)
   {
     a := aa;
+    b := aa;
     str := strp;
   }
 is {
   static var v1 : Integer := 3;
   static var v2 : Integer := 4;
   var a : Integer;
+  var b : Integer;
   var str : String;
 
   def me() is {
-    (str & a.toString()).println(); 
+    (str & a.toString() & b.toString()).println(); 
   }
 }
 {

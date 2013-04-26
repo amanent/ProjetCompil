@@ -10,7 +10,7 @@
 #include <string.h>
 #include "symboles.h"
 
-bool verif_contextuelle();
+int verif_contextuelle();
 bool verif_paramList(FunctionP func);
 bool verif_classCode(ClassP c);
 bool verif_nameResolution();
