@@ -271,7 +271,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 			else {
 				tree->var = symTable_getVarFromName(st, tree->u.str);
 				if(tree->var == NULL)
-					return NULL;
+					return FALSE;
 				//printf("%s %x !\n", tree->u.str, tree->var);
 				if(tree->var) {
 					//printf("type : %s\n", tree->var->type->IDClass);
