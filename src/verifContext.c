@@ -147,6 +147,9 @@ bool verif_classCode(ClassP c){
 	fillSymTableClassFunc(c->cml, table);
 	fillSymTableClassFunc(c->staticCml, statictable);
 
+	if(c->constructor!=NULL && !verif_func(table, c->constructor, c))
+		return FALSE;
+
 	ClassMethodListP mtmp = c->cml;
 	while(mtmp){
 		if(!verif_func(table, mtmp->current, c))
