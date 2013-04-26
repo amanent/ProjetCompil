@@ -247,13 +247,14 @@ bool class_generateJumpTable(ClassP c){
 		if(over){
 			if(cmltmp->current->override == FALSE)
 				return FALSE;
+			cmltmp->current->offset = over->current->offset;
 			over->current = cmltmp->current;
 		}
 		else{
-			c->nbFunc++;
 			ClassMethodListP newMethod = NEW(1, ClassMethodList);
 			newMethod->next = NULL;
 			newMethod->current  = cmltmp->current;
+			newMethod->current->offset = c->nbFunc++;
 			if(c->instance->methods)
 				ml_getLast(c->instance->methods)->next = newMethod;
 			else
