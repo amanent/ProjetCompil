@@ -143,29 +143,26 @@ int nbStaticVars = 0;
 bool verif_classCode(ClassP c){
 	SymbolesTableP table = symTable_newTable();
 	SymbolesTableP statictable = symTable_newTable();
-printf("-- test %s 2\n", c->IDClass);
+
 	fillSymTableClassVar(c->cfl, table);
 	fillSymTableStaticVar(c->staticCfl, statictable);
 
 	fillSymTableClassFunc(c->cml, table);
 	fillSymTableClassFunc(c->staticCml, statictable);
 
-printf("-- test %s 3\n", c->IDClass);
 	ClassMethodListP mtmp = c->cml;
 	while(mtmp){
-printf("-- test %s_%s\n", c->IDClass, mtmp->current->ID);
 		if(!verif_func(table, mtmp->current, c))
 			return FALSE;
 		mtmp = mtmp->next;
 	}
-printf("-- test %s 4\n", c->IDClass);
+
 	mtmp = c->staticCml;
 	while(mtmp){
 		if(!verif_func(statictable, mtmp->current, c))
 			return FALSE;
 		mtmp = mtmp->next;
 	}
-printf("-- test %s 5\n", c->IDClass);
 	return TRUE;
 }
 
@@ -262,7 +259,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 	tree->cContext = c;
 	tree->fContext = f;
 
-printf("--treating : %d\n", tree->op);
+//printf("--treating : %d\n", tree->op);
 	switch (tree->op) {
 		case STR: //return true, tree->type = String
 			tree->type = class_getClass("String"); 
@@ -290,7 +287,9 @@ printf("--treating : %d\n", tree->op);
 			else{
 				 tree->var = symTable_getVarFromName(st, tree->u.str);
 				 if(tree->var)
-				 	tree->type = tree->var->type;				
+				 	tree->type = tree->var->type;
+				 else if( !strcmp(tree->u.str, "result")) // si on voit result
+					tree->type = tree->fContext->returnType;
 			}
 			return TRUE;
 		}
@@ -356,12 +355,14 @@ printf("--treating : %d\n", tree->op);
 
 			if(!strcmp(idtxt, "this") || !strcmp(idtxt, "super"))
 				return FALSE;
+
 			return (	(getChild(tree, 1)->type == getChild(tree, 0)->type)||(class_isinheritedFrom(getChild(tree, 1)->type, getChild(tree, 0)->type)));
 
 /**/	case CMPAFF: // l AFF Exp ';' //verif types
 			for(i = 0; i < tree->nbChildren; ++i)
 				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
+
 			return (	(getChild(tree, 1)->type == getChild(tree, 0)->type)||(class_isinheritedFrom(getChild(tree, 1)->type, getChild(tree, 0)->type)));
 				
 
