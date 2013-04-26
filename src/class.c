@@ -236,7 +236,9 @@ bool class_generateJumpTable(ClassP c){
 printf("-- test %s 1\n", c->IDClass);
 	ClassMethodListP cmltmp = c->cml;
 	while(cmltmp){
+printf("-- test %s_%s 1\n", c->IDClass, cmltmp->current->ID);
 		ClassMethodListP over = override(c->instance->methods, cmltmp->current);
+printf("-- test %s_%s 2\n", c->IDClass, cmltmp->current->ID);
 		if(over){
 			if(cmltmp->current->override == FALSE)
 				return FALSE;
@@ -252,6 +254,7 @@ printf("-- test %s 1\n", c->IDClass);
 			else
 				c->instance->methods = newMethod;
 		}
+printf("-- test %s_%s 3\n", c->IDClass, cmltmp->current->ID);
 	}
 printf("-- test %s 2\n", c->IDClass);
 	cmltmp = c->staticCml;
@@ -295,6 +298,7 @@ printf("-- test %s 5\n", c->IDClass);
 ClassMethodListP override(ClassMethodListP orig, FunctionP func){
 	ClassMethodListP tmp = orig;
 	while(tmp){
+printf("-- test2 %s\n", tmp->current->ID);
 		if(!strcmp(func->ID, tmp->current->ID))
 			return tmp;
 		tmp = tmp->next;
