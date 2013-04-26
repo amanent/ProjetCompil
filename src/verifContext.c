@@ -20,6 +20,7 @@ typedef struct _context{
 
 Context context = {NULL, 0, NULL};
 int local_offset = 0;
+int nbStaticVars = 0;
 
 
 bool verif_nameResolution(){
@@ -133,13 +134,15 @@ bool verif_allClassesCode(){
 	return TRUE;
 }
 
-int nbStaticVars = 0;
+
 bool verif_classCode(ClassP c){
 	SymbolesTableP table = symTable_newTable();
 	SymbolesTableP statictable = symTable_newTable();
 
 	fillSymTableClassVar(c->cfl, table);
 	fillSymTableStaticVar(c->staticCfl, statictable);
+	if(strcmp("String", c->IDClass) && strcmp("Integer", c->IDClass))
+		c->offsetTV = nbStaticVars++;
 
 	fillSymTableClassFunc(c->cml, table);
 	fillSymTableClassFunc(c->staticCml, statictable);
@@ -164,11 +167,12 @@ int fillSymTableClassVar(ClassFieldListP cfl, SymbolesTableP st){
 	int n = 0;
 	if(!cfl)
 		return 0;
-	if(cfl->next){
-		n = fillSymTableClassVar(cfl->next, st) + 1;
-	}
-	symTable_addLine(st, cfl->current, NONSTATIC);
+	
+	n = fillSymTableClassVar(cfl->next, st) + 1;
+
 	cfl->current->offset = n;
+	symTable_addLine(st, cfl->current, NONSTATIC);
+	
 	return n;
 }
 
