@@ -232,8 +232,12 @@ bool class_generateJumpTable(ClassP c){
 		c->nbFields = c->super->nbFields;
 		c->nbFunc = c->super->nbFunc;
 	}
+	else{
+		c->instance = NEW(1, JumpTable);
+		c->statics = NEW(1, JumpTable);
+	}
 
-printf("-- test %s 1\n", c->IDClass);
+
 	ClassMethodListP cmltmp = c->cml;
 	while(cmltmp){
 		ClassMethodListP over = override(c->instance->methods, cmltmp->current);
@@ -253,7 +257,7 @@ printf("-- test %s 1\n", c->IDClass);
 				c->instance->methods = newMethod;
 		}
 	}
-printf("-- test %s 2\n", c->IDClass);
+
 	cmltmp = c->staticCml;
 	while(cmltmp){
 		ClassMethodListP newMethod = NEW(1, ClassMethodList);
@@ -264,7 +268,7 @@ printf("-- test %s 2\n", c->IDClass);
 		else
 			c->instance->methods = newMethod;
 	}
-printf("-- test %s 3\n", c->IDClass);
+
 	ClassFieldListP clftmp = c->cfl;
 	while(clftmp){
 		c->nbFields++;
@@ -276,7 +280,7 @@ printf("-- test %s 3\n", c->IDClass);
 		else
 			c->instance->fields = newField;
 	}
-printf("-- test %s 4\n", c->IDClass);
+
 	clftmp = c->staticCfl;
 	while(clftmp){
 		ClassFieldListP newField = NEW(1, ClassFieldList);
@@ -287,13 +291,13 @@ printf("-- test %s 4\n", c->IDClass);
 		else
 			c->instance->fields = newField;
 	}
-printf("-- test %s 5\n", c->IDClass);
 	return TRUE;
 
 }
 
 ClassMethodListP override(ClassMethodListP orig, FunctionP func){
 	ClassMethodListP tmp = orig;
+
 	while(tmp){
 		if(!strcmp(func->ID, tmp->current->ID))
 			return tmp;
