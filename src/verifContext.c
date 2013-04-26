@@ -1,9 +1,3 @@
-/*
- * verifContext.c
- *
- *  Created on: Apr 5, 2013
- *      Author: Matthieu
- */
 #include "verifContext.h"
 #include "proj.h"
 #include "proj_y.h"
@@ -75,14 +69,14 @@ bool verif_nameResolution(){
 
 		ClassMethodListP currentSCML = currentCL->current->cml;
 		while(currentSCML != NULL){
-			FunctionP currentSFunc = currentCML->current;
+			FunctionP currentSFunc = currentSCML->current;
 			if(currentSFunc->returnType == NULL && currentSFunc->returnName != NULL) {
 				currentSFunc->returnType = class_getClass(currentSFunc->returnName);
 				if(currentSFunc->returnType == NULL || verif_paramList(currentSFunc) == FALSE) // si on a pas trouvé la classe.
 					return FALSE;
 				function_howManyArgs(currentSFunc);
 			}
-			currentCML = currentCML->next;
+			currentSCML = currentSCML->next;
 		}
 
 		/* CHECK CURRENT CLASS SUPER */
@@ -115,6 +109,7 @@ bool verif_paramList(FunctionP func){
 void verif_contructJumpTable(){
 	ClassListP tmp = classList;
 	while(tmp){
+printf("-- test %s\n", tmp->current->IDClass);
 		class_generateJumpTable(tmp->current);
 		tmp = tmp->next;
 	}
@@ -122,11 +117,15 @@ void verif_contructJumpTable(){
 
 bool verif_contextuelle(){ // need verif arg.
 	bool verif = TRUE;
+printf("-- toto1\n");
 	verif &= verif_nameResolution(); if(!verif) return FALSE;
+printf("-- toto2\n");
 	verif_contructJumpTable();
+printf("-- toto3\n");	
 	verif &= verif_allClassesCode(); if(!verif) return FALSE;
+printf("-- toto4\n");	
 	verif &= verif_types(symTable_newTable(), mainCode, NULL, NULL); if(!verif) return FALSE;
-
+printf("-- toto5\n");
 	return TRUE;
 }
 
