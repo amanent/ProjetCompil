@@ -259,7 +259,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 	tree->cContext = c;
 	tree->fContext = f;
 
-//printf("--treating : %d\n", tree->op);
+printf("--treating : %d\n", tree->op);
 	switch (tree->op) {
 		case STR: //return true, tree->type = String
 			tree->type = class_getClass("String"); 
@@ -458,6 +458,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 			for(i = 0; i < tree->nbChildren; ++i)
 				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
+
 			ClassP c = class_getClass(tree->u.str);
 			tree->type = c;
 			return (c != NULL);
@@ -468,7 +469,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 					return FALSE;			
 			tree->type = class_getClass(getChild(tree, 0)->u.str);
 
-			return (prmlst_goodCallArgs(tree->type->constructor, context.arglst));
+			return prmlst_goodCallArgs(tree->type->constructor, context.arglst);
 
 		case INSTR: //gogo child0
 			for(i = 0; i < tree->nbChildren; ++i)

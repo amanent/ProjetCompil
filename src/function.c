@@ -90,10 +90,14 @@ int function_howManyArgs(FunctionP func){
 }
 
 bool prmlst_goodCallArgs (FunctionP f, ArgListP args){
-	ParamsListP params = f->paramsList;
-	ArgListElemP arg = args->top;
-	if(params == NULL && args == NULL )
+	ParamsListP params;
+	ArgListElemP arg;
+	
+	if( (f==NULL || f->paramsList == NULL) && args == NULL )
 		return TRUE;
+	
+	params = f->paramsList;
+	arg = args->top;
 	while(params != NULL && arg != NULL){
 		if(params != NULL || arg != NULL)
 			return FALSE;
