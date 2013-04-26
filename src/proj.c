@@ -109,27 +109,22 @@ int main(int argc, char **argv) {
 
 	printf("--Fin des initialisation des classes de base\n");
 
-	if(!verif_contextuelle()) {
-		fprintf(stderr, "Erreur a la verif contextuelle\n");
-		return -1;
+	switch(verif_contextuelle()) {
+		case 1: printf("--Verif contextuelle : ok\n"); break;
+		case -1: printf("--Verif contextuelle : erreur a la résolution des noms\n"); return -1;
+		case -2: printf("--Verif contextuelle : erreur dans le code d'une classe\n"); return -2;
+		case -3: printf("--Verif contextuelle : erreur dans le code principal\n"); return -3;
+		default: printf("--Verif contextuelle : unknown error\n"); return -4;
 	}
-	printf("--Verif contextuelle ok\n");
 
 	string toto = NULL;
 	toto = genBaseCode(classList->next->next); // les deux next servent a éviter les deux types primitifs
-
 	toto = strcatwalloc(toto, gencode(mainCode));
-
 	toto = writeCode(toto, FALSE, NULL, "STOP", NULL, NULL);
 
-	/*/(string prevCode, bool breakPoint, string label, string code, string arg, string comm)
-	writeCode(toto, FALSE, NULL, "WRITEI", NULL, NULL);
-	writeCode(toto, FALSE, NULL, "PUSHS", "\"\\n\"", NULL); 
-	writeCode(toto, FALSE, NULL, "WRITES", NULL, NULL);
-	writeCode(toto, FALSE, NULL, "STOP", NULL, NULL);
-	 */
+
 	printf("--code :\n%s\n", toto);
-	//*/
+
 	if (fd != NIL(FILE)) fclose(fd);
 	return res ? SYNTAX_ERROR : errorCode;
 }
