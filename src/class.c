@@ -57,11 +57,13 @@ void class_addField(ClassP c, bool isStatic, TreeP decl ) {
 	newCFL->current = newClassField;
 	
 	if(isStatic){
+		newClassField->nature = STATIC;
 		newCFL->next = c->staticCfl;
 		c->staticCfl = newCFL;
 	}
 	else
 	{
+		newClassField->nature = NONSTATIC;
 		newCFL->next = c->cfl;
 		c->cfl = newCFL;
 	}
