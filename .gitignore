@@ -3,4 +3,4 @@
 test/*
 *.ini
 .dropbox
-.simple
+*.simple
