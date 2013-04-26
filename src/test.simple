@@ -1,0 +1,62 @@
+--Compiling
+--A priori c'est bon :)
+--Verif contextuelle ok
+--code :
+
+--champs statiques : (ne pas se fier a l'ordre)
+	JUMP	start	
+--methodes statiques :
+--methodes non statiques :
+--code des fonctions de base
+toString:	PUSHL	-1	
+	STR		
+	STOREL	-2	
+	RETURN		--fin toString
+
+print:	PUSHL	-1	
+	WRITES		
+	SWAP		
+	RETURN		--fin print
+
+println:	PUSHL	-1	
+	PUSHS	"\n"	
+	CONCAT		
+	WRITES		
+	SWAP		
+	RETURN		--fin println
+
+start:	START		--main function
+--generation des TV:
+--fin generation des TV:
+
+	PUSHN	1	--a
+	PUSHI	10	--int cst
+	STOREG	0	
+	PUSHG	0	
+	PUSHI	5	--int cst
+	INFEQ		
+	JZ	else_0	--if
+	PUSHI	4	--int cst
+	PUSHI	0	
+	PUSHI	5	--int cst
+	SUB		
+	MUL		
+	STOREG	0	
+	JUMP	suite_0	
+else_0:	NOP		
+	PUSHI	4	--int cst
+	PUSHI	5	--int cst
+	MUL		
+	STOREG	0	
+suite_0:	NOP		--fin if
+	PUSHN	1	--return value
+	PUSHN	1	--return value
+	PUSHG	0	
+	PUSHA	toString	
+* 	CALL		
+	POPN	1	
+	PUSHA	println	
+* 	CALL		
+	POPN	1	
+	POPN	1	
+	STOP		

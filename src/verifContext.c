@@ -248,7 +248,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 	int i = 0;
 	
 	if (tree == NULL){
-		printf("Verif d'un arbre vide\n");
+		fprintf(stderr, "Verif d'un arbre vide\n");
 		return TRUE;
 	}
 	    

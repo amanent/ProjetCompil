@@ -5,6 +5,7 @@
 #include "proj.h"
 #include "proj_y.h"
 #include "variable.h"
+#include "gencode.h"
 
 string writeCode(string prevCode, bool breakPoint, string label, string code, string arg, string comm) { // ne marche pas avec une chaine constante en premier paramètre.
 	string newCode = realloc(prevCode, (prevCode==NULL?0:strlen(prevCode))
@@ -136,13 +137,13 @@ string gencode(TreeP tree) {
 		case DIRAFF: // Id AFF Exp ';'
 			code = gencode(getChild(tree, 1)); /* le code de l'expression */
 			
-			if(tree->var==NULL) 
+			if(getChild(tree, 0)->var==NULL) 
 				return writeCode(code, FALSE, NULL, "STOREL", "0", "-----------------------------------------------------------------5");
 			else
 			{
-				sprintf(intToStr, "%d", getChild(tree, 1)->var->offset); 
+				sprintf(intToStr, "%d", getChild(tree, 0)->var->offset); 
 				
-				switch(tree->var->nature)
+				switch(getChild(tree, 0)->var->nature)
 				{
 					case STATIC: // offset par rapport a GP
 						return writeCode(code, FALSE, NULL, "STOREG", intToStr , NULL);
@@ -194,11 +195,17 @@ string gencode(TreeP tree) {
 	
 			code = strcatwalloc(code, gencode(getChild(tree, 0))); // pour mettre l'appelant sur la pile
 			code = strcatwalloc(code, gencode(getChild(tree, 2))); //push des n arguments
+
+			if(strcmp(getChild(tree, 0)->type->IDClass, "String")!=0 && strcmp(getChild(tree, 0)->type->IDClass, "Integer")!=0) {
+				sprintf(intToStr, "%d", getChild(tree, 0)->type->offsetTV);
+				code = writeCode(code, FALSE, NULL, "PUSHI", intToStr , "@ TV");
+				sprintf(intToStr, "%d", tree->func->offset);
+				code = writeCode(code, FALSE, NULL, "LOAD", intToStr, "index function");
+			}
+			else
+				code = writeCode(code, FALSE, NULL, "PUSHA", getChild(tree, 1)->u.str , NULL);
 			
-			sprintf(intToStr, "%d", getChild(tree, 0)->type->offsetTV);
-			code = writeCode(code, FALSE, NULL, "PUSHI", intToStr , "@ TV");
-			code = writeCode(code, FALSE, NULL, "LOAD", tree->func->offset , "index function");
-			code = writeCode(code, TRUE, NULL, "CALL", NULL , NULL);
+			code = writeCode(code, TRUE, NULL, "CALL", NULL, NULL);
 			
 			if(tree->func!=NULL)
 			{
@@ -270,7 +277,7 @@ string gencode(TreeP tree) {
 }
 
 
-string genCodeFunc(Class c, FunctionP func) 
+string genCodeFunc(ClassP c, FunctionP func) 
 {
 	char intToStr[40] = "";
 	string code = NULL;
@@ -401,7 +408,7 @@ string genBaseCode(ClassListP cl_par)
 		sprintf(intToStr, "\n\t--classe %s", cl->current->IDClass);
 		code = strcatwalloc(code, intToStr);
 
-		code = strcatwalloc(code, genCodeConst(cl->current, cl->current)); // constructeur
+		code = strcatwalloc(code, genCodeConst(cl->current)); // constructeur
 		while(cml!=NULL)
 		{
 			code = strcatwalloc(code, genCodeFunc(cl->current, cml->current));
@@ -426,7 +433,7 @@ string genTVCode(ClassListP cl) {
 	while(cl!=NULL) {
 		ClassMethodListP cml = cl->current->instance->methods;
 
-		sprintf(intToStr, "%s", cl->current->offsetTV);
+		sprintf(intToStr, "%d", cl->current->offsetTV);
 
 		while(cml!=NULL)
 		{
@@ -438,5 +445,5 @@ string genTVCode(ClassListP cl) {
 		}
 		cl = cl->next;
 	}
-	return strcatwalloc(code, "\n-- fin generation des TV:");
+	return strcatwalloc(code, "\n--fin generation des TV:\n");
 }

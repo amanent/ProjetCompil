@@ -112,12 +112,13 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "Erreur a la verif contextuelle\n");
 		return -1;
 	}
-	fprintf(stderr, "Verif contextuelle pass\n");
+	printf("--Verif contextuelle ok\n");
 
 	string toto = NULL;
-	toto = genBaseCode(classList);
-	
+	toto = genBaseCode(classList->next->next); // les deux next servent a éviter les deux types primitifs
+
 	toto = strcatwalloc(toto, gencode(mainCode));
+
 	toto = writeCode(toto, FALSE, NULL, "STOP", NULL, NULL);
 
 	/*/(string prevCode, bool breakPoint, string label, string code, string arg, string comm)
