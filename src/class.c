@@ -259,11 +259,11 @@ bool class_generateJumpTable(ClassP c){
 			else
 				c->instance->methods = newMethod;
 		}
+		cmltmp = cmltmp->next;
 	}
 
 	cmltmp = c->staticCml;
 	while(cmltmp){
-		c->nbFields++;
 		ClassMethodListP newMethod = NEW(1, ClassMethodList);
 		newMethod->next = NULL;
 		newMethod->current  = cmltmp->current;
@@ -271,29 +271,32 @@ bool class_generateJumpTable(ClassP c){
 			ml_getLast(c->instance->methods)->next = newMethod;
 		else
 			c->instance->methods = newMethod;
+		cmltmp = cmltmp->next;
 	}
 
-	ClassFieldListP clftmp = c->cfl;
-	while(clftmp){
+	ClassFieldListP cfltmp = c->cfl;
+	while(cfltmp){
 		c->nbFields++;
 		ClassFieldListP newField = NEW(1, ClassFieldList);
 		newField->next = NULL;
-		newField->current = clftmp->current;
+		newField->current = cfltmp->current;
 		if(c->instance->fields)
 			fl_getLast(c->instance->fields)->next = newField;
 		else
 			c->instance->fields = newField;
+		cfltmp = cfltmp->next;
 	}
 
-	clftmp = c->staticCfl;
-	while(clftmp){
+	cfltmp = c->staticCfl;
+	while(cfltmp){
 		ClassFieldListP newField = NEW(1, ClassFieldList);
 		newField->next = NULL;
-		newField->current = clftmp->current;
+		newField->current = cfltmp->current;
 		if(c->instance->fields)
 			fl_getLast(c->instance->fields)->next = newField;
 		else
 			c->instance->fields = newField;
+		cfltmp = cfltmp->next;
 	}
 	return TRUE;
 

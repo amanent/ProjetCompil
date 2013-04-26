@@ -44,7 +44,7 @@ SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func, ClassP c
 	//Section 1 = Params -> sec0
 	symTable_enterNewScope(nt);
 	ParamsListP prm = func->paramsList;
-	int nbParams = func->nbParam;
+	int nbParams = function_howManyArgs(func);
 	int i = 0;
 	while(prm != NULL){
 		VarP v = NEW(1, Var);
