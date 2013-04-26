@@ -396,37 +396,41 @@ int jtable_getOffsetStatic(ClassP c, string argName){
 }
 
 VarP class_getInstanceFieldFromName(ClassP c, string varName){
-	ClassFieldListP tmp = c->cfl;
+	ClassFieldListP tmp = c->instance->fields;
 	while(tmp){
 		if(!strcmp(varName, tmp->current->ID))
 			return tmp->current;
+		tmp = tmp->next;
 	}
 	return NULL;
 }
 
 VarP class_getStaticFieldFromName(ClassP c, string varName){
-	ClassFieldListP tmp = c->staticCfl;
+	ClassFieldListP tmp = c->statics->fields;
 	while(tmp){
 		if(!strcmp(varName, tmp->current->ID))
 			return tmp->current;
+		tmp = tmp->next;
 	}
 	return NULL;
 }
 
 FunctionP class_getInstanceMethFromName(ClassP c, string funcName){
-	ClassMethodListP tmp = c->cml;
+	ClassMethodListP tmp = c->instance->methods;
 	while(tmp){
 		if(!strcmp(funcName, tmp->current->ID))
 			return tmp->current;
+		tmp = tmp->next;
 	}
 	return NULL;
 
 }
 FunctionP class_getStaticMethFromName(ClassP c, string funcName){
-	ClassMethodListP tmp = c->staticCml;
+	ClassMethodListP tmp = c->statics->methods;
 	while(tmp){
 		if(!strcmp(funcName, tmp->current->ID))
 			return tmp->current;
+		tmp = tmp->next;
 	}
 	return NULL;
 }
