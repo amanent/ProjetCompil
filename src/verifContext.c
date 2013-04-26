@@ -109,7 +109,6 @@ bool verif_paramList(FunctionP func){
 void verif_contructJumpTable(){
 	ClassListP tmp = classList;
 	while(tmp){
-printf("-- test %s\n", tmp->current->IDClass);
 		class_generateJumpTable(tmp->current);
 		tmp = tmp->next;
 	}
