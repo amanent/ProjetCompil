@@ -284,11 +284,14 @@ printf("--treating : %d\n", tree->op);
 				symTable_addLine(st, v, LOCAL);
 				tree->var = v;
 			}
-			else{
-				 tree->var = symTable_getVarFromName(st, tree->u.str);
-				 if(tree->var)
-				 	tree->type = tree->var->type;
-				 else if( !strcmp(tree->u.str, "result")) // si on voit result
+			else {
+				tree->var = symTable_getVarFromName(st, tree->u.str);
+				printf("%s %x !\n", tree->u.str, tree->var);
+				if(tree->var) {
+					printf("type : %s\n", tree->var->type);
+					tree->type = tree->var->type;
+				}
+				else if(!strcmp(tree->u.str, "result")) // si on voit result
 					tree->type = tree->fContext->returnType;
 			}
 			return TRUE;
@@ -415,10 +418,9 @@ printf("--treating : %d\n", tree->op);
 			if(!exp2type)
 				return FALSE;
 			FunctionP ff = NULL;
-			//if(getChild(tree, 0)->var || getChild(tree, 0)->func){
+
 			if(getChild(tree, 0)->op != IDCL) {
 				ff = class_getInstanceMethFromName(exp2type, getChild(tree, 1)->u.str);
-				printf("searching non static\n");
 			}
 			else{
 				ff = class_getStaticMethFromName(exp2type, getChild(tree, 1)->u.str);
