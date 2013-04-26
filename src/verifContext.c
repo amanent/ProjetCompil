@@ -415,12 +415,16 @@ printf("--treating : %d\n", tree->op);
 			if(!exp2type)
 				return FALSE;
 			FunctionP ff = NULL;
-			if(getChild(tree, 0)->var || getChild(tree, 0)->func){
+			//if(getChild(tree, 0)->var || getChild(tree, 0)->func){
+			if(getChild(tree, 0)->op != IDCL) {
 				ff = class_getInstanceMethFromName(exp2type, getChild(tree, 1)->u.str);
+				printf("searching non static\n");
 			}
 			else{
 				ff = class_getStaticMethFromName(exp2type, getChild(tree, 1)->u.str);
 			}
+			if(ff)
+				printf("retType = %s\n", ff->returnName);
 			if(ff && prmlst_goodCallArgs(ff, context.arglst))
 			{
 				tree->type = ff->returnType;
@@ -428,7 +432,7 @@ printf("--treating : %d\n", tree->op);
 				return TRUE;
 			}
 			//FONCTIONS SPECIALES
-
+printf("caca ? %s_%s\n",getChild(tree, 0)->u.str, getChild(tree, 1)->u.str);
 			if(getChild(tree, 0)->type == class_getClass("Integer")){
 				if(!strcmp("toString", getChild(tree, 1)->u.str)){
 					tree->type = class_getClass("String");
@@ -440,7 +444,7 @@ printf("--treating : %d\n", tree->op);
 					||	!strcmp("print", getChild(tree, 1)->u.str))
 					return TRUE;
 			}
-
+printf("caca !\n");
 			return FALSE;
 
 		}
