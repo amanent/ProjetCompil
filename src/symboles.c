@@ -62,6 +62,7 @@ SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func, ClassP c
 		this->type = c;
 		this->typeName = c->IDClass;
 		this->offset = -nbParams - 1;
+		this->nature = PARAM;
 		symTable_addLine(nt, this, PARAM);
 	}
 
@@ -71,6 +72,7 @@ SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func, ClassP c
 		res->type = func->returnType;
 		res->typeName = res->type->IDClass;
 		res->offset = -nbParams - 2;
+		res->nature = PARAM;
 		symTable_addLine(nt, res, PARAM);
 	}
 
