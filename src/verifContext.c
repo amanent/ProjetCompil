@@ -154,6 +154,9 @@ bool verif_classCode(ClassP c){
 		mtmp = mtmp->next;
 	}
 
+	if(c->constructor)
+		if(!verif_func(table, c->constructor, c))
+			return FALSE;
 	mtmp = c->staticCml;
 	while(mtmp){
 		if(!verif_func(statictable, mtmp->current, c))
@@ -354,6 +357,8 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 
 			if(!strcmp(idtxt, "this") || !strcmp(idtxt, "super"))
 				return FALSE;
+
+
 
 			return (	(getChild(tree, 1)->type == getChild(tree, 0)->type)||(class_isinheritedFrom(getChild(tree, 1)->type, getChild(tree, 0)->type)));
 

@@ -52,7 +52,9 @@ SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func, ClassP c
 		v->typeName = prm->type;
 		v->type = class_getClass(v->typeName);
 		v->offset = -nbParams + (i++);
+		v->nature = PARAM;
 		symTable_addLine(nt, v, PARAM);
+		prm = prm->next;
 	}
 	{
 		VarP this = NEW(1, Var);
@@ -63,7 +65,7 @@ SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func, ClassP c
 		symTable_addLine(nt, this, PARAM);
 	}
 
-	if(func->returnType) {
+	if(func->returnType && c->constructor != func) {
 		VarP res = NEW(1, Var);
 		res->ID = "result";
 		res->type = func->returnType;
