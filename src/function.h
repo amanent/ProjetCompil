@@ -3,7 +3,6 @@
 
 	typedef struct _ParamsList ParamsList, *ParamsListP;
 	typedef struct _Function Function, *FunctionP;
-	typedef struct _ArgList ArgList, *ArgListP;
 
 	#include "tree.h"
 	#include "class.h"

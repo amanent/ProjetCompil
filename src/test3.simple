@@ -1,0 +1,128 @@
+--Compiling
+--A priori c'est bon :)
+--Fin des initialisation des classes de base
+--Verif contextuelle ok
+--code :
+
+--champs statiques : (ne pas se fier a l'ordre)
+	PUSHN	1	--Test3_v2
+	PUSHN	1	--Test3_v1
+	PUSHN	1	--Test3_TV
+	PUSHN	1	--Test2_TV
+	PUSHN	1	--Test1_TV
+	JUMP	start	
+--methodes statiques :
+	--classe Test3
+	--classe Test2
+	--classe Test1
+--methodes non statiques :
+	--classe Test3
+Test3:	NOP		--constructor
+	PUSHL	-1	
+	PUSHG	0	
+	STORE	0	
+	PUSHL	0	-------------------------------------------------------------------1
+	STOREL	0	-------------------------------------------------------------------5
+	PUSHL	0	-------------------------------------------------------------------1
+	STOREL	0	-------------------------------------------------------------------5
+	RETURN		
+Test3_me:	NOP		
+	PUSHN	1	--return value
+	PUSHG	3	
+	PUSHN	1	--return value
+	PUSHG	1	
+	PUSHA	toString	
+* 	CALL		
+	POPN	1	
+	CONCAT		
+	PUSHA	println	
+* 	CALL		
+	POPN	1	
+	POPN	1	
+	RETURN		
+	--classe Test2
+Test2:	NOP		--constructor
+	PUSHL	-1	
+	PUSHG	0	
+	STORE	0	
+	PUSHL	0	-------------------------------------------------------------------1
+	STOREL	0	-------------------------------------------------------------------5
+	RETURN		
+Test2_me:	NOP		
+	PUSHG	1	
+	STOREL	0	-------------------------------------------------------------------5
+	RETURN		
+	--classe Test1
+Test1:	NOP		--constructor
+	PUSHL	-1	
+	PUSHG	0	
+	STORE	0	
+	RETURN		
+--code des fonctions de base
+toString:	PUSHL	-1	
+	STR		
+	STOREL	-2	
+	RETURN		--fin toString
+
+print:	PUSHL	-1	
+	WRITES		
+	SWAP		
+	RETURN		--fin print
+
+println:	PUSHL	-1	
+	PUSHS	"\n"	
+	CONCAT		
+	WRITES		
+	SWAP		
+	RETURN		--fin println
+
+start:	START		--main function
+	PUSHI	3	--int cst
+	PUSHI	4	--int cst
+--generation des TV:
+	PUSHI	0	--adresse TV
+	PUSHA	Test3_me	
+	PUSHI	0	--adresse TV
+	PUSHA	Test2_me	
+--fin generation des TV:
+
+	ALLOC	1	
+	PUSHA	Test1	
+	CALL		
+	POPN	0	
+	ALLOC	1	
+	PUSHI	10	--int cst
+	PUSHA	Test2	
+	CALL		
+	POPN	0	
+	ALLOC	1	
+	PUSHI	25	--int cst
+	PUSHS	"toto"	--str cst
+	PUSHA	Test3	
+	CALL		
+	POPN	0	
+	PUSHN	1	--x
+	PUSHG	0	
+	PUSHI	0	--@ TV
+	LOAD	0	--index function
+* 	CALL		
+	POPN	1	
+	STOREG	0	
+	PUSHN	1	--return value
+	PUSHN	1	--return value
+	PUSHG	0	
+	PUSHA	toString	
+* 	CALL		
+	POPN	1	
+	PUSHA	println	
+* 	CALL		
+	POPN	1	
+	POPN	1	
+	PUSHN	1	--return value
+	PUSHG	0	
+	PUSHI	0	--@ TV
+	LOAD	0	--index function
+* 	CALL		
+	POPN	1	
+	POPN	1	
+	STOP		

@@ -312,7 +312,7 @@ string genCodeConst(ClassP c) // l'objet est alloué avant les paramètres
 	
 	// ici quel que soit le chemin on a l'adresse de l'objet en tete de pile
 	sprintf(intToStr, "%d", c->offsetTV);
-	code =  writeCode(code, FALSE, NULL, "PUSHG", intToStr, NULL); // chargement de la table des symboles de la classe
+	code =  writeCode(code, FALSE, NULL, "PUSHG", intToStr, "@TV"); // chargement de la table des symboles de la classe
 	code =  writeCode(code, FALSE, NULL, "STORE", "0", NULL); // puis on la stocke dans l'objet a l'offset reservé aux TV
 
 	code = strcatwalloc(code, genFieldInitCode(c->cfl)); // initialisation des champs non statiques

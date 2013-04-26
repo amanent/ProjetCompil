@@ -2,6 +2,7 @@
 #define _VARIABLES_H_
 
 	typedef struct _Var Var, *VarP;
+	typedef struct _ArgList ArgList, *ArgListP;
 
 	#include "proj.h"
 	#include "class.h"
@@ -25,10 +26,10 @@
 		struct _ArgListElem* next;
 	}ArgListElem, *ArgListElemP;
 
-	typedef struct _ArgList{
+	struct _ArgList{
 		ArgListElemP top;
 		ArgListElemP bottom;
-	}ArgList, *ArgListP;
+	};
 
 
 

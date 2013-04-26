@@ -161,7 +161,7 @@ ListArgO	:	/* epsilon */								{ pprintf("listargo null"); $$ = NULL; }
 			|	ListArg										{ pprintf("listargo non null"); $$ = $1; }
 			;
 
-ListArg		:	Exp											{ pprintf("list arg final"); $$ = $1; }
+ListArg		:	Exp											{ pprintf("list arg final"); $$ = makeTree(LSTARG, 2, $1, NULL); } // vérifier
 			|	Exp ',' ListArg								{ pprintf("list arg continue"); $$ = makeTree(LSTARG, 2, $1, $3); }
 			;
 

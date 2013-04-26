@@ -92,20 +92,27 @@ int function_howManyArgs(FunctionP func){
 bool prmlst_goodCallArgs (FunctionP f, ArgListP args){
 	ParamsListP params;
 	ArgListElemP arg;
-
-	if(f==NULL || args == NULL)
-		return (f==NULL || f->paramsList == NULL) && args==NULL;
-	
+//printf("entering : %x, %x\n", f, args);
+	if(args==NULL) {
+		if(f==NULL) return FALSE;
+//		printf("%s %x \n", f->ID, f->paramsList);
+		return f==NULL || f->paramsList==NULL;
+	}
+//printf("arg not null \n");
+	if(f==NULL)
+		return args->top==NULL;
+//printf("the params are not null\n");
 	params = f->paramsList;
 	arg = args->top;
 	while(params != NULL && arg != NULL){
-		if(params != NULL || arg != NULL)
+//		printf("comparing %s != %s\n", arg->current->IDClass, params->type);
+		if(arg->current != class_getClass(params->type)) {
+//			printf("nop\n");
 			return FALSE;
-
-		if(arg->current != class_getClass(params->type))
-			return FALSE;
+		}
 		arg = arg->next;
 		params = params->next;
 	}
-	return TRUE;
+//	printf("the params are the same, but maybe there is more of one of them\n");
+	return (params==NULL && arg==NULL); // faux si pas le meme nombre de paramètres
 }

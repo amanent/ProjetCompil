@@ -26,7 +26,7 @@ bool verif_nameResolution(){
 	ClassListP currentCL = classList;
 
 	while(currentCL != NULL){
-
+//printf("salut %s 1\n", currentCL->current->IDClass);
 		/* CHECK NON-STATIC CLASS FIELD TYPE*/
 		ClassFieldListP currentCFL =currentCL->current->cfl;
 		while(currentCFL != NULL){
@@ -38,7 +38,7 @@ bool verif_nameResolution(){
 			}
 			currentCFL = currentCFL->next;
 		}
-
+//printf("salut %s 2\n", currentCL->current->IDClass);
 		/* CHECK STATIC CLASS FIELD TYPE*/
 		ClassFieldListP currentSCFL = currentCL->current->staticCfl;
 		while(currentSCFL != NULL){
@@ -50,13 +50,12 @@ bool verif_nameResolution(){
 			}
 			currentSCFL = currentSCFL->next;
 		}
-
+//printf("salut %s 3\n", currentCL->current->IDClass);
 		/* CHECK NON-STATIC CLASS METHOD */
-
 		ClassMethodListP currentCML = currentCL->current->cml;
 		while(currentCML != NULL){
 			FunctionP currentFunc = currentCML->current;
-			if(currentFunc->returnType == NULL && currentFunc->returnName != NULL) {
+			if(currentFunc->returnType == NULL && currentFunc->returnName[0] != '\0') { // pour tester les fonctions void
 				currentFunc->returnType = class_getClass(currentFunc->returnName);
 				if(currentFunc->returnType == NULL || verif_paramList(currentFunc) == FALSE) // si on a pas trouvé la classe.
 					return FALSE;
@@ -64,13 +63,12 @@ bool verif_nameResolution(){
 			}
 			currentCML = currentCML->next;
 		}
-
+//printf("salut %s 4\n", currentCL->current->IDClass);
 		/* CHECK STATIC CLASS METHOD */
-
 		ClassMethodListP currentSCML = currentCL->current->cml;
 		while(currentSCML != NULL){
 			FunctionP currentSFunc = currentSCML->current;
-			if(currentSFunc->returnType == NULL && currentSFunc->returnName != NULL) {
+			if(currentSFunc->returnType == NULL && currentSFunc->returnName[0] != '\0') {
 				currentSFunc->returnType = class_getClass(currentSFunc->returnName);
 				if(currentSFunc->returnType == NULL || verif_paramList(currentSFunc) == FALSE) // si on a pas trouvé la classe.
 					return FALSE;
@@ -78,20 +76,17 @@ bool verif_nameResolution(){
 			}
 			currentSCML = currentSCML->next;
 		}
-
+//printf("salut %s 5\n", currentCL->current->IDClass);
 		/* CHECK CURRENT CLASS SUPER */
-
 		if(currentCL->current->super == NULL && currentCL->current->superName != NULL) {
 			currentCL->current->super = class_getClass(currentCL->current->superName);
 			if(currentCL->current->super == NULL) // si on a pas trouvé la classe.
 				return FALSE;
 		}
-
+//printf("salut %s 6\n", currentCL->current->IDClass);
 		currentCL = currentCL->next;
 	}
-
 	return TRUE;
-
 }
 
 bool verif_paramList(FunctionP func){
@@ -116,22 +111,22 @@ void verif_contructJumpTable(){
 
 bool verif_contextuelle(){ // need verif arg.
 	bool verif = TRUE;
-printf("-- toto1\n");
+//printf("-- toto1\n");
 	verif &= verif_nameResolution(); if(!verif) return FALSE;
-printf("-- toto2\n");
+//printf("-- toto2\n");
 	verif_contructJumpTable();
-printf("-- toto3\n");	
+//printf("-- toto3\n");	
 	verif &= verif_allClassesCode(); if(!verif) return FALSE;
-printf("-- toto4\n");	
+//printf("-- toto4\n");	
 	verif &= verif_types(symTable_newTable(), mainCode, NULL, NULL); if(!verif) return FALSE;
-printf("-- toto5\n");
+//printf("-- toto5\n");
 	return TRUE;
 }
 
 bool verif_allClassesCode(){
 	ClassListP tmp = classList;
 	while(tmp){
-printf("-- test %s 1\n", tmp->current->IDClass);
+//printf("-- test %s 1\n", tmp->current->IDClass);
 		if(!verif_classCode(tmp->current))
 			return FALSE;
 		tmp = tmp->next;
@@ -248,18 +243,17 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 	int i = 0;
 	
 	if (tree == NULL){
-		fprintf(stderr, "Verif d'un arbre vide\n");
+		//fprintf(stderr, "Verif d'un arbre vide\n");
 		return TRUE;
 	}
 	    
 	short prevOP = context.prevOP;
 	context.prevOP = tree->op;
-	ArgListP arglist = context.arglst;
 	
 	tree->cContext = c;
 	tree->fContext = f;
 
-printf("--treating : %d\n", tree->op);
+//printf("--treating : %d\n", tree->op);
 	switch (tree->op) {
 		case STR: //return true, tree->type = String
 			tree->type = class_getClass("String"); 
@@ -286,9 +280,9 @@ printf("--treating : %d\n", tree->op);
 			}
 			else {
 				tree->var = symTable_getVarFromName(st, tree->u.str);
-				printf("%s %x !\n", tree->u.str, tree->var);
+				//printf("%s %x !\n", tree->u.str, tree->var);
 				if(tree->var) {
-					printf("type : %s\n", tree->var->type);
+					//printf("type : %s\n", tree->var->type->IDClass);
 					tree->type = tree->var->type;
 				}
 				else if(!strcmp(tree->u.str, "result")) // si on voit result
@@ -411,12 +405,20 @@ printf("--treating : %d\n", tree->op);
 		case MSGSNTS: // voir a factoriser avec MSGSNT
 /**/	case MSGSNT: // Exp2 '.' Id '(' ListArgO ')' //verif params && id dans les func de exp2
 		{
+			ArgListP arglist = context.arglst; // sauvegarde du contexte
+			context.arglst = arglst_newList();
+
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i), c, f))
+				if(!verif_types(st, getChild(tree, i), c, f)) {
+					context.arglst = arglist;
 					return FALSE;
+				}
+
 			ClassP exp2type = getChild(tree, 0)->type;
-			if(!exp2type)
+			if(!exp2type) {
+				context.arglst = arglist;
 				return FALSE;
+			}
 			FunctionP ff = NULL;
 
 			if(getChild(tree, 0)->op != IDCL) {
@@ -425,16 +427,19 @@ printf("--treating : %d\n", tree->op);
 			else{
 				ff = class_getStaticMethFromName(exp2type, getChild(tree, 1)->u.str);
 			}
-			if(ff)
-				printf("retType = %s\n", ff->returnName);
+			//if(ff)
+			//	printf("retType = %s\n", ff->returnName);
 			if(ff && prmlst_goodCallArgs(ff, context.arglst))
 			{
 				tree->type = ff->returnType;
 				tree->func = ff;
+				context.arglst = arglist;
 				return TRUE;
 			}
+			context.arglst = arglist; // restauration du contexte
+
 			//FONCTIONS SPECIALES
-printf("caca ? %s_%s\n",getChild(tree, 0)->u.str, getChild(tree, 1)->u.str);
+//printf("caca ? %s_%s\n",(getChild(tree, 0)->op==ID?getChild(tree, 0)->u.str:""), getChild(tree, 1)->u.str);
 			if(getChild(tree, 0)->type == class_getClass("Integer")){
 				if(!strcmp("toString", getChild(tree, 1)->u.str)){
 					tree->type = class_getClass("String");
@@ -446,11 +451,9 @@ printf("caca ? %s_%s\n",getChild(tree, 0)->u.str, getChild(tree, 1)->u.str);
 					||	!strcmp("print", getChild(tree, 1)->u.str))
 					return TRUE;
 			}
-printf("caca !\n");
+//printf("caca !\n");
 			return FALSE;
-
 		}
-		
 
 		case CAST: //verification heritage, type = type du cast
 			for(i = 0; i < tree->nbChildren; ++i)
@@ -470,13 +473,22 @@ printf("caca !\n");
 			return (c != NULL);
 		}
 /**/	case INSTA: // NEW Idcl '(' ListArgO ')' // verif de la liste d'args du const de idcl
+		{
+			ArgListP arglist = context.arglst;
+			context.arglst = arglst_newList();
+
 			for(i = 0; i < tree->nbChildren; ++i)
-				if(!verif_types(st, getChild(tree, i), c, f))
-					return FALSE;			
+				if(!verif_types(st, getChild(tree, i), c, f)) {
+					context.arglst = arglist;
+					return FALSE;
+				}	
 			tree->type = class_getClass(getChild(tree, 0)->u.str);
 
-			return prmlst_goodCallArgs(tree->type->constructor, context.arglst);
-
+			bool toto = prmlst_goodCallArgs(tree->type->constructor, context.arglst);
+			//printf("%s : %s\n", getChild(tree, 0)->u.str, (toto?"vrai":"faux"));
+			context.arglst = arglist;
+			return toto; //prmlst_goodCallArgs(tree->type->constructor, context.arglst);
+		}
 		case INSTR: //gogo child0
 			for(i = 0; i < tree->nbChildren; ++i)
 				if(!verif_types(st, getChild(tree, i), c, f))
@@ -486,21 +498,16 @@ printf("caca !\n");
 			tree->func = getChild(tree, 0)->func;
 			return TRUE;
 		case LSTARG:
-
 			for(i = 0; i < tree->nbChildren; ++i)
 				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
 
-			if(prevOP == INSTA || prevOP == MSGSNT || prevOP == MSGSNTS){
-				context.arglst = arglst_newList();
-			}
 			tree->type = getChild(tree, 0)->type;
 			if(tree->type == NULL)
 				return FALSE;
 			tree->var  = getChild(tree, 0)->var;
 			tree->func = getChild(tree, 0)->func;
-			arglst_pushFront(arglist, tree->type);
-			context.arglst = arglist;
+			arglst_pushFront(context.arglst, tree->type);
 			return TRUE;
 		case BLCDECL:
 			symTable_enterNewScope(st);

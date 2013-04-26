@@ -107,7 +107,7 @@ ClassP class_getClass(string className){
 	ClassListP currentCL = classList;
 	
 	while(currentCL != NULL) {
-		if(strcmp(currentCL->current->IDClass,className))
+		if(!strcmp(currentCL->current->IDClass, className))
 			return currentCL->current;
 		currentCL = currentCL->next;
 	}
