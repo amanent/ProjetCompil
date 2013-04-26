@@ -170,7 +170,7 @@ int fillSymTableClassVar(ClassFieldListP cfl, SymbolesTableP st){
 	}
 	symTable_addLine(st, cfl->current, NONSTATIC);
 	cfl->current->offset = n + 1;
-	return n + 1;
+	return n;
 }
 
 void fillSymTableStaticVar(ClassFieldListP cfl, SymbolesTableP st){
@@ -264,22 +264,14 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 			return TRUE;
 
 /**/	case ID: //ajout dans la table
-			//aff ? dans inst ?
 		{	
 			if(prevOP == VAR){
-				//add to symtable + tree->var->ID = u.str
-				VarP v = NEW(1, Var);
-				v->ID = tree->u.str;
-				//v->typeName = prm->type;
-				//v->type = class_getClass(v->typeName); a ajouter dans la partie sup
-				v->offset = local_offset;
-				if(symTable_isNameInUse(st, v->ID))
-					return FALSE;
-				symTable_addLine(st, v, LOCAL);
-				tree->var = v;
+				return TRUE;
 			}
 			else {
 				tree->var = symTable_getVarFromName(st, tree->u.str);
+				if(tree->var == NULL)
+					return FALSE;
 				//printf("%s %x !\n", tree->u.str, tree->var);
 				if(tree->var) {
 					//printf("type : %s\n", tree->var->type->IDClass);
@@ -393,9 +385,19 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 			for(i = 0; i < tree->nbChildren; ++i)
 				if(!verif_types(st, getChild(tree, i), c, f))
 					return FALSE;
-			getChild(tree, 0)->var->type = getChild(tree, 1)->type;
-			getChild(tree, 0)->var->typeName = getChild(tree, 0)->var->type->IDClass;
+			//ALLOCATION D'UNE NOUVELLE VARIABLE
+			VarP v = NEW(1, Var);
+			v->ID = getChild(tree, 0)->u.str;
+			v->offset = local_offset++;
+			if(symTable_isNameInUse(st, v->ID))
+				return FALSE;
+			symTable_addLine(st, v, LOCAL);
+			getChild(tree, 0)->var = v;
+			v->type = getChild(tree, 1)->type;
+			v->typeName = getChild(tree, 0)->var->type->IDClass;
 			getChild(tree, 0)->type = getChild(tree, 1)->type;
+			//--------------------------------
+
 			if(!getChild(tree, 2))
 				return TRUE;
 			return(	   getChild(tree, 1)->type == getChild(tree, 2)->type
