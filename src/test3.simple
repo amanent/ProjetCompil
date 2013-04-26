@@ -19,7 +19,7 @@
 	--classe Test3
 Test3:	NOP		--constructor
 	PUSHL	-1	
-	PUSHG	0	
+	PUSHG	0	--@TV
 	STORE	0	
 	PUSHL	0	-------------------------------------------------------------------1
 	STOREL	0	-------------------------------------------------------------------5
@@ -28,9 +28,11 @@ Test3:	NOP		--constructor
 	RETURN		
 Test3_me:	NOP		
 	PUSHN	1	--return value
-	PUSHG	3	
+	PUSHL	-1	
+	LOAD	2	
 	PUSHN	1	--return value
-	PUSHG	1	
+	PUSHL	-1	
+	LOAD	1	
 	PUSHA	toString	
 * 	CALL		
 	POPN	1	
@@ -43,19 +45,20 @@ Test3_me:	NOP
 	--classe Test2
 Test2:	NOP		--constructor
 	PUSHL	-1	
-	PUSHG	0	
+	PUSHG	0	--@TV
 	STORE	0	
 	PUSHL	0	-------------------------------------------------------------------1
 	STOREL	0	-------------------------------------------------------------------5
 	RETURN		
 Test2_me:	NOP		
-	PUSHG	1	
-	STOREL	0	-------------------------------------------------------------------5
+	PUSHL	-1	
+	LOAD	1	
+	STOREG	-2	
 	RETURN		
 	--classe Test1
 Test1:	NOP		--constructor
 	PUSHL	-1	
-	PUSHG	0	
+	PUSHG	0	--@TV
 	STORE	0	
 	RETURN		
 --code des fonctions de base
@@ -102,15 +105,15 @@ start:	START		--main function
 	CALL		
 	POPN	0	
 	PUSHN	1	--x
-	PUSHG	0	
+	PUSHG	1	
 	PUSHI	0	--@ TV
 	LOAD	0	--index function
 * 	CALL		
 	POPN	1	
-	STOREG	0	
+	STOREG	3	
 	PUSHN	1	--return value
 	PUSHN	1	--return value
-	PUSHG	0	
+	PUSHG	3	
 	PUSHA	toString	
 * 	CALL		
 	POPN	1	
@@ -119,7 +122,7 @@ start:	START		--main function
 	POPN	1	
 	POPN	1	
 	PUSHN	1	--return value
-	PUSHG	0	
+	PUSHG	2	
 	PUSHI	0	--@ TV
 	LOAD	0	--index function
 * 	CALL		

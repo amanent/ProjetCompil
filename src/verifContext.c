@@ -227,10 +227,11 @@ bool verif_class(ClassP c){
 */
 
 bool verif_func(SymbolesTableP st, FunctionP func, ClassP c){
-	symTable_enterFunction(st, func, c);
+//	symTable_enterFunction(st, func, c);
 	local_offset = 0;
-	bool res = verif_types(st, func->code, c, func);
+	bool res = verif_types(symTable_enterFunction(st, func, c), func->code, c, func);
 	local_offset = 0;
+	symTable_exitScope(st);
 	symTable_exitScope(st);
 	return res;
 }
@@ -269,9 +270,15 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 				return TRUE;
 			}
 			else {
+//				if(!strcmp(tree->u.str, "result") || !strcmp(tree->u.str, "this"))
+//					return TRUE;
+
 				tree->var = symTable_getVarFromName(st, tree->u.str);
-				if(tree->var == NULL)
+				if(tree->var == NULL){
+					fprintf(stderr, "--%s\n", tree->u.str);
+					tree->var = symTable_getVarFromName(st, tree->u.str);
 					return FALSE;
+				}
 				//printf("%s %x !\n", tree->u.str, tree->var);
 				if(tree->var) {
 					//printf("type : %s\n", tree->var->type->IDClass);
@@ -409,12 +416,15 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 		{
 			ArgListP arglist = context.arglst; // sauvegarde du contexte
 			context.arglst = arglst_newList();
-
+/*
 			for(i = 0; i < tree->nbChildren; ++i)
 				if(!verif_types(st, getChild(tree, i), c, f)) {
 					context.arglst = arglist;
 					return FALSE;
 				}
+*/
+			if(!verif_types(st, getChild(tree, 0), c, f) || !verif_types(st, getChild(tree, 2), c, f))
+				return FALSE;
 
 			ClassP exp2type = getChild(tree, 0)->type;
 			if(!exp2type) {
