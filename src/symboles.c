@@ -148,10 +148,12 @@ VarP symTable_getVarFromName(SymbolesTableP t, string varName){
 
 bool symTable_isNameInUse(SymbolesTableP t, string varName){
 	LineP tmp = t->current;
-	while(tmp != NULL) {
+	int nbVarInScope = t->nbVarAtRank[t->max_rank-1];
+	while(tmp != NULL && nbVarInScope > 0) {
 		if(!strcmp(varName, tmp->v->ID))
 			return TRUE;
 		tmp = tmp->next;
+		nbVarInScope--;
 	}
 	return FALSE;
 }
