@@ -183,7 +183,7 @@ string gencode(TreeP tree) {
 			if(getChild(tree, 2)== NULL) // si pas d'affectation directement a la déclaration
 				return writeCode(NULL, FALSE, NULL, "PUSHN", "1" , getChild(tree, 0)->u.str); //si pas d'affectation, on prépare un emlplacement pour la variable.
 			else
-				return gencode(getChild(tree, 2)); // sinon mets le code d'initialisation de la variable, qui laissera une valeur en tete de pile, qui équivant a l'espace reservé au cas précédent.		
+				return strcatwalloc(strcatwalloc(gencode(getChild(tree, 2)), " => "), getChild(tree, 0)->u.str); // sinon mets le code d'initialisation de la variable, qui laissera une valeur en tete de pile, qui équivant a l'espace reservé au cas précédent.		
 		case MSGSNT: // Exp2 '.' Id '(' ListArgO ')'
 			//if(tree->func==NULL || function_hasReturnType(tree->func)) // voir MSGSNT
 				code = writeCode(code, FALSE, NULL, "PUSHN", "1" , "return value"); // pour la valeur de retour

@@ -37,6 +37,19 @@ is {
   is
   {
     var t2 : Test2 := t3;
+    var t4 : Test2 := t3;
+    is
+    t2.m2();
+    {
+      var t5 : Test1 := t3;
+      is
+      t5.m2();
+    }
+  }
+
+  {
+    var t2 : Test2 := t3;
+    var t4 : Test2 := t3;
     is
     t2.m2();
   }
