@@ -226,6 +226,10 @@ int class_getNbFields(ClassP c){
 }
 
 bool class_generateJumpTable(ClassP c){
+
+	if(c->instance)
+		return TRUE;
+
 	if(c->super != NULL){
 		if(c->super->instance == NULL){
 			class_generateJumpTable(c->super);
@@ -250,6 +254,7 @@ bool class_generateJumpTable(ClassP c){
 				return FALSE;
 			cmltmp->current->offset = over->current->offset;
 			over->current = cmltmp->current;
+			fprintf(stderr, "--%s - %s - %d\n", c->IDClass, over->current->ID,over->current->offset);
 		}
 		else{
 			ClassMethodListP newMethod = NEW(1, ClassMethodList);
