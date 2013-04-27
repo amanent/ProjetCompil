@@ -273,7 +273,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 	tree->cContext = c;
 	tree->fContext = f;
 
-	//printf("--treating : %d\n", tree->op);
+	fprintf(stderr, "--treating : %d\n", tree->op);
 	switch (tree->op) {
 	case STR: //return true, tree->type = String
 		tree->type = class_getClass("String");
@@ -283,7 +283,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 		tree->type = class_getClass("Integer");
 		return TRUE;
 
-	/**/	case ID: //ajout dans la table
+	case ID: //ajout dans la table
 	{
 		if(prevOP == VAR){
 			return TRUE;
@@ -439,7 +439,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 				|| class_isinheritedFrom(getChild(tree, 2)->type, getChild(tree, 1)->type));
 
 	case MSGSNTS: // voir a factoriser avec MSGSNT
-	/**/	case MSGSNT: // Exp2 '.' Id '(' ListArgO ')' //verif params && id dans les func de exp2
+	case MSGSNT: // Exp2 '.' Id '(' ListArgO ')' //verif params && id dans les func de exp2
 	{
 		ArgListP arglist = context.arglst; // sauvegarde du contexte
 		context.arglst = arglst_newList();
@@ -450,12 +450,16 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 					return FALSE;
 				}
 		 */
-		if(!verif_types(st, getChild(tree, 0), c, f) || !verif_types(st, getChild(tree, 2), c, f))
+		if(!verif_types(st, getChild(tree, 0), c, f) || !verif_types(st, getChild(tree, 2), c, f)){
+			context.arglst = arglist;
+			//fprintf(stderr, "1\n");
 			return FALSE;
+		}
 
 		ClassP exp2type = getChild(tree, 0)->type;
 		if(!exp2type) {
 			context.arglst = arglist;
+			//fprintf(stderr, "2\n");
 			return FALSE;
 		}
 		FunctionP ff = NULL;
@@ -478,7 +482,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 		context.arglst = arglist; // restauration du contexte
 
 		//FONCTIONS SPECIALES
-		//printf("caca ? %s_%s\n",(getChild(tree, 0)->op==ID?getChild(tree, 0)->u.str:""), getChild(tree, 1)->u.str);
+		//printf("??? ? %s_%s\n",(getChild(tree, 0)->op==ID?getChild(tree, 0)->u.str:""), getChild(tree, 1)->u.str);
 		if(getChild(tree, 0)->type == class_getClass("Integer")){
 			if(!strcmp("toString", getChild(tree, 1)->u.str)){
 				tree->type = class_getClass("String");
@@ -490,7 +494,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 					||	!strcmp("print", getChild(tree, 1)->u.str))
 				return TRUE;
 		}
-		//printf("caca !\n");
+		//fprintf(stderr, "4\n");
 		return FALSE;
 	}
 

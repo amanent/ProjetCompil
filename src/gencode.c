@@ -262,7 +262,7 @@ string gencode(TreeP tree) {
 			return strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
 		case CAST: // (seulement géré a la verif context, va modifier directement l'offset)
 			return gencode(getChild(tree, 1));
-		default: // case IDCL: case CAST: 
+		default: // case IDCL:
 		fprintf(stderr, "Erreur! gencode : etiquette d'operator inconnue: %d\n", tree->op);
 		break; 
 	}
@@ -361,12 +361,12 @@ string genBaseFuncCode()
 	code = writeCode(code, FALSE, "toString", "PUSHL", "-1" , NULL);
 	code = writeCode(code, FALSE, NULL, "STR", NULL , NULL);
 	code = writeCode(code, FALSE, NULL, "STOREL", "-2" , NULL);
-	code = writeCode(code, FALSE, NULL, "RETURN", NULL , "fin toString\n");
+	code = writeCode(code, FALSE, NULL, "RETURN", NULL , "fin toString");
 
 	code = writeCode(code, FALSE, "print", "PUSHL", "-1" , NULL);
 	code = writeCode(code, FALSE, NULL, "WRITES", NULL , NULL);
 	code = writeCode(code, FALSE, NULL, "SWAP", NULL, NULL);
-	code = writeCode(code, FALSE, NULL, "RETURN", NULL , "fin print\n");
+	code = writeCode(code, FALSE, NULL, "RETURN", NULL , "fin print");
 
 	code = writeCode(code, FALSE, "println", "PUSHL", "-1" , NULL);
 	code = writeCode(code, FALSE, NULL, "PUSHS", "\"\\n\"" , NULL);
