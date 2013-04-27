@@ -24,6 +24,7 @@
 		string returnName;
 		int nbParam;
 		int offset;
+		ClassP mother;
 	};
 	
 /*

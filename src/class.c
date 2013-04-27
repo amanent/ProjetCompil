@@ -81,6 +81,7 @@ void class_addMethod(ClassP c, int visi, string methodName, string returnType, P
 	newMeth->override = (visi==1);
 	newMeth->paramsList = paramList;
 	newMeth->code = code;
+	newMeth->mother = c;
 
 	ClassMethodListP newCML = NEW(1, ClassMethodList);
 	newCML->current = newMeth;

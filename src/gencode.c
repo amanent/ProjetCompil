@@ -292,8 +292,6 @@ string genCodeConst(ClassP c) // l'objet est alloué avant les paramètres
 	code = writeCode(code, FALSE, NULL, "PUSHL", intToStr, NULL); //on met l'adresse de l'objet en tete de pile
 
 	if(c->superName != NULL) {
-		sprintf(intToStr, "%d", -c->constructor->nbParam-1);
-		code = writeCode(code, FALSE, NULL, "PUSHL", intToStr, NULL); //on met l'adresse de l'objet en tete de pile
 		code = strcatwalloc(code, gencode(c->superCallArgs)); //push des n arguments
 		code = writeCode(code, FALSE, NULL, "PUSHA", c->superName , NULL);
 		code = writeCode(code, FALSE, NULL, "CALL", NULL , NULL);
@@ -456,7 +454,7 @@ string genTVCode(ClassListP cl) {
 		{
 			code = writeCode(code, FALSE, NULL, "DUPN", "1", "adresse TV");
 
-			sprintf(intToStr2, "%s_%s", cl->current->IDClass, cml->current->ID);
+			sprintf(intToStr2, "%s_%s", cml->current->mother->IDClass, cml->current->ID);
 			code = writeCode(code, FALSE, NULL, "PUSHA", intToStr2, NULL);
 
 			sprintf(intToStr2, "%d", cml->current->offset);
