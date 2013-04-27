@@ -433,7 +433,7 @@ FunctionP class_getInstanceMethFromName(ClassP c, string funcName){
 
 }
 FunctionP class_getStaticMethFromName(ClassP c, string funcName){
-	ClassMethodListP tmp = c->statics->methods;
+	ClassMethodListP tmp = c->staticCml;//c->statics->methods;
 	while(tmp){
 		if(!strcmp(funcName, tmp->current->ID))
 			return tmp->current;
