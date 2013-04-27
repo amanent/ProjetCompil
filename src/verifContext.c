@@ -80,6 +80,8 @@ bool verif_nameResolution(){
 //printf("salut %s 5\n", currentCL->current->IDClass);
 		/* CHECK CURRENT CLASS SUPER */
 		if(currentCL->current->super == NULL && currentCL->current->superName != NULL) {
+			if(!strcmp(currentCL->current->superName, "Integer") || !strcmp(currentCL->current->superName, "String"))
+				return FALSE;
 			currentCL->current->super = class_getClass(currentCL->current->superName);
 			if(currentCL->current->super == NULL) // si on a pas trouvé la classe.
 				return FALSE;
