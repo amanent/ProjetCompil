@@ -37,6 +37,17 @@ void symTable_enterNewScope(SymbolesTableP table){
 
 }
 
+
+bool func_isStatic(FunctionP f, ClassP c){
+	ClassMethodListP tmp = c->staticCml;
+	while(tmp){
+		if(f == tmp->current)
+			return TRUE;
+		tmp = tmp->next;
+	}
+	return FALSE;
+}
+
 SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func, ClassP c){
 	//SymbolesTableP nt = symTable_duplicate(t, 0);
 	//Section 0 = Global
@@ -57,6 +68,9 @@ SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func, ClassP c
 		symTable_addLine(nt, v, PARAM);
 		prm = prm->next;
 	}
+
+	bool isStatic = func_isStatic(func, c);
+	if(!isStatic)
 	{
 		VarP this = NEW(1, Var);
 		this->ID = "this";
@@ -72,7 +86,7 @@ SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func, ClassP c
 		res->ID = "result";
 		res->type = func->returnType;
 		res->typeName = res->type->IDClass;
-		res->offset = -nbParams - 2;
+		res->offset = -nbParams - 2 + isStatic;
 		res->nature = PARAM;
 		symTable_addLine(nt, res, PARAM);
 	}
