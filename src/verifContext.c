@@ -363,7 +363,8 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 			if(!strcmp(idtxt, "this") || !strcmp(idtxt, "super"))
 				return FALSE;
 
-
+			if(!strcmp(getChild(tree, 1)->u.str,"result"))
+				return FALSE;
 
 			return (	(getChild(tree, 1)->type == getChild(tree, 0)->type)||(class_isinheritedFrom(getChild(tree, 1)->type, getChild(tree, 0)->type)));
 
