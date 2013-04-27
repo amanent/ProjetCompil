@@ -159,18 +159,18 @@ string gencode(TreeP tree) {
 
 			return writeCode(code, TRUE, NULL, "NOP", NULL, "erreur d'adressage");	
 		case SELECTS: // Idcl '.' Id
-			if(getChild(tree, 1)->var != NULL)
+			/*if(getChild(tree, 1)->var != NULL)
 				sprintf(intToStr, "%d", getChild(tree, 1)->var->offset); // on suppose que pour les séléctions, l'offset de l'adresse (si besoin) est dans le membre, et celle du décalage dans le fils.
 			else
 				sprintf(intToStr, "%d------------4", 0); // debug
-
+*/
 			if(tree->var != NULL)
 				sprintf(intToStr2, "%d", tree->var->offset);
 			else
 				sprintf(intToStr2, "%d------------3", 0); // debug
 
-			code = writeCode(NULL, FALSE, NULL, "PUSHI", intToStr2 , NULL);
-			return writeCode(code, FALSE, NULL, "LOAD", intToStr , NULL);
+			return writeCode(NULL, FALSE, NULL, "PUSHG", intToStr2 , NULL);
+			//return writeCode(code, FALSE, NULL, "LOAD", intToStr , NULL);
 		case SELECT: // Exp2 '.' Id
 			if(getChild(tree, 1)->var != NULL)
 				sprintf(intToStr, "%d", getChild(tree, 1)->var->offset); // on suppose que pour les séléctions, l'offset de l'adresse (si besoin) est dans le membre, et celle du décalage dans le fils.

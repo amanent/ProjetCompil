@@ -120,7 +120,7 @@ int main(int argc, char **argv) {
 	string toto = NULL;
 	toto = genBaseCode(classList->next->next); // les deux next servent a éviter les deux types primitifs
 	toto = strcatwalloc(toto, gencode(mainCode));
-	toto = writeCode(toto, FALSE, NULL, "STOP", NULL, NULL);
+	toto = writeCode(toto, TRUE, NULL, "STOP", NULL, NULL);
 
 
 	printf("--code :\n%s\n", toto);

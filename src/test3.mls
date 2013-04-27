@@ -9,6 +9,10 @@ is {
   def me() returns Integer is {
     result := a;
   }
+
+  static def cat(p : String) returns String is {
+    result := "toto" & p;
+  }
 }
 class Test3(aa : Integer, strp : String)
   {
@@ -47,6 +51,7 @@ is {
   var t3 : Test3 := new Test3(3, "toto");
   var x : Integer;
   is
+  Test2.cat("titi").print();
   x := Test3.v1; /*t2.me();*/
   x.toString().println();
   /*t3.get().me().toString().println();*/
