@@ -160,6 +160,9 @@ bool verif_classCode(ClassP c){
 	if(c->constructor!=NULL && !verif_func(table, c->constructor, c))
 		return FALSE;
 
+	//if(c->super!=NULL && !verif_func(table, c->superCallArgs, c->super))
+	//	return FALSE;
+
 	ClassMethodListP mtmp = c->cml;
 	while(mtmp){
 		if(!verif_func(table, mtmp->current, c))
@@ -296,12 +299,11 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 			if(tree->var == NULL){
 
 				if(!strcmp("super", tree->u.str)){
-					if(c == NULL)
+					if(c == NULL || c->super == NULL)
 						return FALSE;
-					tree->type = c->super;
-					if(c->super == FALSE)
-						return FALSE;
-					return TRUE;
+					tree->type = c;
+					tree->var = symTable_getVarFromName(st, "this");
+					return (tree->var!=NULL);
 				}
 
 				fprintf(stderr, "--unknown identifier %s in table :\n", tree->u.str);

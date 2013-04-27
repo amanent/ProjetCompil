@@ -193,7 +193,13 @@ string gencode(TreeP tree) {
 
 			if(strcmp(getChild(tree, 0)->type->IDClass, "String")!=0 && strcmp(getChild(tree, 0)->type->IDClass, "Integer")!=0) {
 				//code = writeCode(code, FALSE, NULL, "DUPN", "1" , "pour garder l'appellant");
-				code = strcatwalloc(code, gencode(getChild(tree, 0))); // pour remettre l'appelant sur la pile (possiblement a optimiser)
+				if(strcmp(getChild(tree, 0)->u.str, "super")) // si différent de super
+					code = strcatwalloc(code, gencode(getChild(tree, 0))); // pour remettre l'appelant sur la pile (possiblement a optimiser)
+				else {
+					sprintf(intToStr, "%d", getChild(tree, 0)->type->super->offsetTV);
+					code = writeCode(code, FALSE, NULL, "PUSHG", intToStr, "TV du papa");
+				}
+
 				code = writeCode(code, FALSE, NULL, "LOAD", "0" , "load TV");
 				sprintf(intToStr, "%d", tree->func->offset);
 				code = writeCode(code, FALSE, NULL, "LOAD", intToStr, "index function");
@@ -336,7 +342,7 @@ string genFieldInitCode(ClassP c, ClassFieldListP cfl) { // miam la recursion no
 				sprintf(intToStr2, "%d", - c->constructor->nbParam - 1); // empilage de l'adresse de l'appelant
 				code = writeCode(code, FALSE, NULL, "PUSHL", intToStr2, "instance 1/3");
 				code = writeCode(code, FALSE, NULL, "SWAP", NULL, "instance 2/3"); // pour remettre les paramètres dans le bon sens
-				return writeCode(code, FALSE, NULL, "STORE", intToStr, "instance 3/3\n");
+				return writeCode(code, FALSE, NULL, "STORE", intToStr, "instance 3/3");
 			default: break;
 		}
 
