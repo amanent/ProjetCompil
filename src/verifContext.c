@@ -149,13 +149,13 @@ bool verif_classCode(ClassP c){
 	SymbolesTableP table = symTable_newTable();
 	SymbolesTableP statictable = symTable_newTable();
 
-	fillSymTableClassVar(c->cfl, table);
-	fillSymTableStaticVar(c->staticCfl, statictable);
+	fillSymTableClassVar(c->instance->fields, table);
+	fillSymTableStaticVar(c->statics->fields, statictable);
 	if(strcmp("String", c->IDClass) && strcmp("Integer", c->IDClass))
 		c->offsetTV = nbStaticVars++;
 
-	fillSymTableClassFunc(c->cml, table);
-	fillSymTableClassFunc(c->staticCml, statictable);
+	fillSymTableClassFunc(c->instance->methods, table);
+	fillSymTableClassFunc(c->statics->methods, statictable);
 
 	if(c->constructor!=NULL && !verif_func(table, c->constructor, c))
 		return FALSE;
@@ -294,6 +294,16 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 
 			tree->var = symTable_getVarFromName(st, tree->u.str);
 			if(tree->var == NULL){
+
+				if(!strcmp("super", tree->u.str)){
+					if(c == NULL)
+						return FALSE;
+					tree->type = c->super;
+					if(c->super == FALSE)
+						return FALSE;
+					return TRUE;
+				}
+
 				fprintf(stderr, "--unknown identifier %s in table :\n", tree->u.str);
 				symTable_printTable(st);
 //				return FALSE;
@@ -464,7 +474,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 		}
 		FunctionP ff = NULL;
 
-		if(getChild(tree, 0)->op != IDCL) {
+		if(getChild(tree, 0)->op != IDCL && !strcmp(getChild(tree, 0)->u.str, "super")) {
 			ff = class_getInstanceMethFromName(exp2type, getChild(tree, 1)->u.str);
 		}
 		else{
