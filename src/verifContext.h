@@ -15,7 +15,7 @@ bool verif_paramList(FunctionP func);
 bool verif_classCode(ClassP c);
 bool verif_nameResolution();
 
-void verif_contructJumpTable();
+bool verif_contructJumpTable();
 
 int fillSymTableClassVar(ClassFieldListP cfl, SymbolesTableP st);
 int fillSymTableClassFunc(ClassMethodListP cml, SymbolesTableP st);

@@ -46,16 +46,16 @@ void class_addField(ClassP c, bool isStatic, TreeP decl ) {
 	string type = decl->u.children[1]->u.str;
 	string name = decl->u.children[0]->u.str;
 	VarP newClassField = NEW(1, Var);
-	
+
 	newClassField->typeName = NEW(strlen(type)+ 1, char);
 	newClassField->ID = NEW(strlen(name)+1,char);
 	strcpy(newClassField->typeName,type);
 	strcpy(newClassField->ID,name);
-	
+
 	newClassField->value = decl->u.children[2];
 	ClassFieldListP newCFL = NEW(1, ClassFieldList);
 	newCFL->current = newClassField;
-	
+
 	if(isStatic){
 		newClassField->nature = STATIC;
 		newCFL->next = c->staticCfl;
@@ -71,10 +71,10 @@ void class_addField(ClassP c, bool isStatic, TreeP decl ) {
 
 void class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code) {
 	FunctionP newMeth = NEW(1, Function);
-	
+
 	newMeth->ID = NEW(strlen(methodName)+1, char);
 	strcpy(newMeth->ID,methodName);
-	
+
 	newMeth->returnName = NEW(strlen(returnType)+1, char);
 	strcpy(newMeth->returnName,returnType);
 
@@ -84,7 +84,7 @@ void class_addMethod(ClassP c, int visi, string methodName, string returnType, P
 
 	ClassMethodListP newCML = NEW(1, ClassMethodList);
 	newCML->current = newMeth;
-	
+
 	if(visi==2)
 	{
 		newCML->next = c->staticCml;
@@ -107,7 +107,7 @@ void class_setConstructor(ClassP c, ParamsListP pl, TreeP code) {
 
 ClassP class_getClass(string className){
 	ClassListP currentCL = classList;
-	
+
 	while(currentCL != NULL) {
 		if(!strcmp(currentCL->current->IDClass, className))
 			return currentCL->current;
@@ -137,7 +137,7 @@ string classList_print() {
 
 string class_print(ClassP class){
 	string str = NEW(2000, char);
-	
+
 	strcat(str, class->IDClass);
 
 	//Heritage ?
@@ -156,7 +156,7 @@ string class_print(ClassP class){
 	strcat(str, "\n\t");
 	strcat(str, "Constructeur : ");
 	strcat(str, function_printFunc(class->constructor));
-	
+
 	//Static Fields
 	strcat(str, "\n\tStatic Fields:");
 	ClassFieldListP stfl = class->staticCfl;
@@ -206,7 +206,7 @@ bool class_isinheritedFrom(ClassP c, ClassP cc){
 	if(c->super == NULL)
 		return FALSE;
 	return (c->super == cc || class_isinheritedFrom(c->super, cc));
-		
+
 }
 
 bool class_canAffect(ClassP c, ClassP cc){
@@ -243,9 +243,9 @@ bool class_generateJumpTable(ClassP c){
 	ClassMethodListP cmltmp = c->cml;
 	while(cmltmp){
 		ClassMethodListP over = override(c->instance->methods, cmltmp->current);
-		
+
 		if(over){
-			if(cmltmp->current->override == FALSE)
+			if(cmltmp->current->override == FALSE || ! prmlst_sameTypes(over->current->paramsList, cmltmp->current->paramsList))
 				return FALSE;
 			cmltmp->current->offset = over->current->offset;
 			over->current = cmltmp->current;
@@ -330,7 +330,7 @@ ClassFieldListP fl_getLast(ClassFieldListP fl){
 
 JumpTableP jtable_duplicate(JumpTableP j){
 	JumpTableP jump = NEW(1, JumpTable);
-	
+
 	ClassFieldListP  jcfl = j->fields;
 	ClassMethodListP jcml = j->methods;
 
