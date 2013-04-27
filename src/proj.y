@@ -38,7 +38,8 @@ ClassP current;
 
 
 void yyerror(char *ignore) {
-  printf("erreur de syntaxe: Ligne %d : %d unexpected\n", yylineno, yychar);
+  fprintf(stderr, "erreur de syntaxe: Ligne %d : %d unexpected\n", yylineno, yychar);
+  exit(-1);
 }
 
 void pprintf(char *c) {

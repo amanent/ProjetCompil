@@ -154,15 +154,12 @@ bool verif_classCode(ClassP c){
 	if(strcmp("String", c->IDClass) && strcmp("Integer", c->IDClass))
 		c->offsetTV = nbStaticVars++;
 
-	fillSymTableClassFunc(c->instance->methods, table);
-	fillSymTableClassFunc(c->statics->methods, statictable);
+	// fillSymTableClassFunc(c->instance->methods, table);
+	//fillSymTableClassFunc(c->statics->methods, statictable);
 
-	if(c->constructor!=NULL && !verif_func(table, c->constructor, c))
+	if(c->constructor!=NULL && !verif_constructor(table, c))
 		return FALSE;
-
-	//if(c->super!=NULL && !verif_func(table, c->superCallArgs, c->super))
-	//	return FALSE;
-
+	
 	ClassMethodListP mtmp = c->cml;
 	while(mtmp){
 		if(!verif_func(table, mtmp->current, c))
@@ -248,6 +245,21 @@ bool verif_class(ClassP c){
 }
  */
 
+bool verif_constructor(SymbolesTableP st, ClassP c){
+	local_offset = 0;
+	SymbolesTableP st2 = symTable_enterFunction(st, c->constructor, c);
+
+	bool res = verif_types(st2, c->constructor->code, c, c->constructor);
+	if(c->super!=NULL)
+		res &= verif_types(st2, c->superCallArgs, c, c->constructor);
+	local_offset = 0;
+	symTable_exitScope(st);
+	symTable_exitScope(st);
+	
+	return res;
+}
+
+
 bool verif_func(SymbolesTableP st, FunctionP func, ClassP c){
 	//	symTable_enterFunction(st, func, c);
 	local_offset = 0;
@@ -257,9 +269,6 @@ bool verif_func(SymbolesTableP st, FunctionP func, ClassP c){
 	symTable_exitScope(st);
 	return res;
 }
-
-
-
 
 
 bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
@@ -476,14 +485,16 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 		}
 		FunctionP ff = NULL;
 
-		if(getChild(tree, 0)->op != IDCL && !strcmp(getChild(tree, 0)->u.str, "super")) {
+		if(getChild(tree, 0)->op != IDCL || !strcmp(getChild(tree, 0)->u.str, "super")) {
+			//fprintf(stderr, "3.1\n");
 			ff = class_getInstanceMethFromName(exp2type, getChild(tree, 1)->u.str);
 		}
 		else{
+			//fprintf(stderr, "3.2\n");
 			ff = class_getStaticMethFromName(exp2type, getChild(tree, 1)->u.str);
 		}
 		//if(ff)
-		//	printf("retType = %s\n", ff->returnName);
+		//fprintf(stderr, "funcname = %s\n", getChild(tree, 1)->u.str);
 		if(ff && prmlst_goodCallArgs(ff, context.arglst))
 		{
 			tree->type = ff->returnType;
@@ -572,7 +583,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 				return FALSE;
 			}
 		local_offset -= st->nbVarAtRank[st->max_rank - 1];
-
+		tree->nbVar = st->nbVarAtRank[st->max_rank - 1];
 		symTable_exitScope(st);
 		return TRUE;
 	case DECL:

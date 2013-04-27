@@ -231,7 +231,7 @@ bool class_generateJumpTable(ClassP c){
 		return TRUE;
 
 
-	fprintf(stderr, "%s------------------------\n", c->IDClass);
+	//fprintf(stderr, "%s------------------------\n", c->IDClass);
 
 	if(c->super != NULL){
 		if(c->super->instance == NULL){
@@ -312,13 +312,21 @@ bool class_generateJumpTable(ClassP c){
 		cfltmp = cfltmp->next;
 	}
 
-
+/*
 	ClassMethodListP ccc = c->instance->methods;
 	while(ccc){
-		fprintf(stderr, "--%s - %s - %s - %d\n", c->IDClass, ccc->current->ID,ccc->current->mother->IDClass, ccc->current->offset);
+		fprintf(stderr, "--%s - %s - %s - %d\n", c->IDClass, ccc->current->ID,
+			ccc->current->mother->IDClass, ccc->current->offset);
 		ccc = ccc->next;
 	}
 	fprintf(stderr, "-------------------\n");
+
+	ClassMethodListP cml = c->instance->methods;
+		while(cml!=NULL)
+		{
+			fprintf(stderr, "%s : %s, %d\n", c->IDClass, cml->current->ID, cml->current->offset);
+			cml = cml->next;
+		}*/
 
 	return TRUE;
 
@@ -450,6 +458,7 @@ VarP class_getStaticFieldFromName(ClassP c, string varName){
 FunctionP class_getInstanceMethFromName(ClassP c, string funcName){
 	ClassMethodListP tmp = c->instance->methods;
 	while(tmp){
+	//fprintf(stderr, "treating : %s\n", tmp->current->ID);
 		if(!strcmp(funcName, tmp->current->ID))
 			return tmp->current;
 		tmp = tmp->next;

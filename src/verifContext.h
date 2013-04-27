@@ -24,6 +24,7 @@ bool verif_paramList(FunctionP func);
 bool verif_classCode(ClassP c);
 bool verif_class(ClassP c);
 bool verif_allClassesCode();
+bool verif_constructor(SymbolesTableP st, ClassP c);
 bool verif_func(SymbolesTableP st, FunctionP func, ClassP c);
 bool verif_types(SymbolesTableP st, TreeP tree, ClassP c, FunctionP f);
 

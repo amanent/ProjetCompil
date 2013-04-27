@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
 		case -3: fprintf(stderr, "--Verif contextuelle : erreur dans le code principal\n"); return -3;
 		default: fprintf(stderr, "--Verif contextuelle : unknown error\n"); return -4;
 	}
-
+/*
 	ClassListP cl = classList;
 	while(cl!= NULL)
 	{
@@ -128,10 +128,12 @@ int main(int argc, char **argv) {
 		}
 		cl=cl->next;
 	}
-
+*/
 	string toto = NULL;
 	toto = genBaseCode(classList->next->next); // les deux next servent a éviter les deux types primitifs
+	//fprintf(stderr, "caca \n");
 	toto = strcatwalloc(toto, gencode(mainCode));
+	//fprintf(stderr, "caca2 \n");
 	toto = writeCode(toto, TRUE, NULL, "STOP", NULL, NULL);
 
 

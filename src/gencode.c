@@ -64,7 +64,7 @@ string gencode(TreeP tree) {
 
 	if (tree == NULL)
 	    return NULL;
-	//printf("--treating : %d\n", tree->op);
+	//fprintf(stderr, "--treating : %d\n", tree->op);
 	switch (tree->op) {
 		case STR: 
 			return writeCode(NULL, FALSE, NULL, "PUSHS", tree->u.str, "str cst"); 
@@ -180,7 +180,7 @@ string gencode(TreeP tree) {
 			code = gencode(getChild(tree, 0)); // pas sur que ca marche
 			return writeCode(code, FALSE, NULL, "LOAD", intToStr , NULL);
 		case VAR: //VAR Id ':' Idcl AffectO	';'
-			if(getChild(tree, 2)== NULL) // si affectation directement a la déclaration
+			if(getChild(tree, 2)== NULL) // si pas d'affectation directement a la déclaration
 				return writeCode(NULL, FALSE, NULL, "PUSHN", "1" , getChild(tree, 0)->u.str); //si pas d'affectation, on prépare un emlplacement pour la variable.
 			else
 				return gencode(getChild(tree, 2)); // sinon mets le code d'initialisation de la variable, qui laissera une valeur en tete de pile, qui équivant a l'espace reservé au cas précédent.		
@@ -240,17 +240,17 @@ string gencode(TreeP tree) {
 			switch(tree->var->nature)
 			{
 				case STATIC: // offset par rapport a GP
-					return writeCode(NULL, FALSE, NULL, "PUSHG", intToStr, "static");
+					return strcatwalloc(writeCode(NULL, FALSE, NULL, "PUSHG", intToStr, "static "), tree->var->ID);
 				case NONSTATIC: // offset par rapport a adresse Classe
 					if(tree->fContext != NULL) {
 						sprintf(intToStr2, "%d", - tree->fContext->nbParam - 1); // empilage de l'adresse de l'appelant
-						code = writeCode(NULL, FALSE, NULL, "PUSHL", intToStr2, "nonstatic 1/2");
-						return writeCode(code, FALSE, NULL, "LOAD", intToStr, "nonstatic 2/2");
+						code = strcatwalloc(writeCode(NULL, FALSE, NULL, "PUSHL", intToStr2, "nonstatic 1/2 "), tree->var->ID);
+						return strcatwalloc(writeCode(code, FALSE, NULL, "LOAD", intToStr, "nonstatic 2/2 "), tree->var->ID);
 					}
 				case PARAM: // offset par rapport a FP (negatif)
-					return writeCode(NULL, FALSE, NULL, "PUSHL", intToStr, "param");
+					return strcatwalloc(writeCode(NULL, FALSE, NULL, "PUSHL", intToStr, "param "), tree->var->ID);
 				case LOCAL: // offset par rapport a FP (positif)
-					return writeCode(NULL, FALSE, NULL, "PUSHL", intToStr, "local");
+					return strcatwalloc(writeCode(NULL, FALSE, NULL, "PUSHL", intToStr, "local "), tree->var->ID);
 			}
 			return writeCode(code, TRUE, NULL, "NOP", NULL, "erreur d'adressage");
 		case INSTA: // NEW Idcl '(' ListArgO ')'
@@ -262,9 +262,13 @@ string gencode(TreeP tree) {
 			
 			sprintf(intToStr, "%d", class_getClass(getChild(tree, 0)->u.str)->constructor->nbParam);
 			return writeCode(code, FALSE, NULL, "POPN", intToStr , NULL);// pas nécéssaire a priori si on pop dans le constructeur.
+		case BLCDECL:
+			sprintf(intToStr, "%d", tree->nbVar);
+			code = strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
+			return writeCode(code, FALSE, NULL, "POPN", intToStr , "nb variable dans bloc");
 		case INSTR: 
 			return strcatwalloc(gencode(getChild(tree, 0)), writeCode(NULL, FALSE, NULL, "POPN", "1", NULL));
-		case LSTARG: case BLCDECL: case DECL: case LSTINST:  
+		case LSTARG: case DECL: case LSTINST:  
 			return strcatwalloc(gencode(getChild(tree, 0)), gencode(getChild(tree, 1)));
 		case CAST: // (seulement géré a la verif context, va modifier directement l'offset)
 			return gencode(getChild(tree, 1));

@@ -14,7 +14,7 @@
 		int val;        /* valeur de la feuille si op = CST */
 		struct _Tree **children; /* tableau des sous-arbres */
 	  } u;
-	  char* code;
+	  int nbVar;
 	  VarP var;
 	  FunctionP func; // ces deux derniers champs peuvent etre dans une union
 	  ClassP type;

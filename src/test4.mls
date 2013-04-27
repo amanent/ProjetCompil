@@ -33,5 +33,14 @@ is {
   var z : Integer := 3;
 }
 {
-  new Test3(0);
+  var t3 : Test3 := new Test3(0);
+  is
+  {
+    var t2 : Test2 := t3;
+    is
+    t2.m2();
+  }
+  t3.m1();
+  t3.m2();
+  t3.m3();
 }
