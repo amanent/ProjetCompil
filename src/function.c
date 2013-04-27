@@ -75,7 +75,7 @@ string function_printFunc(FunctionP func){
 }
 
 bool function_hasReturnType(FunctionP func){
-	return (func->returnType == NULL || func->returnName == NULL || !strcmp(func->returnName, ""));
+	return !(func->returnType == NULL || func->returnName == NULL || !strcmp(func->returnName, ""));
 }
 
 int function_howManyArgs(FunctionP func){

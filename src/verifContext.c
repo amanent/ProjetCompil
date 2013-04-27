@@ -410,6 +410,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 			if(symTable_isNameInUse(st, v->ID))
 				return FALSE;
 			symTable_addLine(st, v, LOCAL);
+			v->nature = LOCAL;
 			getChild(tree, 0)->var = v;
 			v->type = getChild(tree, 1)->type;
 			v->typeName = getChild(tree, 0)->var->type->IDClass;

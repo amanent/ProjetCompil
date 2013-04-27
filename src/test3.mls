@@ -13,14 +13,13 @@ is {
 class Test3(aa : Integer, strp : String)
   {
     a := aa;
-    b := aa;
     str := strp;
   }
 is {
   static var v1 : Integer := 3;
   static var v2 : Integer := 4;
   var a : Integer;
-  var b : Integer;
+  var b : Integer := 7;
   var str : String;
 
   def me() is {

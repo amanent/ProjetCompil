@@ -8,7 +8,7 @@
 	string genCodeConst(ClassP c);
 	string genBaseCode(ClassListP cl_par);
 	string genBaseFuncCode();
-	string genFieldInitCode(ClassFieldListP cfl);
+	string genFieldInitCode(ClassP c, ClassFieldListP cfl);
 	string genStaticFieldInitCode(ClassListP cl);
 	string genTVCode(ClassListP cl);
 
