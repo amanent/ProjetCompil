@@ -551,8 +551,12 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 	case BLCDECL:
 		symTable_enterNewScope(st);
 		for(i = 0; i < tree->nbChildren; ++i)
-			if(!verif_types(st, getChild(tree, i), c, f))
+			if(!verif_types(st, getChild(tree, i), c, f)){
+				symTable_exitScope(st);
 				return FALSE;
+			}
+		local_offset -= st->nbVarAtRank[st->max_rank - 1];
+
 		symTable_exitScope(st);
 		return TRUE;
 	case DECL:
