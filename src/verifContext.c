@@ -60,6 +60,8 @@ bool verif_nameResolution(){
 		ClassMethodListP currentCML = currentCL->current->cml;
 		while(currentCML != NULL){
 			FunctionP currentFunc = currentCML->current;
+			if(!strcmp(currentFunc->ID, "result") || !strcmp(currentFunc->ID, "super") || !strcmp(currentFunc->ID, "this"))
+				return FALSE;
 			if(currentFunc->returnType == NULL && currentFunc->returnName[0] != '\0') { // pour tester les fonctions void
 				currentFunc->returnType = class_getClass(currentFunc->returnName);
 				if(currentFunc->returnType == NULL || verif_paramList(currentFunc) == FALSE) // si on a pas trouvé la classe.
