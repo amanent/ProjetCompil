@@ -110,19 +110,21 @@ bool verif_paramList(FunctionP func){
 	return TRUE;
 }
 
-void verif_contructJumpTable(){
+bool verif_contructJumpTable(){
 	ClassListP tmp = classList;
 	while(tmp){
-		class_generateJumpTable(tmp->current);
+		if(!class_generateJumpTable(tmp->current))
+			return FALSE;
 		tmp = tmp->next;
 	}
+	return TRUE;
 }
 
 int verif_contextuelle(){ // need verif arg.
 	//printf("-- toto1\n");
 	if(!verif_nameResolution()) return -1;
 	//printf("-- toto2\n");
-	verif_contructJumpTable();
+	if(!verif_contructJumpTable()) return -4;
 	//printf("-- toto3\n");
 	if(!verif_allClassesCode()) return -2;
 	//printf("-- toto4\n");
@@ -353,14 +355,14 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 		}
 		return FALSE;
 
-	case IF: /*IF Exp THEN Inst ELSE Inst*/
+		case IF: /*IF Exp THEN Inst ELSE Inst*/
 		for(i = 0; i < tree->nbChildren; ++i)
 			if(!verif_types(st, getChild(tree, i), c, f))
 				return FALSE;
 		return (getChild(tree, 0)->type == class_getClass("Integer"));
 
 
-	/**/	case DIRAFF: // Id AFF Exp ';'
+/**/	case DIRAFF: // Id AFF Exp ';'
 		for(i = 0; i < tree->nbChildren; ++i)
 			if(!verif_types(st, getChild(tree, i), c, f))
 				return FALSE;
@@ -374,15 +376,15 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 
 		return (	(getChild(tree, 1)->type == getChild(tree, 0)->type)||(class_isinheritedFrom(getChild(tree, 1)->type, getChild(tree, 0)->type)));
 
-	/**/	case CMPAFF: // l AFF Exp ';' //verif types
+/**/	case CMPAFF: // l AFF Exp ';' //verif types
 		for(i = 0; i < tree->nbChildren; ++i)
 			if(!verif_types(st, getChild(tree, i), c, f))
 				return FALSE;
 
 		return (	(getChild(tree, 1)->type == getChild(tree, 0)->type)||(class_isinheritedFrom(getChild(tree, 1)->type, getChild(tree, 0)->type)));
 
-
-	/**/	case SELECT: // Exp2 '.' Id //verif id est dans exp2
+		case SELECTS:
+/**/	case SELECT: // Exp2 '.' Id //verif id est dans exp2
 	{
 
 		for(i = 0; i < tree->nbChildren; ++i)
