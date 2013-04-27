@@ -14,7 +14,7 @@ void symTable_addLineFromLine(SymbolesTableP theTable, LineP l){
 	theTable->current = l;
 	l->next = current;
 	l->depth = theTable->max_rank;
-	l->rang = ++(theTable->nbVarAtRank[theTable->max_rank]);
+	l->rang = ++(theTable->nbVarAtRank[theTable->max_rank - 1]);
 }
 
 void symTable_addLine(SymbolesTableP theTable, VarP var, e_nature n){
@@ -23,7 +23,7 @@ void symTable_addLine(SymbolesTableP theTable, VarP var, e_nature n){
 	theTable->current = l;
 	l->next = current;
 	l->depth = theTable->max_rank;
-	l->rang = ++(theTable->nbVarAtRank[theTable->max_rank]);
+	l->rang = ++(theTable->nbVarAtRank[theTable->max_rank - 1]);
 }
 
 
@@ -32,7 +32,7 @@ void symTable_addLineFromScratch(){
 }
 
 void symTable_enterNewScope(SymbolesTableP table){
-	table->sections[table->max_rank] = table->current;
+	table->sections[table->max_rank - 1] = table->current;
 	++table->max_rank;
 
 }
@@ -108,9 +108,9 @@ void symTable_printTable(SymbolesTableP t)
 
 
 void symTable_exitScope(SymbolesTableP table){
-	table->nbVarAtRank[table->max_rank] = 0;
+	table->nbVarAtRank[table->max_rank - 1] = 0;
 	--table->max_rank;
-	table->current = table->sections[table->max_rank];
+	table->current = table->sections[table->max_rank - 1];
 }
 
 /*TODO si on veut cleaner la memoire*/
