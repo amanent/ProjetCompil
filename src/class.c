@@ -268,10 +268,10 @@ bool class_generateJumpTable(ClassP c){
 		ClassMethodListP newMethod = NEW(1, ClassMethodList);
 		newMethod->next = NULL;
 		newMethod->current  = cmltmp->current;
-		if(c->instance->methods)
-			ml_getLast(c->instance->methods)->next = newMethod;
+		if(c->statics->methods)
+			ml_getLast(c->statics->methods)->next = newMethod;
 		else
-			c->instance->methods = newMethod;
+			c->statics->methods = newMethod;
 		cmltmp = cmltmp->next;
 	}
 
@@ -293,10 +293,10 @@ bool class_generateJumpTable(ClassP c){
 		ClassFieldListP newField = NEW(1, ClassFieldList);
 		newField->next = NULL;
 		newField->current = cfltmp->current;
-		if(c->instance->fields)
-			fl_getLast(c->instance->fields)->next = newField;
+		if(c->statics->fields)
+			fl_getLast(c->statics->fields)->next = newField;
 		else
-			c->instance->fields = newField;
+			c->statics->fields = newField;
 		cfltmp = cfltmp->next;
 	}
 	return TRUE;
@@ -433,7 +433,7 @@ FunctionP class_getInstanceMethFromName(ClassP c, string funcName){
 
 }
 FunctionP class_getStaticMethFromName(ClassP c, string funcName){
-	ClassMethodListP tmp = c->statics->methods;
+	ClassMethodListP tmp = c->staticCml;
 	while(tmp){
 		if(!strcmp(funcName, tmp->current->ID))
 			return tmp->current;
