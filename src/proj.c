@@ -94,9 +94,9 @@ int main(int argc, char **argv) {
 	 * c'est possible.
 	 */
 
-	printf("--Compiling\n");
+	fprintf(stderr, "--Compiling\n");
 	res = yyparse();
-	printf("--A priori c'est bon :)\n");
+	fprintf(stderr, "--A priori c'est bon :)\n");
 	//printf("resultat:\n%s", classList_print());
 	//pprintMain(mainCode);
 
@@ -107,14 +107,14 @@ int main(int argc, char **argv) {
 	classList_addClass(integer);
 	classList_addClass(sstring);
 
-	printf("--Fin des initialisation des classes de base\n");
+	fprintf(stderr, "--Fin des initialisation des classes de base\n");
 
 	switch(verif_contextuelle()) {
-		case 1: printf("--Verif contextuelle : ok\n"); break;
-		case -1: printf("--Verif contextuelle : erreur a la résolution des noms\n"); return -1;
-		case -2: printf("--Verif contextuelle : erreur dans le code d'une classe\n"); return -2;
-		case -3: printf("--Verif contextuelle : erreur dans le code principal\n"); return -3;
-		default: printf("--Verif contextuelle : unknown error\n"); return -4;
+		case 1: fprintf(stderr, "--Verif contextuelle : ok\n"); break;
+		case -1: fprintf(stderr, "--Verif contextuelle : erreur a la résolution des noms\n"); return -1;
+		case -2: fprintf(stderr, "--Verif contextuelle : erreur dans le code d'une classe\n"); return -2;
+		case -3: fprintf(stderr, "--Verif contextuelle : erreur dans le code principal\n"); return -3;
+		default: fprintf(stderr, "--Verif contextuelle : unknown error\n"); return -4;
 	}
 
 	string toto = NULL;

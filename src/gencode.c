@@ -263,7 +263,7 @@ string gencode(TreeP tree) {
 		case CAST: // (seulement géré a la verif context, va modifier directement l'offset)
 			return gencode(getChild(tree, 1));
 		default: // case IDCL: case CAST: 
-		fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", tree->op);
+		fprintf(stderr, "Erreur! gencode : etiquette d'operator inconnue: %d\n", tree->op);
 		break; 
 	}
 	return NULL;

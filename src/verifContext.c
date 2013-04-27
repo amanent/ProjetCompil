@@ -568,7 +568,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 
 
 	default: //   (seulement géré a la verif context, va modifier directement l'offset)
-		fprintf(stderr, "Erreur! pprint : etiquette d'operator inconnue: %d\n", tree->op);
+		fprintf(stderr, "Erreur! verig context : etiquette d'operator inconnue: %d\n", tree->op);
 		break;
 	}
 	return TRUE;
