@@ -117,6 +117,18 @@ int main(int argc, char **argv) {
 		default: fprintf(stderr, "--Verif contextuelle : unknown error\n"); return -4;
 	}
 
+	ClassListP cl = classList;
+	while(cl!= NULL)
+	{
+		ClassMethodListP cml = cl->current->instance->methods;
+		while(cml!=NULL)
+		{
+			fprintf(stderr, "%s : %s, %d\n", cl->current->IDClass, cml->current->ID, cml->current->offset);
+			cml = cml->next;
+		}
+		cl=cl->next;
+	}
+
 	string toto = NULL;
 	toto = genBaseCode(classList->next->next); // les deux next servent a éviter les deux types primitifs
 	toto = strcatwalloc(toto, gencode(mainCode));
