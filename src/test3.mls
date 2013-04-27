@@ -47,7 +47,7 @@ is {
   var t3 : Test3 := new Test3(3, "toto");
   var x : Integer;
   is
-  x := Test3.getV1(); /*t2.me();*/
+  x := Test3.v1; /*t2.me();*/
   x.toString().println();
   /*t3.get().me().toString().println();*/
   /*t3.fuu(5).toString().println();*/

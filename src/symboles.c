@@ -87,7 +87,7 @@ void symTable_printTable(SymbolesTableP t)
 {
 	LineP tmp = t->current;
 	while(tmp != NULL) {
-		printf("%s : %s (%s)\n", tmp->v->ID, tmp->v->typeName, var_natToString(tmp->n));
+		fprintf(stderr, "%s : %s (%s)\n", tmp->v->ID, tmp->v->typeName, var_natToString(tmp->n));
 		tmp = tmp->next;
 	}
 }
