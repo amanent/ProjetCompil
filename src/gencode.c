@@ -192,7 +192,8 @@ string gencode(TreeP tree) {
 			code = strcatwalloc(code, gencode(getChild(tree, 2))); //push des n arguments
 
 			if(strcmp(getChild(tree, 0)->type->IDClass, "String")!=0 && strcmp(getChild(tree, 0)->type->IDClass, "Integer")!=0) {
-				code = writeCode(code, FALSE, NULL, "DUPN", "1" , "pour garder l'appellant");
+				//code = writeCode(code, FALSE, NULL, "DUPN", "1" , "pour garder l'appellant");
+				code = strcatwalloc(code, gencode(getChild(tree, 0))); // pour remettre l'appelant sur la pile (possiblement a optimiser)
 				code = writeCode(code, FALSE, NULL, "LOAD", "0" , "load TV");
 				sprintf(intToStr, "%d", tree->func->offset);
 				code = writeCode(code, FALSE, NULL, "LOAD", intToStr, "index function");

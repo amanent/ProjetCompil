@@ -14,25 +14,41 @@ class Test3(aa : Integer, strp : String)
   {
     a := aa;
     str := strp;
+    t := new Test2(aa);
   }
 is {
   static var v1 : Integer := 3;
   static var v2 : Integer := 4;
   var a : Integer;
+
+  static def getV1() returns Integer is {
+    result := v1;
+  }
+
   var b : Integer := 7;
   var str : String;
+  var t : Test2;
 
   def me() is {
     (str & a.toString() & b.toString()).println(); 
+  }
+
+  def fuu(p : Integer) returns Integer is {
+    result := (a + b)*p;
+  }
+
+  def get() returns Test2 is {
+    result := t;
   }
 }
 {
   var t1 : Test1 := new Test1();
   var t2 : Test2 := new Test2(10);
-  var t3 : Test3 := new Test3(25, "toto");
+  var t3 : Test3 := new Test3(3, "toto");
   var x : Integer;
   is
-  x := t2.me();
+  x := Test3.getV1; /*t2.me();*/
   x.toString().println();
-  t3.me();
+  /*t3.get().me().toString().println();*/
+  /*t3.fuu(5).toString().println();*/
 }
