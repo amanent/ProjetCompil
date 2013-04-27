@@ -1,4 +1,5 @@
 #include "symboles.h"
+#include "stdio.h"
 
 SymbolesTableP symTable_newTable(){
 	SymbolesTableP table = NEW(1, SymbolesTable);

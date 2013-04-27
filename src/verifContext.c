@@ -72,7 +72,7 @@ bool verif_nameResolution(){
 		}
 		//printf("salut %s 4\n", currentCL->current->IDClass);
 		/* CHECK STATIC CLASS METHOD */
-		ClassMethodListP currentSCML = currentCL->current->cml;
+		ClassMethodListP currentSCML = currentCL->current->staticCml;
 		while(currentSCML != NULL){
 			FunctionP currentSFunc = currentSCML->current;
 			if(currentSFunc->returnType == NULL && currentSFunc->returnName[0] != '\0') {
@@ -296,7 +296,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 			if(tree->var == NULL){
 				fprintf(stderr, "--unknown identifier %s in table :\n", tree->u.str);
 				symTable_printTable(st);
-				return FALSE;
+//				return FALSE;
 			}
 			//printf("%s %x !\n", tree->u.str, tree->var);
 			if(tree->var) {

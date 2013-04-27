@@ -413,7 +413,7 @@ VarP class_getInstanceFieldFromName(ClassP c, string varName){
 }
 
 VarP class_getStaticFieldFromName(ClassP c, string varName){
-	ClassFieldListP tmp = c->statics->fields;
+	ClassFieldListP tmp = c->staticCfl;
 	while(tmp){
 		if(!strcmp(varName, tmp->current->ID))
 			return tmp->current;
