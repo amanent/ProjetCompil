@@ -342,6 +342,8 @@ JumpTableP jtable_duplicate(JumpTableP j){
 		fff->current = jcfl->current;
 		if(ff)
 			ff->next = fff;
+		else
+			jump->fields = fff;
 		ff = fff;
 		jcfl = jcfl->next;
 	}
@@ -351,6 +353,8 @@ JumpTableP jtable_duplicate(JumpTableP j){
 		mmm->current = jcml->current;
 		if(mm)
 			mm->next = mmm;
+		else
+			jump->methods = mmm;
 		mm = mmm;
 		jcml = jcml->next;
 	}

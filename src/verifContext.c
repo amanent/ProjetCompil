@@ -149,13 +149,13 @@ bool verif_classCode(ClassP c){
 	SymbolesTableP table = symTable_newTable();
 	SymbolesTableP statictable = symTable_newTable();
 
-	fillSymTableClassVar(c->cfl, table);
-	fillSymTableStaticVar(c->staticCfl, statictable);
+	fillSymTableClassVar(c->instance->fields, table);
+	fillSymTableStaticVar(c->statics->fields, statictable);
 	if(strcmp("String", c->IDClass) && strcmp("Integer", c->IDClass))
 		c->offsetTV = nbStaticVars++;
 
-	fillSymTableClassFunc(c->cml, table);
-	fillSymTableClassFunc(c->staticCml, statictable);
+	fillSymTableClassFunc(c->instance->methods, table);
+	fillSymTableClassFunc(c->statics->methods, statictable);
 
 	if(c->constructor!=NULL && !verif_func(table, c->constructor, c))
 		return FALSE;
