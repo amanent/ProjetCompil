@@ -41,3 +41,13 @@ void arglst_pushBack(ArgListP list, ClassP c){
 		list->top= newElem;
 }
 
+string var_natToString(e_nature n)
+{
+	switch(n)
+	{
+		case STATIC: return "static";
+		case NONSTATIC: return "instance";
+		case PARAM: return "parametre";
+		case LOCAL: return "locale";
+	}
+}

@@ -38,7 +38,8 @@
 	ArgListElemP arglm_newElem(ClassP c);
 	void arglst_pushFront(ArgListP list, ClassP c);
 	void arglst_pushBack(ArgListP list, ClassP c);
-
+	string var_natToString(e_nature n);
+	
 
 
 #endif

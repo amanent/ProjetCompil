@@ -82,6 +82,15 @@ SymbolesTableP symTable_enterFunction(SymbolesTableP t, FunctionP func, ClassP c
 	return nt;
 }
 
+void symTable_printTable(SymbolesTableP t)
+{
+	LineP tmp = t->current;
+	while(tmp != NULL) {
+		printf("%s : %s (%s)\n", tmp->v->ID, tmp->v->typeName, var_natToString(tmp->n));
+		tmp = tmp->next;
+	}
+}
+
 
 void symTable_exitScope(SymbolesTableP table){
 	table->nbVarAtRank[table->max_rank] = 0;

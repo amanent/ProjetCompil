@@ -30,6 +30,7 @@
 	bool symTable_isNameInUse(SymbolesTableP t, string varName);
 	VarP symTable_getVarFromName(SymbolesTableP t, string varName);
 
+	void symTable_printTable(SymbolesTableP t);
 
 	void symTable_enterNewScope(SymbolesTableP table);
 	void symTable_exitScope(SymbolesTableP table);

@@ -21,9 +21,9 @@ is {
   static var v2 : Integer := 4;
   var a : Integer;
 
-  /*static def getV1() returns Integer is {
+  static def getV1() returns Integer is {
     result := v1;
-  }*/
+  }
 
   var b : Integer := 7;
   var str : String;
@@ -47,7 +47,7 @@ is {
   var t3 : Test3 := new Test3(3, "toto");
   var x : Integer;
   is
-  x := Test3.v1; /*t2.me();*/
+  x := Test3.getV1; /*t2.me();*/
   x.toString().println();
   /*t3.get().me().toString().println();*/
   /*t3.fuu(5).toString().println();*/

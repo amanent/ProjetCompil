@@ -294,8 +294,8 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 
 			tree->var = symTable_getVarFromName(st, tree->u.str);
 			if(tree->var == NULL){
-				fprintf(stderr, "--%s\n", tree->u.str);
-				tree->var = symTable_getVarFromName(st, tree->u.str);
+				fprintf(stderr, "--unknown identifier %s in table :\n", tree->u.str);
+				symTable_printTable(st);
 				return FALSE;
 			}
 			//printf("%s %x !\n", tree->u.str, tree->var);
