@@ -1,0 +1,29 @@
+class Test1()
+is {
+  var x : String := "t1";
+  var y : Integer := 2;
+  def m1() returns Integer is {
+    result := y;
+  }
+  def m2() returns Integer is {
+    result := y;
+  }
+}
+class Test2(xc : Integer, yc : Integer)
+  extends Test1()
+is {
+  var x : String := "t2";
+
+  override def m2() returns Integer is {
+    result := y;
+  }
+  def m3() returns Integer is {
+    result := super.m2();
+  }
+}
+{
+  var t2 : Test2 := new Test2();
+  is
+  t2.x.println();
+  (as Test1 : t2).x.println();
+}
