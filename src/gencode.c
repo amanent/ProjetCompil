@@ -461,7 +461,7 @@ string genTVCode(ClassListP cl) {
 
 
 		sprintf(intToStr, "%d", cl->current->nbFunc);
-		sprintf(intToStr2, "alloc TV ", cl->current->IDClass);
+		sprintf(intToStr2, "alloc TV %s", cl->current->IDClass);
 		code = writeCode(code, FALSE, NULL, "ALLOC", intToStr, intToStr2);
 		while(cml!=NULL)
 		{
