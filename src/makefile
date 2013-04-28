@@ -41,5 +41,5 @@ redo: mrproper all
 test:
 	@make
 	@./$(PROG) test4.mls 1> test4.simple
-	#@../utils/Interprete/interp test4.simple
+	@../utils/Interprete/interp test4.simple
 

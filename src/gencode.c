@@ -183,7 +183,7 @@ string gencode(TreeP tree) {
 			if(getChild(tree, 2)== NULL) // si pas d'affectation directement a la déclaration
 				return writeCode(NULL, FALSE, NULL, "PUSHN", "1" , getChild(tree, 0)->u.str); //si pas d'affectation, on prépare un emlplacement pour la variable.
 			else
-				return strcatwalloc(strcatwalloc(gencode(getChild(tree, 2)), " => "), getChild(tree, 0)->u.str); // sinon mets le code d'initialisation de la variable, qui laissera une valeur en tete de pile, qui équivant a l'espace reservé au cas précédent.		
+				return strcatwalloc(strcatwalloc(gencode(getChild(tree, 2)), "-- => "), getChild(tree, 0)->u.str); // sinon mets le code d'initialisation de la variable, qui laissera une valeur en tete de pile, qui équivant a l'espace reservé au cas précédent.		
 		case MSGSNT: // Exp2 '.' Id '(' ListArgO ')'
 			//if(tree->func==NULL || function_hasReturnType(tree->func)) // voir MSGSNT
 				code = writeCode(code, FALSE, NULL, "PUSHN", "1" , "return value"); // pour la valeur de retour
@@ -193,14 +193,15 @@ string gencode(TreeP tree) {
 
 			if(strcmp(getChild(tree, 0)->type->IDClass, "String")!=0 && strcmp(getChild(tree, 0)->type->IDClass, "Integer")!=0) {
 				//code = writeCode(code, FALSE, NULL, "DUPN", "1" , "pour garder l'appellant");
-				if(strcmp(getChild(tree, 0)->u.str, "super")) // si différent de super
+				if(strcmp(getChild(tree, 0)->u.str, "super")) { // si différent de super
 					code = strcatwalloc(code, gencode(getChild(tree, 0))); // pour remettre l'appelant sur la pile (possiblement a optimiser)
+					code = writeCode(code, FALSE, NULL, "LOAD", "0" , "load TV");
+				}
 				else {
 					sprintf(intToStr, "%d", getChild(tree, 0)->type->super->offsetTV);
 					code = writeCode(code, FALSE, NULL, "PUSHG", intToStr, "TV du papa");
 				}
 
-				code = writeCode(code, FALSE, NULL, "LOAD", "0" , "load TV");
 				sprintf(intToStr, "%d", tree->func->offset);
 				code = writeCode(code, FALSE, NULL, "LOAD", intToStr, "index function");
 			}

@@ -293,6 +293,7 @@ bool class_generateJumpTable(ClassP c){
 		ClassFieldListP newField = NEW(1, ClassFieldList);
 		newField->next = NULL;
 		newField->current = cfltmp->current;
+		newField->current->offset = c->nbFields;
 		if(c->instance->fields)
 			fl_getLast(c->instance->fields)->next = newField;
 		else
