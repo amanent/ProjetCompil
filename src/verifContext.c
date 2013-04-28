@@ -121,22 +121,22 @@ bool verif_contructJumpTable(){
 }
 
 int verif_contextuelle(){ // need verif arg.
-	fprintf(stderr, "-- toto1\n");
+	//fprintf(stderr, "-- toto1\n");
 	if(!verif_nameResolution()) return -1;
-	fprintf(stderr, "-- toto2\n");
+	//fprintf(stderr, "-- toto2\n");
 	if(!verif_contructJumpTable()) return -4;
-	fprintf(stderr, "-- toto3\n");
+	//fprintf(stderr, "-- toto3\n");
 	if(!verif_allClassesCode()) return -2;
-	fprintf(stderr, "-- toto4\n");
+	//fprintf(stderr, "-- toto4\n");
 	if(!verif_types(symTable_newTable(), mainCode, NULL, NULL)) return -3;
-	fprintf(stderr, "-- toto5\n");
+	//fprintf(stderr, "-- toto5\n");
 	return 1;
 }
 
 bool verif_allClassesCode(){
 	ClassListP tmp = classList;
 	while(tmp){
-		fprintf(stderr, "-- test %s 1\n", tmp->current->IDClass);
+		//fprintf(stderr, "-- test %s 1\n", tmp->current->IDClass);
 		if(!verif_classCode(tmp->current))
 			return FALSE;
 		tmp = tmp->next;
@@ -162,7 +162,7 @@ bool verif_classCode(ClassP c){
 	
 	ClassMethodListP mtmp = c->cml;
 	while(mtmp){
-		fprintf(stderr, "-- test %s 1\n", mtmp->current->ID);
+		//fprintf(stderr, "-- test %s 1\n", mtmp->current->ID);
 		if(!verif_func(table, mtmp->current, c))
 			return FALSE;
 		mtmp = mtmp->next;
@@ -286,7 +286,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 	tree->cContext = c;
 	tree->fContext = f;
 
-	fprintf(stderr, "--treating : %d\n", tree->op);
+	//fprintf(stderr, "--treating : %d\n", tree->op);
 	switch (tree->op) {
 	case STR: //return true, tree->type = String
 		tree->type = class_getClass("String");
@@ -400,7 +400,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 		return (	(getChild(tree, 1)->type == getChild(tree, 0)->type)||(class_isinheritedFrom(getChild(tree, 1)->type, getChild(tree, 0)->type)));
 
 /**/	case CMPAFF: // l AFF Exp ';' //verif types
-		fprintf(stderr, "toto : %s\n", getChild(tree, 1)->u.str);
+		//fprintf(stderr, "toto : %s\n", getChild(tree, 1)->u.str);
 		for(i = 0; i < tree->nbChildren; ++i)
 			if(!verif_types(st, getChild(tree, i), c, f))
 				return FALSE;
