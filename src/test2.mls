@@ -91,7 +91,6 @@ is {
 class Cla3()
 is {
   static def s2(dy : Integer) returns Integer is {
-    y0 := y0 + dy;
     result := Cla2.s1();
   }
 }

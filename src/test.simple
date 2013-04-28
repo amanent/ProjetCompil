@@ -1,0 +1,58 @@
+--code :
+
+--champs statiques : (ne pas se fier a l'ordre)
+	JUMP	start	
+--methodes statiques :
+--methodes non statiques :
+--code des fonctions de base
+toString:	PUSHL	-1	
+	STR		
+	STOREL	-2	
+	RETURN		--fin toString
+print:	PUSHL	-1	
+	WRITES		
+	SWAP		
+	RETURN		--fin print
+println:	PUSHL	-1	
+	PUSHS	"\n"	
+	CONCAT		
+	WRITES		
+	SWAP		
+	RETURN		--fin println
+
+* start:	START		--main function
+--generation des TV:
+--fin generation des TV:
+
+	PUSHN	1	--a
+	PUSHI	10	--int cst
+	STOREL	0	--local
+	PUSHL	0	--local a
+	PUSHI	5	--int cst
+	INFEQ		
+	JZ	else_0	--if
+	PUSHI	4	--int cst
+	PUSHI	0	
+	PUSHI	5	--int cst
+	SUB		
+	MUL		
+	STOREL	0	--local
+	JUMP	suite_0	
+else_0:	NOP		
+	PUSHI	4	--int cst
+	PUSHI	5	--int cst
+	MUL		
+	STOREL	0	--local
+suite_0:	NOP		--fin if
+	PUSHN	1	--return value
+	PUSHN	1	--return value
+	PUSHL	0	--local a
+	PUSHA	toString	
+* 	CALL		
+	POPN	1	
+	PUSHA	println	
+* 	CALL		
+	POPN	1	
+	POPN	1	
+	POPN	1	--nb variable dans bloc
+* 	STOP		

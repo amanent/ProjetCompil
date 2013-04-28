@@ -27,7 +27,7 @@ bool noEval = FALSE;
 int errorCode = NO_ERROR;
 
 /* Descripteur de fichier pour la lecture des donnees par get */
-FILE *fd = NIL(FILE);
+FILE *fd = NIL(FILE), *out = NIL(FILE);
 
 
 /* Appel:
@@ -40,6 +40,7 @@ FILE *fd = NIL(FILE);
 int main(int argc, char **argv) {
 	int fi;
 	int i, res;
+	string fileName = NULL;
 
 	for(i = 1; i < argc; i++) {
 		if (argv[i][0] == '-') {
@@ -48,6 +49,9 @@ int main(int argc, char **argv) {
 				verbose = TRUE; continue;
 			case 'e': case 'E':
 				noEval = TRUE; continue;
+			case 'o':
+				if(argv[i+1]==NULL || argv[i+1][0]=='-') return -1;
+				fileName = argv[++i]; continue;
 			case '?': case 'h': case 'H':
 				fprintf(stderr, "Command: tp -e -v program.txt data.dat\n");
 				exit(USAGE_ERROR);
@@ -71,13 +75,22 @@ int main(int argc, char **argv) {
 	// redirige l'entree standard sur le fichier...
 	close(0); dup(fi); close(fi);
 
-	if (i < argc) { // fichier dans lequel lire les valeurs pour get()
+	/*if (i < argc) { // fichier dans lequel lire les valeurs pour get()
 		if ((fd = fopen(argv[i], "r")) == NULL) {
 			fprintf(stderr, "Error: Cannot open %s\n", argv[i]);
 			exit(USAGE_ERROR);
 		}
+	}*/
+
+	if(fileName == NULL) {
+		fileName = NEW(10, char);
+		strcpy(fileName, "a.out");
 	}
 
+	if ((out = fopen(fileName, "w")) == NULL) {
+		fprintf(stderr, "Error: Cannot open %s\n", fileName);
+		exit(USAGE_ERROR);
+	}
 
 	/* Lance l'analyse syntaxique de tout le source, en appelant yylex au fur
 	 * et a mesure. Execute les actions semantiques en parallele avec les
@@ -137,9 +150,13 @@ int main(int argc, char **argv) {
 	toto = writeCode(toto, TRUE, NULL, "STOP", NULL, NULL);
 
 
-	printf("--code :\n%s\n", toto);
+	//printf("--code :\n%s\n", toto);
+	fprintf(out, "--code :\n%s\n", toto);
+
+	fprintf(stderr, "--Compilation : ok, in file : %s\n", fileName);
 
 	if (fd != NIL(FILE)) fclose(fd);
+	if (out != NIL(FILE)) fclose(out);
 	return res ? SYNTAX_ERROR : errorCode;
 }
 
