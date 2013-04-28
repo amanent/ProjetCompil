@@ -437,13 +437,23 @@ int jtable_getOffsetStatic(ClassP c, string argName){
 }
 
 VarP class_getInstanceFieldFromName(ClassP c, string varName){
-	ClassFieldListP tmp = c->instance->fields;
+/*	ClassFieldListP tmp = c->instance->fields;
 	while(tmp){
 		if(!strcmp(varName, tmp->current->ID))
 			return tmp->current;
 		tmp = tmp->next;
 	}
 	return NULL;
+
+*/
+	VarP last = NULL;
+	ClassFieldListP cfltmp = c->instance->fields;
+	while(cfltmp){
+		if(!strcmp(cfltmp->current->ID, varName))
+			last = cfltmp->current;
+		cfltmp = cfltmp->next;
+	}
+	return last;
 }
 
 VarP class_getStaticFieldFromName(ClassP c, string varName){
