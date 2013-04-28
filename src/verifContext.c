@@ -201,7 +201,7 @@ void fillSymTableStaticVar(ClassFieldListP cfl, SymbolesTableP st){
 		tmp = tmp->next;
 	}
 }
-
+/*
 int fillSymTableClassFunc(ClassMethodListP cml, SymbolesTableP st){
 	int n = 0;
 	if(!cml)
@@ -211,7 +211,7 @@ int fillSymTableClassFunc(ClassMethodListP cml, SymbolesTableP st){
 	cml->current->offset = n;
 	return n;
 }
-
+*/
 
 
 /*
