@@ -3,8 +3,8 @@
 
 SymbolesTableP symTable_newTable(){
 	SymbolesTableP table = NEW(1, SymbolesTable);
-	table->nbVarAtRank = NEW(20, int);
-	table->sections = NEW(20, LineP);
+	table->nbVarAtRank = NEW(50, int);
+	table->sections = NEW(50, LineP);
 	table->max_rank = 0;
 	return table;
 }
@@ -26,10 +26,6 @@ void symTable_addLine(SymbolesTableP theTable, VarP var, e_nature n){
 	l->rang = ++(theTable->nbVarAtRank[theTable->max_rank - 1]);
 }
 
-
-void symTable_addLineFromScratch(){
-
-}
 
 void symTable_enterNewScope(SymbolesTableP table){
 	table->sections[table->max_rank - 1] = table->current;
