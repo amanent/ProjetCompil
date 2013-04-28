@@ -49,11 +49,34 @@
 		struct _ClassList * next;
 	}ClassList, *ClassListP;
 
-
+	/**
+	 * Ajoute une classe dans la liste globale des classes
+	 * @param c classe a ajouter
+	 */
 	void classList_addClass(ClassP c);
 	
+	/**
+	 * Defini le nom d'une classe
+	 * @param c    la classe a modifier
+	 * @param name le nom de la classe
+	 */
 	void class_setName(ClassP c, string name);
+	/**
+	 * Ajoute un champ a la classe
+	 * @param c        la classe
+	 * @param isStatic si le champ est static
+	 * @param decl     le code du champ
+	 */
 	void class_addField(ClassP c, bool isStatic, TreeP decl );
+	/**
+	 * [class_addMethod description]
+	 * @param c          [description]
+	 * @param visi       [description]
+	 * @param methodName [description]
+	 * @param returnType [description]
+	 * @param paramList  [description]
+	 * @param code       [description]
+	 */
 	void class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code);
 	void class_setConstructor(ClassP c, ParamsListP pl, TreeP code);
 	

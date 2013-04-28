@@ -101,7 +101,7 @@ void symTable_printTable(SymbolesTableP t)
 {
 	LineP tmp = t->current;
 	while(tmp != NULL) {
-		fprintf(stderr, "%s : %s (%s)\n", tmp->v->ID, tmp->v->typeName, var_natToString(tmp->n));
+		fprintf(stderr, "%s : %s (%s) @ %d\n", tmp->v->ID, tmp->v->typeName, var_natToString(tmp->n), tmp->v->offset);
 		tmp = tmp->next;
 	}
 }

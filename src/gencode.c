@@ -248,6 +248,7 @@ string gencode(TreeP tree) {
 						code = strcatwalloc(writeCode(NULL, FALSE, NULL, "PUSHL", intToStr2, "nonstatic 1/2 "), tree->var->ID);
 						return strcatwalloc(writeCode(code, FALSE, NULL, "LOAD", intToStr, "nonstatic 2/2 "), tree->var->ID);
 					}
+					break;
 				case PARAM: // offset par rapport a FP (negatif)
 					return strcatwalloc(writeCode(NULL, FALSE, NULL, "PUSHL", intToStr, "param "), tree->var->ID);
 				case LOCAL: // offset par rapport a FP (positif)
