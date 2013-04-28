@@ -34,10 +34,17 @@ bool verif_nameResolution(){
 			VarP currentVar = currentCFL->current;
 			if(!strcmp(currentVar->ID, "result") || !strcmp(currentVar->ID, "super") || !strcmp(currentVar->ID, "this"))
 				return FALSE;
+
 			if(currentVar->type == NULL){
 				currentVar->type = class_getClass(currentVar->typeName);
 				if(currentVar->type == NULL) // si on a pas trouvé la classe.
 					return FALSE;
+			}
+//			if(currentVar->value && currentCL->current == currentVar->type)
+			if(currentVar->value && class_canAffect(currentCL->current, currentVar->type))
+			{
+//				fprintf(stderr, "constructception\n");
+				return FALSE;
 			}
 			currentCFL = currentCFL->next;
 		}
@@ -201,7 +208,7 @@ void fillSymTableStaticVar(ClassFieldListP cfl, SymbolesTableP st){
 		tmp = tmp->next;
 	}
 }
-
+/*
 int fillSymTableClassFunc(ClassMethodListP cml, SymbolesTableP st){
 	int n = 0;
 	if(!cml)
@@ -211,7 +218,7 @@ int fillSymTableClassFunc(ClassMethodListP cml, SymbolesTableP st){
 	cml->current->offset = n;
 	return n;
 }
-
+*/
 
 
 /*
@@ -439,6 +446,17 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 		for(i = 0; i < tree->nbChildren; ++i)
 			if(!verif_types(st, getChild(tree, i), c, f))
 				return FALSE;
+
+		//VERIFICATION DES CONSTRUCTCEPTION
+		if(c && f){
+			if(f == c->constructor){
+				if(class_canAffect(c, getChild(tree, 1)->type) && getChild(tree, 2))
+//					fprintf(stderr, "--ccption in constructor\n");
+					return FALSE;
+			}
+		}
+		//--------------------------------
+
 		//ALLOCATION D'UNE NOUVELLE VARIABLE
 		VarP v = NEW(1, Var);
 		v->ID = getChild(tree, 0)->u.str;
