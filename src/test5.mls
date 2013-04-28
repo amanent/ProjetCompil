@@ -9,7 +9,7 @@ is {
     result := y;
   }
 }
-class Test2(xc : Integer, yc : Integer)
+class Test2()
   extends Test1()
 is {
   var x : String := "t2";

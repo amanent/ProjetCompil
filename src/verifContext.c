@@ -285,7 +285,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 	tree->cContext = c;
 	tree->fContext = f;
 
-	//fprintf(stderr, "--treating : %d\n", tree->op);
+	fprintf(stderr, "--treating : %d\n", tree->op);
 	switch (tree->op) {
 	case STR: //return true, tree->type = String
 		tree->type = class_getClass("String");
@@ -538,7 +538,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 		tree->type = c;
 		return (c != NULL);
 	}
-	/**/	case INSTA: // NEW Idcl '(' ListArgO ')' // verif de la liste d'args du const de idcl
+	case INSTA: // NEW Idcl '(' ListArgO ')' // verif de la liste d'args du const de idcl
 	{
 		ArgListP arglist = context.arglst;
 		context.arglst = arglst_newList();
