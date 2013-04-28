@@ -1,2 +1,0 @@
-begin "abc" + "def" end
-/* erreur de syntaxe ou erreur contextuelle */

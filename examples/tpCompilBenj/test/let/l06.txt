@@ -1,6 +1,0 @@
-x := 2;
-y := let x := 4 in let x := x * x in x;
-begin y*x end
-/*
-result: 32
-*/

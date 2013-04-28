@@ -1,4 +1,0 @@
-x := 1;
-y := let z := x + y + z /* y et z incorrects */ 
-     in x + y + z; /* z correct, y incorrect */
-begin 1 end

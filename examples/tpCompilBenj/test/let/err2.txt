@@ -1,3 +1,0 @@
-x := 1;
-y := let z := x + y /* y incorrect */ in z;
-begin 1 end
