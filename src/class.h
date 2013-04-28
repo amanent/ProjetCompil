@@ -69,26 +69,81 @@
 	 */
 	void class_addField(ClassP c, bool isStatic, TreeP decl );
 	/**
-	 * [class_addMethod description]
-	 * @param c          [description]
-	 * @param visi       [description]
-	 * @param methodName [description]
-	 * @param returnType [description]
-	 * @param paramList  [description]
-	 * @param code       [description]
+	 * Ajoute une methode a une classe
+	 * @param c          la classe
+	 * @param visi       spécificité de la methode (0 : normale, 1 : override, 2 : static)
+	 * @param methodName nom de la methode
+	 * @param returnType nom du type de retour
+	 * @param paramList  la liste de parametres associee
+	 * @param code       code de la fonction
 	 */
 	void class_addMethod(ClassP c, int visi, string methodName, string returnType, ParamsListP paramList, TreeP code);
+	/**
+	 * Affecte le constrcteur de la classe
+	 * @param c    la classe
+	 * @param pl   la liste de parametres associee
+	 * @param code code de la fonction
+	 */
 	void class_setConstructor(ClassP c, ParamsListP pl, TreeP code);
 	
-	ClassP class_getClass(string super);
+	/**
+	 * Retrouve une classe dans la liste globalegrace a som nom
+	 * @param  className nom de la classe
+	 * @return           la classe trouvee ou null
+	 */
+	ClassP class_getClass(string className);
+	/**
+	 * Retrouve la place de la classe dans la liste
+	 * @param  c la classe
+	 * @return   la place de la classe
+	 */
 	int class_getNb(ClassP c);
+	/**
+	 * Retrouve la place de la classe dans la liste
+	 * @param  className le nom de la classe
+	 * @return           la place de la classe
+	 */
 	int class_getNbFromName(string className);
+	/**
+	 * Set la super classe d'une classe
+	 * @param c     classe fille
+	 * @param super classe mere
+	 * @param args  code de l'appel au constructeur
+	 */
 	void class_setSuper(ClassP c, string super, TreeP args);
+	/**
+	 * Affiche une description de toutes les classes
+	 * @return la string contenant les descriptions
+	 */
 	string classList_print();
+	/**
+	 * Affiche une description d'une classe
+	 * @param  class la classe a decrire
+	 * @return       la desciption
+	 */
 	string class_print(ClassP class);
+
+	/**
+	 * Regarde si une classe herite d'une autre
+	 * @param  c  fille
+	 * @param  cc parent
+	 * @return    si la classe fille herite de la mere
+	 */
 	bool class_isinheritedFrom(ClassP c, ClassP cc);
+	/**
+	 * Regarde si une variable d'une classe peut etre affectee a une variable d'une autre classe 
+	 * @param  c  classe fille
+	 * @param  cc parent
+	 * @return    si on peut affecter
+	 */
 	bool class_canAffect(ClassP c, ClassP cc);
 
+	/**
+	 * Retourne la variable de la classe 
+	 * @param  c       classe
+	 * @param  varName nom de la variable
+	 * @return         la variable
+	 */
 	VarP class_getInstanceFieldFromName(ClassP c, string varName);
 	VarP class_getStaticFieldFromName(ClassP c, string varName);
 
