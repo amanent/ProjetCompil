@@ -411,19 +411,20 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 		for(i = 0; i < tree->nbChildren; ++i)
 			if(!verif_types(st, getChild(tree, i), c, f))
 				return FALSE;
-		ClassP c = getChild(tree, 0)->type;
+		ClassP class = getChild(tree, 0)->type;
 		VarP v = getChild(tree, 0)->var;
 		VarP vv = NULL;
 		if(v)
 		{
-			vv = class_getInstanceFieldFromName(c, getChild(tree, 1)->u.str);
+			vv = class_getInstanceFieldFromName(class, getChild(tree, 1)->u.str);
 		}
 		else
 		{
-			vv = class_getStaticFieldFromName(c, getChild(tree, 1)->u.str);
+			vv = class_getStaticFieldFromName(class, getChild(tree, 1)->u.str);
 		}
 		if(vv){
 			tree->var = vv;
+			getChild(tree, 1)->var = vv;
 			tree->type = vv->type;
 			return TRUE;
 		}
@@ -525,7 +526,11 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 		for(i = 0; i < tree->nbChildren; ++i)
 			if(!verif_types(st, getChild(tree, i), c, f))
 				return FALSE;
+
+//		fprintf(stderr, "trying to cast %s as %s", getChild(tree, 1)->type->IDClass,getChild(tree, 0)->type->IDClass);
+
 		tree->type = getChild(tree, 0)->type;
+		tree->var = getChild(tree, 1);
 		return (class_canAffect(tree->type, getChild(tree, 1)->type));
 
 	case IDCL: // verif tabledesclasses
