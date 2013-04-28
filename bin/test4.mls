@@ -27,7 +27,7 @@ class Test3(xc : Integer)
   extends Test2(xc, 5)
   {
     x := xc;
-    z := x + y;
+    z := x + this.y;
   }
 is {
   var z : Integer := 3;
