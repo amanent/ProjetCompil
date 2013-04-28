@@ -34,10 +34,15 @@ bool verif_nameResolution(){
 			VarP currentVar = currentCFL->current;
 			if(!strcmp(currentVar->ID, "result") || !strcmp(currentVar->ID, "super") || !strcmp(currentVar->ID, "this"))
 				return FALSE;
+
 			if(currentVar->type == NULL){
 				currentVar->type = class_getClass(currentVar->typeName);
 				if(currentVar->type == NULL) // si on a pas trouvé la classe.
 					return FALSE;
+			}
+			if(currentVar->value && currentCL->current == currentVar->type){
+//				fprintf(stderr, "constructception\n");
+				return FALSE;
 			}
 			currentCFL = currentCFL->next;
 		}
