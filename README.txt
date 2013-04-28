@@ -1,7 +1,7 @@
 ProjetCompil
 ============
 
-Mattieux Allié
+Matthieu Allié
 Benjamin Blois
 Dylan Darcy
 Arnaud Manente
@@ -27,6 +27,7 @@ Utilisation
 		 - testi : (où i est un nombre entre 1 et 5) compile le programme et 
 		 	lance le test numéro i (détaillé après).
 		 - clean : supprime tout les fichiers objets et temporaires.
+		 - cleanTest : supprime les fichier de sortie des tests.
 		 - mrproper : comme clean,mais supprime également l'executable.
 		 - redo : clean et recompile l'ensemble du programme.
 

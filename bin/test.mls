@@ -1,8 +1,0 @@
-/*test.mls*/
-{
-	var a : Integer;
-	is
-	a := 10;
-	if a <= 5 then a := 4 * -5; else a:= 4 * 5;
-	a.toString().println();
-}

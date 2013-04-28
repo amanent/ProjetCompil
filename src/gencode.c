@@ -328,7 +328,7 @@ string genCodeConst(ClassP c) // l'objet est alloué avant les paramètres
 	return writeCode(code, FALSE, NULL, "RETURN", NULL, NULL);
 }
 
-string genFieldInitCode(ClassP c, ClassFieldListP cfl) { // miam la recursion non terminale a cause des structures de données pourries d'Arnaud
+string genFieldInitCode(ClassP c, ClassFieldListP cfl) { 
 	string code = NULL;
 	char intToStr[40] = "", intToStr2[40] = "";
 
@@ -452,7 +452,7 @@ string genBaseCode(ClassListP cl_par)
 }
 
 string genTVCode(ClassListP cl) {
-	char intToStr[40] = "", intToStr2[40] = "";
+	char intToStr[40] = "", intToStr2[50] = "";
 	string code = NULL;
 
 	code = strcatwalloc(code, "\n--generation des TV:");
@@ -461,7 +461,8 @@ string genTVCode(ClassListP cl) {
 
 
 		sprintf(intToStr, "%d", cl->current->nbFunc);
-		code = writeCode(code, FALSE, NULL, "ALLOC", intToStr, "allocation TV");
+		sprintf(intToStr2, "alloc TV ", cl->current->IDClass);
+		code = writeCode(code, FALSE, NULL, "ALLOC", intToStr, intToStr2);
 		while(cml!=NULL)
 		{
 			code = writeCode(code, FALSE, NULL, "DUPN", "1", "adresse TV");

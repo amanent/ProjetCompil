@@ -36,9 +36,9 @@ is {
   var t3 : Test3 := new Test3(0);
   is
   {
-    var t3 : Test1;
+    var t3 : String := "masquage";
     is
-    t3.m1();
+    t3.println();
   }
   t3.m1();
 }

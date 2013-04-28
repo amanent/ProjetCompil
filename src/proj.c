@@ -87,11 +87,6 @@ int main(int argc, char **argv) {
 		strcpy(fileName, "a.out");
 	}
 
-	if ((out = fopen(fileName, "w")) == NULL) {
-		fprintf(stderr, "Error: Cannot open %s\n", fileName);
-		exit(USAGE_ERROR);
-	}
-
 	/* Lance l'analyse syntaxique de tout le source, en appelant yylex au fur
 	 * et a mesure. Execute les actions semantiques en parallele avec les
 	 * reductions.
@@ -149,6 +144,11 @@ int main(int argc, char **argv) {
 	//fprintf(stderr, "caca2 \n");
 	toto = writeCode(toto, TRUE, NULL, "STOP", NULL, NULL);
 
+	// ici pour pas creer le fichier si pas besoin
+	if ((out = fopen(fileName, "w")) == NULL) {
+		fprintf(stderr, "Error: Cannot open %s\n", fileName);
+		exit(USAGE_ERROR);
+	}
 
 	//printf("--code :\n%s\n", toto);
 	fprintf(out, "--code :\n%s\n", toto);
