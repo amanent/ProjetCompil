@@ -121,22 +121,22 @@ bool verif_contructJumpTable(){
 }
 
 int verif_contextuelle(){ // need verif arg.
-	//printf("-- toto1\n");
+	fprintf(stderr, "-- toto1\n");
 	if(!verif_nameResolution()) return -1;
-	//printf("-- toto2\n");
+	fprintf(stderr, "-- toto2\n");
 	if(!verif_contructJumpTable()) return -4;
-	//printf("-- toto3\n");
+	fprintf(stderr, "-- toto3\n");
 	if(!verif_allClassesCode()) return -2;
-	//printf("-- toto4\n");
+	fprintf(stderr, "-- toto4\n");
 	if(!verif_types(symTable_newTable(), mainCode, NULL, NULL)) return -3;
-	//printf("-- toto5\n");
+	fprintf(stderr, "-- toto5\n");
 	return 1;
 }
 
 bool verif_allClassesCode(){
 	ClassListP tmp = classList;
 	while(tmp){
-		//printf("-- test %s 1\n", tmp->current->IDClass);
+		fprintf(stderr, "-- test %s 1\n", tmp->current->IDClass);
 		if(!verif_classCode(tmp->current))
 			return FALSE;
 		tmp = tmp->next;
@@ -162,6 +162,7 @@ bool verif_classCode(ClassP c){
 	
 	ClassMethodListP mtmp = c->cml;
 	while(mtmp){
+		fprintf(stderr, "-- test %s 1\n", mtmp->current->ID);
 		if(!verif_func(table, mtmp->current, c))
 			return FALSE;
 		mtmp = mtmp->next;
@@ -285,7 +286,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 	tree->cContext = c;
 	tree->fContext = f;
 
-	//fprintf(stderr, "--treating : %d\n", tree->op);
+	fprintf(stderr, "--treating : %d\n", tree->op);
 	switch (tree->op) {
 	case STR: //return true, tree->type = String
 		tree->type = class_getClass("String");
@@ -314,9 +315,10 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 					tree->var = symTable_getVarFromName(st, "this");
 					return (tree->var!=NULL);
 				}
-
+/*
 				fprintf(stderr, "--unknown identifier %s in table :\n", tree->u.str);
 				symTable_printTable(st);
+*/
 //				return FALSE;
 			}
 			//printf("%s %x !\n", tree->u.str, tree->var);
@@ -392,12 +394,13 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 		if(!strcmp(idtxt, "this") || !strcmp(idtxt, "super"))
 			return FALSE;
 
-		if(!strcmp(getChild(tree, 1)->u.str,"result"))
+		if((getChild(tree, 1)->op ==ID) && !strcmp(getChild(tree, 1)->u.str,"result"))
 			return FALSE;
 
 		return (	(getChild(tree, 1)->type == getChild(tree, 0)->type)||(class_isinheritedFrom(getChild(tree, 1)->type, getChild(tree, 0)->type)));
 
 /**/	case CMPAFF: // l AFF Exp ';' //verif types
+		fprintf(stderr, "toto : %s\n", getChild(tree, 1)->u.str);
 		for(i = 0; i < tree->nbChildren; ++i)
 			if(!verif_types(st, getChild(tree, i), c, f))
 				return FALSE;
@@ -530,7 +533,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 //		fprintf(stderr, "trying to cast %s as %s", getChild(tree, 1)->type->IDClass,getChild(tree, 0)->type->IDClass);
 
 		tree->type = getChild(tree, 0)->type;
-		tree->var = getChild(tree, 1);
+		tree->var = getChild(tree, 1)->var;
 		return (class_canAffect(tree->type, getChild(tree, 1)->type));
 
 	case IDCL: // verif tabledesclasses
@@ -543,7 +546,7 @@ bool verif_types(SymbolesTableP st, TreeP tree, ClassP c , FunctionP f) {
 		tree->type = c;
 		return (c != NULL);
 	}
-	/**/	case INSTA: // NEW Idcl '(' ListArgO ')' // verif de la liste d'args du const de idcl
+	case INSTA: // NEW Idcl '(' ListArgO ')' // verif de la liste d'args du const de idcl
 	{
 		ArgListP arglist = context.arglst;
 		context.arglst = arglst_newList();

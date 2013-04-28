@@ -172,8 +172,8 @@ string gencode(TreeP tree) {
 			return writeCode(NULL, FALSE, NULL, "PUSHG", intToStr2 , NULL);
 			//return writeCode(code, FALSE, NULL, "LOAD", intToStr , NULL);
 		case SELECT: // Exp2 '.' Id
-			if(getChild(tree, 1)->var != NULL)
-				sprintf(intToStr, "%d", getChild(tree, 1)->var->offset); // on suppose que pour les séléctions, l'offset de l'adresse (si besoin) est dans le membre, et celle du décalage dans le fils.
+			if(tree->var != NULL)
+				sprintf(intToStr, "%d", tree->var->offset); // on suppose que pour les séléctions, l'offset de l'adresse (si besoin) est dans le membre, et celle du décalage dans le fils.
 			else
 				sprintf(intToStr, "%d ------------2", 0); // debug
 

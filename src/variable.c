@@ -50,4 +50,5 @@ string var_natToString(e_nature n)
 		case PARAM: return "parametre";
 		case LOCAL: return "locale";
 	}
+	return "";
 }
