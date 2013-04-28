@@ -139,25 +139,89 @@
 	bool class_canAffect(ClassP c, ClassP cc);
 
 	/**
-	 * Retourne la variable de la classe 
+	 * Retourne la variable d'instance de la classe 
 	 * @param  c       classe
 	 * @param  varName nom de la variable
 	 * @return         la variable
 	 */
 	VarP class_getInstanceFieldFromName(ClassP c, string varName);
+	/**
+	 * Retourne la variable statique de la classe 
+	 * @param  c       classe
+	 * @param  varName nom de la variable
+	 * @return         la variable
+	 */
 	VarP class_getStaticFieldFromName(ClassP c, string varName);
 
+	/**
+	 * Retourne la methode d'instance de la classe 
+	 * @param  c       classe
+	 * @param  varName nom de la variable
+	 * @return         la methode
+	 */
 	FunctionP class_getInstanceMethFromName(ClassP c, string funcName);
+	/**
+	 * Retourne la methode statique de la classe 
+	 * @param  c       classe
+	 * @param  varName nom de la variable
+	 * @return         la methode
+	 */
 	FunctionP class_getStaticMethFromName(ClassP c, string funcName);
 
+	/**
+	 * Regarde le nombre de champs d'une classe
+	 * @param  c la classe
+	 * @return   le nombre de champs
+	 */
 	int class_getNbFields(ClassP c);
 
+	/**
+	 * Calcule l'offset d'un champ ou d'une methode d'instance d'une classe
+	 * @deprecated
+	 * @param  c       la classe
+	 * @param  argName le nom de l'objet a trouver
+	 * @return         l'offset
+	 */
 	int jtable_getOffsetStatic(ClassP c, string argName);
+	/**
+	 * Calcule l'offset d'un champ ou d'une methode statique d'une classe
+	 * @deprecated
+	 * @param  c       la classe
+	 * @param  argName le nom de l'objet a trouver
+	 * @return         l'offset
+	 */
 	int jtable_getOffsetInst(ClassP c, string argName);
+	/**
+	 * Duplique une table de sauts
+	 * @param  j la table a dupliquer
+	 * @return   la table dupliquee
+	 */
 	JumpTableP jtable_duplicate(JumpTableP j);
+	/**
+	 * Cherche le dernier element d'une liste
+	 * @param  fl la liste
+	 * @return    l'element
+	 */
 	ClassFieldListP fl_getLast(ClassFieldListP fl);
+	/**
+	 * Cherche le dernier element d'une liste
+	 * @param  ml la liste
+	 * @return    l'element
+	 */
 	ClassMethodListP ml_getLast(ClassMethodListP ml);
+	/**
+	 * Cherche si une methode doit etre override
+	 * @param  orig liste dans laquelle on cherche
+	 * @param  func la fonctionque l'on cherche a ajouter dans cette liste
+	 * @return      l'element de la liste qui contient la methode a override ou null
+	 *                        si la methode n'a pas a etre override
+	 */
 	ClassMethodListP override(ClassMethodListP orig, FunctionP func);
+	/**
+	 * Genere une table de saut pour une classe donnee
+	 * @param  c la classe
+	 * @return   si la geneation s'est bien deroulee
+	 */
 	bool class_generateJumpTable(ClassP c);
 
 
