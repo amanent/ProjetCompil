@@ -1,9 +1,0 @@
-x := 3;
-y := 12 + x;
-z := x + 2 * get(); /* La valeur retourne par get ne sera connue qu'a l'execution */
-t := if z > y  then put("Then:",  x + 3) else y + 3;
-begin put("Resultat: ", if t = z then x * y + z * t else 1 * z) end
-/*
-result: 53
-*/
-

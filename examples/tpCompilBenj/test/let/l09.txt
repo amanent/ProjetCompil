@@ -1,6 +1,0 @@
-x := 2;
-y := if x = 2 then x+1 else let x := 5 in x;
-begin y * x end
-/*
-result: 6
-*/

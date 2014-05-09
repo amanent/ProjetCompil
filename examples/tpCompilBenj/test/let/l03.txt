@@ -1,6 +1,0 @@
-y := 3;
-z := y * (let y := y * y in y);
-begin y * z end
-/*
-result: 81
-*/

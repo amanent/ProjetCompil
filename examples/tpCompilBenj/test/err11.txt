@@ -1,4 +1,0 @@
-begin if 1 < 0 then x else 1 end
-/* erreur : variable x non declaree meme si inutilisee */
-
-
