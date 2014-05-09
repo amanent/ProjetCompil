@@ -1,0 +1,6 @@
+/* a utiliser sans fournir de fichier de donnees */
+x := get();
+y := get();
+z := get();
+begin 1 end
+/* Missing data file */

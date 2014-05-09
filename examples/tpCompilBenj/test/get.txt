@@ -1,0 +1,6 @@
+/* a lire dans le fichier get.dat si on veut obtenir cette sortie */
+begin get() end
+/*
+result: 23
+*/
+

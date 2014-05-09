@@ -1,0 +1,7 @@
+x := 2;
+z := 0;
+y := if x = 3 then z else (let z := 5 in z);
+begin y * z end
+/*
+result: 0
+*/

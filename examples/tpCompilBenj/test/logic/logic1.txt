@@ -1,0 +1,10 @@
+x := if 1 = 1 or 1 / 0 <> 0 then 0 else 1;
+y := if 0 = 1 or (1 = 0 and 1 / 0 > 0) then 1 else 0;
+z := if 0 = 1 or (1 = 1 and 1 > 0) then 0 else 1;
+t := if not 0 = 0 and 0 = 0 or 1 = 1 then 0 else 1;
+t2 := if 1 = 2 and 2 = 3 or 3 = 3 then 0 else 1;
+t3 := if 1 = 2 and (2 = 3 or 3 = 3) then 1 else 0;
+begin x + y + z + t + t2 + t3 end
+/*
+result: 0
+*/

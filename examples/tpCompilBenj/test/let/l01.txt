@@ -1,0 +1,6 @@
+x := 3;
+y := 5;
+begin x + x * let y2 := y * y in y2 end
+/*
+result: 78
+*/

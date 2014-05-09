@@ -1,0 +1,8 @@
+y:= 150;
+x:= 4;
+z:= let y := 4 in (let x := 3 in x + y);
+begin z end
+
+/*
+result: 7
+*/

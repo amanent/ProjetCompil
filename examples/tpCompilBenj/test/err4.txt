@@ -1,0 +1,6 @@
+/* a utiliser avec err4.dat qui ne contient pas assez de donnees */
+x := get();
+y := get();
+z := get();
+begin 1 end
+/* Erreur: Missing or wrong data in file */

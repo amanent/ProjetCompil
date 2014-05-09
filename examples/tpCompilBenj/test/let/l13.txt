@@ -1,0 +1,6 @@
+x := 2;
+y := (let x := 4 in x) * (let x := 8 in x) * x ;
+begin y*x end
+/*
+result: 128
+*/
